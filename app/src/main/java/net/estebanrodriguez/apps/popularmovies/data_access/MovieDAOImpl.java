@@ -14,7 +14,6 @@ public class MovieDAOImpl implements MovieDAO {
 
     @Override
     public List<MovieItem> getAllMovies() {
-        String movieData = null;
 
 
 
@@ -23,7 +22,10 @@ public class MovieDAOImpl implements MovieDAO {
         //Validation for task
         try {
             if(task.get() != null)
-            movieData = task.get();
+
+            MovieFactory.buildMovieList(
+                    MovieDataParser.parseJsonMovieDataString(task.get()));
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Spoooon on 10/9/2016.
@@ -42,20 +43,10 @@ public class MovieDataParser {
 
         try {
 
-            movieDataObjectMap.put(KeyVault.POSTER_PATH, jsonObject.getString(KeyVault.POSTER_PATH));
-            movieDataObjectMap.put(KeyVault.ADULT, jsonObject.getString(KeyVault.ADULT));
-            movieDataObjectMap.put(KeyVault.OVERVIEW, jsonObject.getString(KeyVault.OVERVIEW));
-            movieDataObjectMap.put(KeyVault.RELEASE_DATE, jsonObject.getString(KeyVault.RELEASE_DATE));
-            movieDataObjectMap.put(KeyVault.GENRE_IDS, jsonObject.getString(KeyVault.GENRE_IDS));
-            movieDataObjectMap.put(KeyVault.ID, jsonObject.getString(KeyVault.ID));
-            movieDataObjectMap.put(KeyVault.ORIGINAL_TITLE, jsonObject.getString(KeyVault.ORIGINAL_TITLE));
-            movieDataObjectMap.put(KeyVault.ORIGINAL_LANGUAGE, jsonObject.getString(KeyVault.ORIGINAL_LANGUAGE));
-            movieDataObjectMap.put(KeyVault.TITLE, jsonObject.getString(KeyVault.TITLE));
-            movieDataObjectMap.put(KeyVault.BACKDROP_PATH, jsonObject.getString(KeyVault.BACKDROP_PATH));
-            movieDataObjectMap.put(KeyVault.POPULARITY, jsonObject.getString(KeyVault.POPULARITY));
-            movieDataObjectMap.put(KeyVault.VOTE_COUNT, jsonObject.getString(KeyVault.VOTE_COUNT));
-            movieDataObjectMap.put(KeyVault.VIDEO, jsonObject.getString(KeyVault.VIDEO));
-            movieDataObjectMap.put(KeyVault.VOTE_AVERAGE, jsonObject.getString(KeyVault.VOTE_AVERAGE));
+            Set<String> keySet = movieDataObjectMap.keySet();
+            for(String key: keySet){
+                movieDataObjectMap.put(key, jsonObject.getString(key));
+            }
 
             return movieDataObjectMap;
 

@@ -23,5 +23,118 @@ public class MovieItem {
     private boolean mVideo;
     private double mVoteAverage;
 
+    public MovieItem() {
+    }
 
+    public String getPosterPath() {
+        return mPosterPath;
+    }
+
+    public void setPosterPath(String posterPath) {
+        mPosterPath = posterPath;
+    }
+
+    public boolean isAdult() {
+        return mAdult;
+    }
+
+    public void setAdult(boolean adult) {
+        mAdult = adult;
+    }
+
+    public String getOverview() {
+        return mOverview;
+    }
+
+    public void setOverview(String overview) {
+        mOverview = overview;
+    }
+
+    public Date getReleaseDate() {
+        return mReleaseDate;
+    }
+
+    public void setReleaseDate(Date releaseDate) {
+        mReleaseDate = releaseDate;
+    }
+
+    public List<String> getGenreIds() {
+        return mGenreIds;
+    }
+
+    public void setGenreIds(List<String> genreIds) {
+        mGenreIds = genreIds;
+    }
+
+    public String getID() {
+        return mID;
+    }
+
+    public void setID(String ID) {
+        mID = ID;
+    }
+
+    public String getOriginalTitle() {
+        return mOriginalTitle;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        mOriginalTitle = originalTitle;
+    }
+
+    public String getOriginalLanguage() {
+        return mOriginalLanguage;
+    }
+
+    public void setOriginalLanguage(String originalLanguage) {
+        mOriginalLanguage = originalLanguage;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    public String getBackdropPath() {
+        return mBackdropPath;
+    }
+
+    public void setBackdropPath(String backdropPath) {
+        mBackdropPath = backdropPath;
+    }
+
+    public double getPopularity() {
+        return mPopularity;
+    }
+
+    public void setPopularity(double popularity) {
+        mPopularity = popularity;
+    }
+
+    public double getVoteCount() {
+        return mVoteCount;
+    }
+
+    public void setVoteCount(double voteCount) {
+        mVoteCount = voteCount;
+    }
+
+    public boolean isVideo() {
+        return mVideo;
+    }
+
+    public void setVideo(boolean video) {
+        mVideo = video;
+    }
+
+    public double getVoteAverage() {
+        return mVoteAverage;
+    }
+
+    public void setVoteAverage(double voteAverage) {
+        mVoteAverage = voteAverage;
+    }
 }
