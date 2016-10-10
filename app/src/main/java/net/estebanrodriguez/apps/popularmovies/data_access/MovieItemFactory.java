@@ -15,7 +15,7 @@ import java.util.Set;
  * Created by Spoooon on 10/9/2016.
  */
 
-public class MovieFactory {
+public class MovieItemFactory {
 
 
     public static List<MovieItem> buildMovieList(List<Map<String, String>> mapList){

@@ -23,7 +23,7 @@ public class MovieDAOImpl implements MovieDAO {
         try {
             if(task.get() != null)
 
-            MovieFactory.buildMovieList(
+            MovieItemFactory.buildMovieList(
                     MovieDataParser.parseJsonMovieDataString(task.get()));
 
         } catch (InterruptedException e) {
