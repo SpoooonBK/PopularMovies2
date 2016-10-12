@@ -1,11 +1,14 @@
 package net.estebanrodriguez.apps.popularmovies.data_access;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +19,8 @@ import java.util.Set;
 
 public class MovieDataParser {
 
+    public static final String LOG_TAG = MovieDataParser.class.getSimpleName();
+
 //Parses original json string data into a list of movie data maps
     public static List<Map<String, String>> parseJsonMovieDataString(String jsonData){
         List<Map<String, String>> movieDataList = new ArrayList<>();
@@ -23,10 +28,12 @@ public class MovieDataParser {
         try {
 
             JSONObject data = new JSONObject(jsonData);
-            JSONArray jsonArray = data.getJSONArray(KeyVault.ARRAY_KEY);
+            JSONArray jsonArray = data.getJSONArray(KeyVault.JSON_ARRAY_KEY);
 
                 for(int i = 0; i < jsonArray.length(); i++){
-                   movieDataList.add(parseJsonMovieDataObject(jsonArray.getJSONObject(i)));
+                    JSONObject movieData = (JSONObject) jsonArray.get(i);
+                    Log.v(LOG_TAG, movieData.toString());
+                    movieDataList.add(parseJsonMovieDataObject(movieData));
                 }
 
         } catch (JSONException e) {
@@ -34,17 +41,19 @@ public class MovieDataParser {
         }
 
 
-        return null;
+        return movieDataList;
     }
 
 //Parses a json movie data object into a movie data map
     public static Map<String, String> parseJsonMovieDataObject(JSONObject jsonObject){
         Map<String, String> movieDataObjectMap = new HashMap<>();
 
+        Iterator<String> iterator = jsonObject.keys();
+
         try {
 
-            Set<String> keySet = movieDataObjectMap.keySet();
-            for(String key: keySet){
+            while(iterator.hasNext()){
+                String key = iterator.next();
                 movieDataObjectMap.put(key, jsonObject.getString(key));
             }
 

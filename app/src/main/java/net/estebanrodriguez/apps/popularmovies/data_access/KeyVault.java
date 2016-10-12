@@ -9,7 +9,7 @@ public class KeyVault {
     //This class stores all the strings that are needed to parse the Json array retrieved from themoviedb.org
 
     //Array Keys
-    public static final String ARRAY_KEY = "results";
+    public static final String JSON_ARRAY_KEY = "results";
 
     //Item Keys
     public static final String POSTER_PATH = "poster_path";

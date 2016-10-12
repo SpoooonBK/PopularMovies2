@@ -137,4 +137,9 @@ public class MovieItem {
     public void setVoteAverage(double voteAverage) {
         mVoteAverage = voteAverage;
     }
+
+    @Override
+    public String toString() {
+        return mOriginalTitle;
+    }
 }
