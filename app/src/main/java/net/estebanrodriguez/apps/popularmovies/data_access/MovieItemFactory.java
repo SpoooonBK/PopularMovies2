@@ -4,13 +4,10 @@ import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
-import org.json.JSONObject;
-
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingFormatArgumentException;
 import java.util.Set;
 
 /**
@@ -51,55 +48,55 @@ public class MovieItemFactory {
             if(dataMap.get(key) != null){
                 switch (key){
 
-                    case KeyVault.POSTER_PATH:{
+                    case ConstantsVault.POSTER_PATH:{
                         movieItem.setPosterPath(dataMap.get(key));
                         break;
                     }
-                    case KeyVault.ADULT:{
+                    case ConstantsVault.ADULT:{
                         movieItem.setAdult(Boolean.parseBoolean(dataMap.get(key)));
                         break;
                     }
-                    case KeyVault.RELEASE_DATE:{
+                    case ConstantsVault.RELEASE_DATE:{
                         movieItem.setReleaseDate(Date.valueOf(dataMap.get(key)));
                         break;
                     }
-                    case KeyVault.GENRE_IDS:{
+                    case ConstantsVault.GENRE_IDS:{
                         //TODO implement
                         break;
                     }
-                    case KeyVault.ID:{
+                    case ConstantsVault.ID:{
                         movieItem.setID(dataMap.get(key));
                         break;
                     }
-                    case KeyVault.ORIGINAL_TITLE:{
+                    case ConstantsVault.ORIGINAL_TITLE:{
                         movieItem.setOriginalTitle(dataMap.get(key));
                         break;
                     }
-                    case KeyVault.ORIGINAL_LANGUAGE:{
+                    case ConstantsVault.ORIGINAL_LANGUAGE:{
                         movieItem.setOriginalLanguage(dataMap.get(key));
                         break;
                     }
-                    case KeyVault.TITLE:{
+                    case ConstantsVault.TITLE:{
                         movieItem.setTitle(dataMap.get(key));
                         break;
                     }
-                    case KeyVault.BACKDROP_PATH:{
+                    case ConstantsVault.BACKDROP_PATH:{
                         movieItem.setBackdropPath(dataMap.get(key));
                         break;
                     }
-                    case KeyVault.POPULARITY:{
+                    case ConstantsVault.POPULARITY:{
                         movieItem.setPopularity(Double.parseDouble(dataMap.get(key)));
                         break;
                     }
-                    case KeyVault.VOTE_COUNT:{
+                    case ConstantsVault.VOTE_COUNT:{
                         movieItem.setVoteCount(Double.parseDouble(dataMap.get(key)));
                         break;
                     }
-                    case KeyVault.VIDEO:{
+                    case ConstantsVault.VIDEO:{
                         movieItem.setVideo(Boolean.parseBoolean(dataMap.get(key)));
                         break;
                     }
-                    case KeyVault.VOTE_AVERAGE:{
+                    case ConstantsVault.VOTE_AVERAGE:{
                         movieItem.setVoteAverage(Double.parseDouble(dataMap.get(key)));
                         break;
                     }

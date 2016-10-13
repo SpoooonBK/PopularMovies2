@@ -2,12 +2,13 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".MainActivity">
-<TextView
-    android:layout_width="match_parent"
+             tools:context=".MainActivity$GridViewActivity">
+<GridView
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="GRIDVIEW FRAGMENT"
-    />
+    android:numColumns="auto_fit"
+    android:id="@+id/main_gridview">
+</GridView>
 
 
 </FrameLayout>

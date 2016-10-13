@@ -1,5 +1,8 @@
 package net.estebanrodriguez.apps.popularmovies.model;
 
+import net.estebanrodriguez.apps.popularmovies.ImageSizer;
+import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
+
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +25,7 @@ public class MovieItem {
     private double mVoteCount;
     private boolean mVideo;
     private double mVoteAverage;
+    private String mImageFetchURL;
 
     public MovieItem() {
     }
@@ -32,6 +36,15 @@ public class MovieItem {
 
     public void setPosterPath(String posterPath) {
         mPosterPath = posterPath;
+        setImageFetchURL();
+    }
+
+    public String getImageFetchURL() {
+        return mImageFetchURL;
+    }
+
+    public void setImageFetchURL() {
+        mImageFetchURL = ConstantsVault.IMAGE_FETCH_BASE_URL + ImageSizer.sDefaultImageSize + mPosterPath;
     }
 
     public boolean isAdult() {

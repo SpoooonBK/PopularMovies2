@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Spoooon on 10/9/2016.
@@ -28,7 +27,7 @@ public class MovieDataParser {
         try {
 
             JSONObject data = new JSONObject(jsonData);
-            JSONArray jsonArray = data.getJSONArray(KeyVault.JSON_ARRAY_KEY);
+            JSONArray jsonArray = data.getJSONArray(ConstantsVault.JSON_ARRAY_KEY);
 
                 for(int i = 0; i < jsonArray.length(); i++){
                     JSONObject movieData = (JSONObject) jsonArray.get(i);
