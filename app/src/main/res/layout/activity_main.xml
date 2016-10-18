@@ -8,7 +8,8 @@
 
 <fragment
 
-    android:name="net.estebanrodriguez.apps.popularmovies.MainActivity$GridViewActivity"
+    android:name="net.estebanrodriguez.apps.popularmovies.GridViewFragment"
+    android:id="@+id/fragment_gridview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:layout="@layout/fragment_grid_view"/>

@@ -100,6 +100,9 @@ public class MovieItemFactory {
                         movieItem.setVoteAverage(Double.parseDouble(dataMap.get(key)));
                         break;
                     }
+                    case ConstantsVault.OVERVIEW:{
+                        movieItem.setOverview(dataMap.get(key));
+                    }
                 }
 
 

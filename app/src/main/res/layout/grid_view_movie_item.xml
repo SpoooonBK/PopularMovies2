@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/main_gridview_item_title"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:textColor="@android:color/holo_red_light"/>
 
 </LinearLayout>

@@ -1,15 +1,22 @@
 package net.estebanrodriguez.apps.popularmovies.model;
 
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import net.estebanrodriguez.apps.popularmovies.ImageSizer;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Spoooon on 10/9/2016.
  */
-public class MovieItem {
+public class MovieItem implements Parcelable {
+
+    public static String PARCELABLE = "Movie Item Parcelable";
 
     private String mPosterPath;
     private boolean mAdult;
@@ -27,8 +34,11 @@ public class MovieItem {
     private double mVoteAverage;
     private String mImageFetchURL;
 
+
     public MovieItem() {
     }
+
+
 
     public String getPosterPath() {
         return mPosterPath;
@@ -151,8 +161,75 @@ public class MovieItem {
         mVoteAverage = voteAverage;
     }
 
-    @Override
-    public String toString() {
-        return mOriginalTitle;
+
+
+
+
+
+
+    protected MovieItem(Parcel in) {
+        mPosterPath = in.readString();
+        mAdult = in.readByte() != 0x00;
+        mOverview = in.readString();
+        long tmpMReleaseDate = in.readLong();
+        mReleaseDate = tmpMReleaseDate != -1 ? new Date(tmpMReleaseDate) : null;
+        if (in.readByte() == 0x01) {
+            mGenreIds = new ArrayList<String>();
+            in.readList(mGenreIds, String.class.getClassLoader());
+        } else {
+            mGenreIds = null;
+        }
+        mID = in.readString();
+        mOriginalTitle = in.readString();
+        mOriginalLanguage = in.readString();
+        mTitle = in.readString();
+        mBackdropPath = in.readString();
+        mPopularity = in.readDouble();
+        mVoteCount = in.readDouble();
+        mVideo = in.readByte() != 0x00;
+        mVoteAverage = in.readDouble();
+        mImageFetchURL = in.readString();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mPosterPath);
+        dest.writeByte((byte) (mAdult ? 0x01 : 0x00));
+        dest.writeString(mOverview);
+        dest.writeLong(mReleaseDate != null ? mReleaseDate.getTime() : -1L);
+        if (mGenreIds == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(mGenreIds);
+        }
+        dest.writeString(mID);
+        dest.writeString(mOriginalTitle);
+        dest.writeString(mOriginalLanguage);
+        dest.writeString(mTitle);
+        dest.writeString(mBackdropPath);
+        dest.writeDouble(mPopularity);
+        dest.writeDouble(mVoteCount);
+        dest.writeByte((byte) (mVideo ? 0x01 : 0x00));
+        dest.writeDouble(mVoteAverage);
+        dest.writeString(mImageFetchURL);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<MovieItem> CREATOR = new Parcelable.Creator<MovieItem>() {
+        @Override
+        public MovieItem createFromParcel(Parcel in) {
+            return new MovieItem(in);
+        }
+
+        @Override
+        public MovieItem[] newArray(int size) {
+            return new MovieItem[size];
+        }
+    };
 }

@@ -3,6 +3,7 @@ package net.estebanrodriguez.apps.popularmovies;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class MovieItemAdapter<MovieItems> extends ArrayAdapter<MovieItem> {
 
     private Context mContext;
     private List<MovieItem> mMovieItems;
+    private static final String LOG_TAG = MovieItemAdapter.class.getSimpleName();
 
 
     public MovieItemAdapter(Context context, List<MovieItem> movieItems) {
@@ -32,6 +34,10 @@ public class MovieItemAdapter<MovieItems> extends ArrayAdapter<MovieItem> {
         mContext = context;
         mMovieItems = movieItems;
 
+    }
+
+    public MovieItem getMovieItem(int index){
+        return mMovieItems.get(index);
     }
 
     @NonNull
@@ -52,4 +58,6 @@ public class MovieItemAdapter<MovieItems> extends ArrayAdapter<MovieItem> {
 
         return convertView;
     }
+
+
 }
