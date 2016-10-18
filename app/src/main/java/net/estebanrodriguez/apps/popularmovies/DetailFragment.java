@@ -1,5 +1,6 @@
 package net.estebanrodriguez.apps.popularmovies;
 
+
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,9 @@ import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
 
 /**
  * Created by Spoooon on 10/13/2016.
@@ -46,7 +49,7 @@ public class DetailFragment extends Fragment {
 
         Picasso.with(getActivity()).load(fetchImage).into(posterImageView);
         titleTextView.setText(movieItem.getTitle());
-        releaseDateTextView.setText(movieItem.getReleaseDate().toString());
+        releaseDateTextView.setText(releaseDate.toString());
         voteAverageTextView.setText(voteAverage.toString());
         popularityTextView.setText(popularity.toString());
         overviewTextView.setText(movieItem.getOverview());

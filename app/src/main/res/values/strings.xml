@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">PopularMovies</string>
+    <string name="detail_activity" translatable="true">Movie Details</string>
+    <string name="sort" translatable="true">Sort by:</string>
+    <string name="popularity" translatable="true">Popularity:</string>
+    <string name="average_rating" translatable="true">Average Rating:</string>
+    <string name="release_date" translatable="true">Release Date:</string>
 
-    <string name="sort">Sort by:</string>
-    <string name="popularity">Most Popular</string>
-    <string name="rating">Highest Rated</string>
+
 </resources>

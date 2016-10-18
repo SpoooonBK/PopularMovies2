@@ -31,11 +31,16 @@ public class RetrieveMovieDataTask extends AsyncTask<Void, Void, String> {
     protected void onPreExecute() {
         super.onPreExecute();
 
+
+
         //Build URL
-        final String BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
+        final String BASE_URL_POPULAR = "http://api.themoviedb.org/3/movie/popular?";
+        final String BASE_URL_TOP_RATED = "http://api.themoviedb.org/3/movie/top_rated?";
         final String API_PARAM = "api_key";
 
-        Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+
+
+        Uri builtUri = Uri.parse(BASE_URL_POPULAR).buildUpon()
                 .appendQueryParameter(API_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                 .build();
 
