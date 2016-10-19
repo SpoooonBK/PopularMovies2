@@ -39,5 +39,9 @@ public final class ConstantsVault {
     //IMAGE FETCH URL
     public static final String IMAGE_FETCH_BASE_URL = "http://image.tmdb.org/t/p/";
 
+    //Preferences Keys
+
+
+
 
 }

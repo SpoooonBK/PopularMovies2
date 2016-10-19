@@ -1,5 +1,6 @@
 package net.estebanrodriguez.apps.popularmovies;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Point;
 import android.preference.PreferenceFragment;
@@ -9,6 +10,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,13 +40,38 @@ public class MainActivity extends AppCompatActivity {
         ImageSizer.setDefaultImageSize(width);
         setContentView(R.layout.activity_main);
 
-        //Dynamically set image sizes
 
+        //Dynamically set image sizes
 
     }
 
-    public static class PrefFragment extends PreferenceFragment{
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+
+        getFragmentManager().beginTransaction().replace(R.id.activity_main,
+                new MoviePreferencesFragment()).commit();
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public static class MoviePreferencesFragment extends PreferenceFragment{
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            addPreferencesFromResource(R.xml.preferences);
+        }
     }
 
 }
