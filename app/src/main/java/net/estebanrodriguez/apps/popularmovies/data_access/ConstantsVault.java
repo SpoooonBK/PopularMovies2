@@ -39,7 +39,11 @@ public final class ConstantsVault {
     //IMAGE FETCH URL
     public static final String IMAGE_FETCH_BASE_URL = "http://image.tmdb.org/t/p/";
 
-    //Preferences Keys
+    //Database Fetch URLs
+    public static final String DB_FETCH_POPULAR_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
+    public static final String DB_FETCH_TOP_RATED_BASE_URL = "http://api.themoviedb.org/3/movie/top_rated?";
+
+
 
 
 

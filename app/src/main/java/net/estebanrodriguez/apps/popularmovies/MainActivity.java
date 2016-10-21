@@ -1,28 +1,15 @@
 package net.estebanrodriguez.apps.popularmovies;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Intent;
+import android.app.FragmentTransaction;
 import android.graphics.Point;
-import android.preference.PreferenceFragment;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ImageView;
-
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
-import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,16 +20,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        ImageSizer.setDefaultImageSize(width);
-        setContentView(R.layout.activity_main);
-
-
         //Dynamically set image sizes
+        ImageSizer.setDefaultImageSize(getDisplaySizeWidth());
 
+
+        setContentView(R.layout.activity_main);
     }
 
     @Override
@@ -58,20 +40,22 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
 
-        getFragmentManager().beginTransaction().replace(R.id.activity_main,
-                new MoviePreferencesFragment()).commit();
+        FragmentManager fragmentManager = getFragmentManager();
 
+        Fragment gridviewfragment = fragmentManager.findFragmentById(R.id.fragment_gridview);
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.add(R.id.activity_main, new MoviePreferencesFragment());
+        ft.hide(gridviewfragment);
+        ft.addToBackStack(gridviewfragment.getTag());
+        ft.commit();
         return super.onOptionsItemSelected(item);
     }
 
-    public static class MoviePreferencesFragment extends PreferenceFragment{
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            addPreferencesFromResource(R.xml.preferences);
-        }
+    private int getDisplaySizeWidth(){
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.x;
     }
 
 }

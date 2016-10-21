@@ -1,5 +1,10 @@
 package net.estebanrodriguez.apps.popularmovies.data_access;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.util.List;
@@ -14,6 +19,9 @@ import static net.estebanrodriguez.apps.popularmovies.data_access.MovieDataParse
 
 public class MovieDAOImpl implements MovieDAO {
 
+    private static Boolean isPreferenceChanged = null;
+    private Context mContext;
+
 
     private MovieDAOImpl(){
 
@@ -22,8 +30,10 @@ public class MovieDAOImpl implements MovieDAO {
         private static final MovieDAOImpl INSTANCE = new MovieDAOImpl();
     }
 
-    public static MovieDAOImpl getInstance(){
-        return MovieDAOHelper.INSTANCE;
+    public static MovieDAOImpl getInstance(Context context){
+        MovieDAOImpl movieDAO = MovieDAOHelper.INSTANCE;
+        movieDAO.setContext(context);
+        return movieDAO;
     }
 
     @Override
@@ -31,8 +41,9 @@ public class MovieDAOImpl implements MovieDAO {
 
 
 
-       RetrieveMovieDataTask task = new RetrieveMovieDataTask();
-       task.execute();
+        RetrieveMovieDataTask task = new RetrieveMovieDataTask();
+        task.execute();
+
         //Validation for task
         try {
             if(task.get() != null){
@@ -46,8 +57,34 @@ public class MovieDAOImpl implements MovieDAO {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
+        } finally {
+            isPreferenceChanged = false;
         }
 
         return null;
     }
+
+    public static void NotifyPreferenceChange(){
+        isPreferenceChanged = true;
+    }
+
+    public static Boolean getIsPreferenceChanged() {
+        return isPreferenceChanged;
+    }
+
+    public void setContext(Context context) {
+        mContext = context;
+    }
+
+//    private String getBaseFetchURL(){
+//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+//        String sortKey = mContext.getString(R.string.sort_preference_key);
+//        String topRated = mContext.getString(R.string);
+//        String currentPref  = preferences.getString(sortKey, defaultValue);
+//TODO implement
+//        if (currentPref.equals(popularity)){
+//            return ConstantsVault.DB_FETCH_POPULAR_BASE_URL;
+//     }
+
+//    }
 }

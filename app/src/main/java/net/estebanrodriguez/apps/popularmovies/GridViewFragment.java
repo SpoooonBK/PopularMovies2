@@ -1,8 +1,11 @@
 package net.estebanrodriguez.apps.popularmovies;
 
+import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +24,22 @@ public class GridViewFragment extends Fragment {
 
     private MovieItemAdapter<MovieItem> mMovieItemAdapter;
     private List<MovieItem> mMovieItems;
+    private GridView mGridView;
+    private MovieDAOImpl mMovieDAO;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mMovieItems = MovieDAOImpl.getInstance().getAllMovies();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mMovieDAO = MovieDAOImpl.getInstance(getActivity());
+
+        //This line gets gets all the movies using the MovieDAOImpl
+        mMovieItems = mMovieDAO.getAllMovies();
+
         View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
 
-        GridView gridView = (GridView) rootView.findViewById(R.id.main_gridview);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mGridView = (GridView) rootView.findViewById(R.id.main_gridview);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
@@ -38,8 +49,17 @@ public class GridViewFragment extends Fragment {
         });
 
         mMovieItemAdapter = new MovieItemAdapter<MovieItem>(getActivity(), mMovieItems);
-        gridView.setAdapter(mMovieItemAdapter);
+        mGridView.setAdapter(mMovieItemAdapter);
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(MovieDAOImpl.getIsPreferenceChanged()) {
+            mMovieItems = mMovieDAO.getAllMovies();
+            mMovieItemAdapter.notifyDataSetChanged();
+        }
     }
 }
