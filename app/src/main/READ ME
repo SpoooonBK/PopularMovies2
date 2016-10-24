@@ -1,0 +1,3 @@
+Insert your api key in gradle.properties using the below format
+
+MyTheMovieDBAPI="[YOUR API KEY]"
