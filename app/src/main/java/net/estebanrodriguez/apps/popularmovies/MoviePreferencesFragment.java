@@ -11,6 +11,7 @@ import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
  */
 public class MoviePreferencesFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
 
+    private final String LOG_TAG = MoviePreferencesFragment.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,11 +24,10 @@ public class MoviePreferencesFragment extends PreferenceFragment implements Shar
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-        if(key.equals(getString(R.string.sort_preference_key))){
+        GridViewFragment gridViewFragment = (GridViewFragment)getFragmentManager().findFragmentById(R.id.fragment_gridview);
 
-            MovieDAOImpl.NotifyPreferenceChange();
-        }
-
+        MovieDAOImpl.NotifyPreferenceChange();
+        gridViewFragment.notifyOnPreferenceChanged();
 
     }
 

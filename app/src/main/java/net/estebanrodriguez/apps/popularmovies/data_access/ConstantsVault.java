@@ -44,8 +44,4 @@ public final class ConstantsVault {
     public static final String DB_FETCH_TOP_RATED_BASE_URL = "http://api.themoviedb.org/3/movie/top_rated?";
 
 
-
-
-
-
 }

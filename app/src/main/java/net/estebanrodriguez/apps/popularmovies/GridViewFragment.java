@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +25,7 @@ public class GridViewFragment extends Fragment {
     private List<MovieItem> mMovieItems;
     private GridView mGridView;
     private MovieDAOImpl mMovieDAO;
+    private final String LOG_TAG = GridViewFragment.class.getSimpleName();
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,9 +42,9 @@ public class GridViewFragment extends Fragment {
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    intent.putExtra(MovieItem.PARCELABLE, mMovieItemAdapter.getMovieItem(position));
-                    startActivity(intent);
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra(MovieItem.PARCELABLE, mMovieItemAdapter.getMovieItem(position));
+                startActivity(intent);
             }
         });
 
@@ -54,12 +54,11 @@ public class GridViewFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(MovieDAOImpl.getIsPreferenceChanged()) {
-            mMovieItems = mMovieDAO.getAllMovies();
-            mMovieItemAdapter.notifyDataSetChanged();
-        }
+    public void notifyOnPreferenceChanged() {
+
+        mMovieItemAdapter.clear();
+        mMovieItems = mMovieDAO.getAllMovies();
+        mMovieItemAdapter.addAll(mMovieItems);
+        mMovieItemAdapter.notifyDataSetChanged();
     }
 }

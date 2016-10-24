@@ -5,8 +5,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.BuildConfig;
-import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
-
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,32 +13,33 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 
 /**
  * Created by Spoooon on 10/9/2016.
  */
 
+
 public class RetrieveMovieDataTask extends AsyncTask<Void, Void, String> {
 
+    private String baseURL;
     URL mURL;
     private final String LOG_TAG = RetrieveMovieDataTask.class.getSimpleName();
+
+    public RetrieveMovieDataTask(String baseURL) {
+        this.baseURL = baseURL;
+    }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
 
 
-
         //Build URL
-        final String BASE_URL_POPULAR = "http://api.themoviedb.org/3/movie/popular?";
-        final String BASE_URL_TOP_RATED = "http://api.themoviedb.org/3/movie/top_rated?";
         final String API_PARAM = "api_key";
 
 
-
-        Uri builtUri = Uri.parse(BASE_URL_POPULAR).buildUpon()
+        Uri builtUri = Uri.parse(baseURL).buildUpon()
                 .appendQueryParameter(API_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                 .build();
 
@@ -67,33 +66,31 @@ public class RetrieveMovieDataTask extends AsyncTask<Void, Void, String> {
 
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
-            if (inputStream == null){
+            if (inputStream == null) {
                 return null;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
 
 
-
             String line;
-            while ((line = reader.readLine()) != null){
+            while ((line = reader.readLine()) != null) {
                 buffer.append(line + "\n");
             }
 
-            if (buffer.length() == 0){
+            if (buffer.length() == 0) {
                 return null;
             }
 
             movieData = buffer.toString();
-            Log.d(LOG_TAG, movieData);
+
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-         finally {
-            if(urlConnection != null) {
+        } finally {
+            if (urlConnection != null) {
                 urlConnection.disconnect();
             }
-            if(reader != null){
+            if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {

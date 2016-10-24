@@ -1,7 +1,5 @@
 package net.estebanrodriguez.apps.popularmovies.data_access;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,8 +18,8 @@ public class MovieDataParser {
 
     public static final String LOG_TAG = MovieDataParser.class.getSimpleName();
 
-//Parses original json string data into a list of movie data maps
-    public static List<Map<String, String>> parseJsonMovieDataString(String jsonData){
+    //Parses original json string data into a list of movie data maps
+    public static List<Map<String, String>> parseJsonMovieDataString(String jsonData) {
         List<Map<String, String>> movieDataList = new ArrayList<>();
 
         try {
@@ -29,11 +27,10 @@ public class MovieDataParser {
             JSONObject data = new JSONObject(jsonData);
             JSONArray jsonArray = data.getJSONArray(ConstantsVault.JSON_ARRAY_KEY);
 
-                for(int i = 0; i < jsonArray.length(); i++){
-                    JSONObject movieData = (JSONObject) jsonArray.get(i);
-                    Log.v(LOG_TAG, movieData.toString());
-                    movieDataList.add(parseJsonMovieDataObject(movieData));
-                }
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject movieData = (JSONObject) jsonArray.get(i);
+                movieDataList.add(parseJsonMovieDataObject(movieData));
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -43,15 +40,15 @@ public class MovieDataParser {
         return movieDataList;
     }
 
-//Parses a json movie data object into a movie data map
-    public static Map<String, String> parseJsonMovieDataObject(JSONObject jsonObject){
+    //Parses a json movie data object into a movie data map
+    public static Map<String, String> parseJsonMovieDataObject(JSONObject jsonObject) {
         Map<String, String> movieDataObjectMap = new HashMap<>();
 
         Iterator<String> iterator = jsonObject.keys();
 
         try {
 
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 String key = iterator.next();
                 movieDataObjectMap.put(key, jsonObject.getString(key));
             }
@@ -64,8 +61,6 @@ public class MovieDataParser {
 
         return null;
     }
-
-
 
 
 }

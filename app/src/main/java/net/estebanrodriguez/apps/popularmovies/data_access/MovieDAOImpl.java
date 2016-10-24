@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static net.estebanrodriguez.apps.popularmovies.data_access.MovieDataParser.parseJsonMovieDataString;
-
 /**
  * Created by Spoooon on 10/9/2016.
  */
@@ -23,14 +21,15 @@ public class MovieDAOImpl implements MovieDAO {
     private Context mContext;
 
 
-    private MovieDAOImpl(){
+    private MovieDAOImpl() {
 
     }
-    private static class MovieDAOHelper{
+
+    private static class MovieDAOHelper {
         private static final MovieDAOImpl INSTANCE = new MovieDAOImpl();
     }
 
-    public static MovieDAOImpl getInstance(Context context){
+    public static MovieDAOImpl getInstance(Context context) {
         MovieDAOImpl movieDAO = MovieDAOHelper.INSTANCE;
         movieDAO.setContext(context);
         return movieDAO;
@@ -40,13 +39,12 @@ public class MovieDAOImpl implements MovieDAO {
     public List<MovieItem> getAllMovies() {
 
 
-
-        RetrieveMovieDataTask task = new RetrieveMovieDataTask();
+        RetrieveMovieDataTask task = new RetrieveMovieDataTask(getBaseFetchURL());
         task.execute();
 
         //Validation for task
         try {
-            if(task.get() != null){
+            if (task.get() != null) {
 
                 List<Map<String, String>> mapList = MovieDataParser.parseJsonMovieDataString(task.get());
                 return MovieItemFactory.buildMovieList(mapList);
@@ -64,7 +62,7 @@ public class MovieDAOImpl implements MovieDAO {
         return null;
     }
 
-    public static void NotifyPreferenceChange(){
+    public static void NotifyPreferenceChange() {
         isPreferenceChanged = true;
     }
 
@@ -76,15 +74,28 @@ public class MovieDAOImpl implements MovieDAO {
         mContext = context;
     }
 
-//    private String getBaseFetchURL(){
-//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-//        String sortKey = mContext.getString(R.string.sort_preference_key);
-//        String topRated = mContext.getString(R.string);
-//        String currentPref  = preferences.getString(sortKey, defaultValue);
-//TODO implement
-//        if (currentPref.equals(popularity)){
-//            return ConstantsVault.DB_FETCH_POPULAR_BASE_URL;
-//     }
+/*
+* METHOD getBaseFetchURL():
+*  gets the proper base fetch url as defined in ConstantsVault by checking the shared preferences.
+*
+* */
+    private String getBaseFetchURL() {
 
-//    }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String sortKey = mContext.getString(R.string.sort_preference_key);
+        String mostPopular = mContext.getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
+        String topRated = mContext.getResources().getStringArray(R.array.fetch_movies_list_preference)[1];
+        String currentPref = preferences.getString(sortKey, mostPopular);
+
+
+        if (currentPref.equals(mostPopular)) {
+            return ConstantsVault.DB_FETCH_POPULAR_BASE_URL;
+        }
+
+        if (currentPref.equals(topRated)) {
+            return ConstantsVault.DB_FETCH_TOP_RATED_BASE_URL;
+        }
+
+        return null;
+    }
 }
