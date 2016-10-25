@@ -1,7 +1,9 @@
 package net.estebanrodriguez.apps.popularmovies;
 
 import android.content.Context;
+import android.graphics.Movie;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +21,7 @@ import java.util.List;
  * Created by Spoooon on 10/12/2016.
  */
 
-public class MovieItemAdapter<MovieItems> extends ArrayAdapter<MovieItem> {
+public class MovieItemAdapter<MovieItems> extends RecyclerView.Adapter<MovieItemAdapter.Viewholder> {
 
     private Context mContext;
     private List<MovieItem> mMovieItems;
@@ -27,34 +29,50 @@ public class MovieItemAdapter<MovieItems> extends ArrayAdapter<MovieItem> {
 
 
     public MovieItemAdapter(Context context, List<MovieItem> movieItems) {
-        super(context, 0, movieItems);
         mContext = context;
         mMovieItems = movieItems;
 
     }
 
+    public class Viewholder extends RecyclerView.ViewHolder{
+
+        public ImageView mImageView;
+        public TextView mTextView;
+
+        public Viewholder(View itemView) {
+            super(itemView);
+            mImageView = (ImageView)itemView.findViewById(R.id.main_gridview_item_image);
+            mTextView = (TextView)itemView.findViewById(R.id.main_gridview_item_title);
+        }
+    }
+
+    @Override
+    public Viewholder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.grid_view_movie_item, parent, false);
+        Viewholder viewholder = new Viewholder(view);
+        return viewholder;
+    }
+
+    @Override
+    public void onBindViewHolder(MovieItemAdapter.Viewholder holder, int position) {
+        MovieItem movieItem = mMovieItems.get(position);
+
+        holder.mTextView.setText(movieItem.getTitle());
+        Picasso.with(mContext).load(movieItem.getImageFetchURL()).into(holder.mImageView);
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return mMovieItems.size();
+    }
+
+
+
+
     public MovieItem getMovieItem(int index){
         return mMovieItems.get(index);
     }
-
-    @NonNull
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-
-        if(convertView == null){
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.grid_view_movie_item, parent, false);
-        }
-
-        ImageView imageViewMovieImage = (ImageView) convertView.findViewById(R.id.main_gridview_item_image);
-        TextView textViewTitle = (TextView) convertView.findViewById(R.id.main_gridview_item_title);
-        MovieItem movieItem = mMovieItems.get(position);
-
-        textViewTitle.setText(movieItem.getTitle());
-        Picasso.with(mContext).load(movieItem.getImageFetchURL()).into(imageViewMovieImage);
-
-        return convertView;
-    }
-
 
 }

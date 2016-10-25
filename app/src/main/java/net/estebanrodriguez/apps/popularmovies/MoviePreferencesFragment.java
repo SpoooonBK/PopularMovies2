@@ -24,7 +24,7 @@ public class MoviePreferencesFragment extends PreferenceFragment implements Shar
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-        GridViewFragment gridViewFragment = (GridViewFragment)getFragmentManager().findFragmentById(R.id.fragment_gridview);
+        RecyclerViewGridFragment gridViewFragment = (RecyclerViewGridFragment)getFragmentManager().findFragmentById(R.id.fragment_gridview);
 
         MovieDAOImpl.NotifyPreferenceChange();
         gridViewFragment.notifyOnPreferenceChanged();
