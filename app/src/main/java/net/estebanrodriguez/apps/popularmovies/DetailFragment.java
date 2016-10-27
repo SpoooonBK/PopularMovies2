@@ -44,7 +44,7 @@ public class DetailFragment extends Fragment {
         TextView popularityTextView = (TextView) rootView.findViewById(R.id.detail_textview_popularity);
         TextView overviewTextView = (TextView) rootView.findViewById(R.id.detail_textview_overview);
 
-        Picasso.with(getActivity()).load(fetchImage).into(posterImageView);
+        Picasso.with(getActivity()).load(fetchImage).placeholder(R.drawable.happy_popcorn).into(posterImageView);
         titleTextView.setText(movieItem.getTitle());
         releaseDateTextView.setText(releaseDate.toString());
         voteAverageTextView.setText(voteAverage.toString());

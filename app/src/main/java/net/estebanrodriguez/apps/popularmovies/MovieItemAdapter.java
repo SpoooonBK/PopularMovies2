@@ -1,6 +1,7 @@
 package net.estebanrodriguez.apps.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Movie;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -34,15 +35,24 @@ public class MovieItemAdapter<MovieItems> extends RecyclerView.Adapter<MovieItem
 
     }
 
-    public class Viewholder extends RecyclerView.ViewHolder{
+    public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public ImageView mImageView;
-        public TextView mTextView;
+
 
         public Viewholder(View itemView) {
             super(itemView);
             mImageView = (ImageView)itemView.findViewById(R.id.main_gridview_item_image);
-            mTextView = (TextView)itemView.findViewById(R.id.main_gridview_item_title);
+            mImageView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+
+            Intent intent = new Intent(mContext, DetailActivity.class);
+            intent.putExtra(MovieItem.PARCELABLE, getMovieItem(getAdapterPosition()));
+            mContext.startActivity(intent);
+            getAdapterPosition();
         }
     }
 
@@ -58,8 +68,8 @@ public class MovieItemAdapter<MovieItems> extends RecyclerView.Adapter<MovieItem
     public void onBindViewHolder(MovieItemAdapter.Viewholder holder, int position) {
         MovieItem movieItem = mMovieItems.get(position);
 
-        holder.mTextView.setText(movieItem.getTitle());
-        Picasso.with(mContext).load(movieItem.getImageFetchURL()).into(holder.mImageView);
+
+        Picasso.with(mContext).load(movieItem.getImageFetchURL()).placeholder(R.drawable.happy_popcorn).into(holder.mImageView);
     }
 
 
@@ -68,6 +78,25 @@ public class MovieItemAdapter<MovieItems> extends RecyclerView.Adapter<MovieItem
         return mMovieItems.size();
     }
 
+    public void clear(){
+
+        if(mMovieItems != null){
+            mMovieItems.clear();
+        }
+
+    }
+
+    public void addAll(List<MovieItem> movieItems){
+
+        if(mMovieItems != null){
+            mMovieItems.addAll(movieItems);
+        }
+    }
+
+    public void swapData(List<MovieItem> movieItems){
+        clear();
+        addAll(movieItems);
+    }
 
 
 

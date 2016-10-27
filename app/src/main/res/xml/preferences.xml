@@ -7,7 +7,7 @@
         android:dialogTitle="@string/sort"
         android:entries="@array/fetch_movies_list_preference"
         android:key="@string/sort_preference_key"
-        android:defaultValue="@string/popularity"
+        android:defaultValue="Most Popular"
         android:title="@string/sort"
 
         />

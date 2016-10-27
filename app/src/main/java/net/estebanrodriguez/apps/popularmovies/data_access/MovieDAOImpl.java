@@ -2,6 +2,8 @@ package net.estebanrodriguez.apps.popularmovies.data_access;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
 import net.estebanrodriguez.apps.popularmovies.R;
@@ -70,7 +72,7 @@ public class MovieDAOImpl implements MovieDAO {
         return isPreferenceChanged;
     }
 
-    public void setContext(Context context) {
+    private void setContext(Context context) {
         mContext = context;
     }
 
@@ -98,4 +100,5 @@ public class MovieDAOImpl implements MovieDAO {
 
         return null;
     }
+
 }

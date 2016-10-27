@@ -6,10 +6,15 @@ import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
+import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,15 +28,23 @@ public class MainActivity extends AppCompatActivity {
         //Dynamically set image sizes
         ImageSizer.setDefaultImageSize(getDisplaySizeWidth());
 
-
-        setContentView(R.layout.activity_main);
+        if (NetworkChecker.isNetworkAvailable(this)){
+            setContentView(R.layout.activity_main);
+        }
+        else{
+            setContentView(R.layout.activity_error);
+            Toast toast = Toast.makeText(this, ConstantsVault.NETWORK_ERROR_MESSAGE, Toast.LENGTH_LONG);
+            toast.show();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        if(NetworkChecker.isNetworkAvailable(this)){
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.main_menu, menu);
+        }
         return super.onCreateOptionsMenu(menu);
 
     }
@@ -39,16 +52,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+            FragmentManager fragmentManager = getFragmentManager();
+            Fragment gridviewfragment = fragmentManager.findFragmentById(R.id.fragment_gridview);
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.add(R.id.activity_main, new MoviePreferencesFragment());
+            ft.hide(gridviewfragment);
+            ft.addToBackStack(gridviewfragment.getTag());
+            ft.commit();
+            return super.onOptionsItemSelected(item);
 
-        FragmentManager fragmentManager = getFragmentManager();
-
-        Fragment gridviewfragment = fragmentManager.findFragmentById(R.id.fragment_gridview);
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.add(R.id.activity_main, new MoviePreferencesFragment());
-        ft.hide(gridviewfragment);
-        ft.addToBackStack(gridviewfragment.getTag());
-        ft.commit();
-        return super.onOptionsItemSelected(item);
     }
 
     private int getDisplaySizeWidth(){
