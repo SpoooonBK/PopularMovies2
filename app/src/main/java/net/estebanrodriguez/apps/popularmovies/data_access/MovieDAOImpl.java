@@ -4,14 +4,26 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 
+import net.estebanrodriguez.apps.popularmovies.BuildConfig;
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import rx.Observable;
+import rx.Subscriber;
 
 /**
  * Created by Spoooon on 10/9/2016.
@@ -21,6 +33,7 @@ public class MovieDAOImpl implements MovieDAO {
 
     private static Boolean isPreferenceChanged = null;
     private Context mContext;
+    private Observable mMovieCache = null;
 
 
     private MovieDAOImpl() {
@@ -43,6 +56,8 @@ public class MovieDAOImpl implements MovieDAO {
 
         RetrieveMovieDataTask task = new RetrieveMovieDataTask(getBaseFetchURL());
         task.execute();
+
+
 
         //Validation for task
         try {
@@ -81,7 +96,10 @@ public class MovieDAOImpl implements MovieDAO {
 *  gets the proper base fetch url as defined in ConstantsVault by checking the shared preferences.
 *
 * */
-    private String getBaseFetchURL() {
+    private URL getBaseFetchURL() {
+
+        String baseURL = null;
+        URL url = null;
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         String sortKey = mContext.getString(R.string.sort_preference_key);
@@ -91,14 +109,105 @@ public class MovieDAOImpl implements MovieDAO {
 
 
         if (currentPref.equals(mostPopular)) {
-            return ConstantsVault.DB_FETCH_POPULAR_BASE_URL;
+            baseURL = ConstantsVault.DB_FETCH_POPULAR_BASE_URL;
         }
 
         if (currentPref.equals(topRated)) {
-            return ConstantsVault.DB_FETCH_TOP_RATED_BASE_URL;
+            baseURL = ConstantsVault.DB_FETCH_TOP_RATED_BASE_URL;
         }
 
-        return null;
+        //Build URL
+        final String API_PARAM = "api_key";
+
+
+        Uri builtUri = Uri.parse(baseURL).buildUpon()
+                .appendQueryParameter(API_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
+                .build();
+
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    private String fetchData(URL url){
+        String movieData = null;
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+
+        try {
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.connect();
+
+            InputStream inputStream = urlConnection.getInputStream();
+            StringBuffer buffer = new StringBuffer();
+            if (inputStream == null) {
+                return null;
+            }
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line + "\n");
+            }
+
+            if (buffer.length() == 0) {
+                return null;
+            }
+
+            movieData = buffer.toString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return movieData;
+    }
+
+
+
+
+
+
+
+    public Observable<String> getMovieListData(String url){
+
+        if(mMovieCache == null) {
+            mMovieCache = Observable.create(new Observable.OnSubscribe<Object>() {
+
+                @Override
+                public void call(Subscriber<? super Object> subscriber) {
+
+                    try {
+                        String data = fetchData(getBaseFetchURL());
+                        subscriber.onNext(data);
+                        subscriber.onCompleted();
+                    } catch (Exception e) {
+                        subscriber.onError(e);
+                    }
+
+                }
+
+            }
+            }
+
+        return mMovieCache;
     }
 
 }
