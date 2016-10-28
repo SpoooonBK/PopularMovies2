@@ -35,6 +35,7 @@ import rx.schedulers.Schedulers;
 public class MovieDAOImpl implements MovieDAO {
 
     private static Boolean isPreferenceChanged = null;
+    private boolean mIsCallBackTriggered = false;
     private Context mContext;
     private List<String> mMovieData = new ArrayList<>();
     private final String LOG_TAG = MovieDAOImpl.class.getSimpleName();
@@ -56,12 +57,11 @@ public class MovieDAOImpl implements MovieDAO {
     @Override
     public List<MovieItem> getAllMovies() {
 
-        getMovieListData();
-
-        List<Map<String, String>> mapList = MovieDataParser.parseJsonMovieDataString(mMovieData.get(0));
+        List<Map<String, String>> mapList = MovieDataParser.parseJsonMovieDataString(fetchData(getBaseFetchURL()));
         isPreferenceChanged = false;
         mMovieData.clear();
         return MovieItemFactory.buildMovieList(mapList);
+
     }
 
     public static void NotifyPreferenceChange() {
@@ -204,6 +204,8 @@ public class MovieDAOImpl implements MovieDAO {
 
     }
 
+    public void callBack(){
 
+    }
 
 }

@@ -23,6 +23,13 @@ import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Spoooon on 10/18/2016.
@@ -42,24 +49,51 @@ public class RecyclerViewGridFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        View rootview = null;
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mMovieDAO = MovieDAOImpl.getInstance(getActivity());
 
         //This line gets gets all the movies using the MovieDAOImpl
-
-            mMovieItems = mMovieDAO.getAllMovies();
-
-
-
-
 
         View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.main_recycler_view);
         mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
-        mMovieItemAdapter = new MovieItemAdapter<MovieItem>(getActivity(), mMovieItems);
-        mRecyclerView.setAdapter(mMovieItemAdapter);
+
+        Observable <List<MovieItem>> movieListObservable = Observable.fromCallable(new Callable<List<MovieItem>>() {
+            @Override
+            public List<MovieItem> call() throws Exception {
+                return mMovieDAO.getAllMovies();
+            }
+        });
+
+        Subscription movieListSubsctition = movieListObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<List<MovieItem>>() {
+                    @Override
+                    public void onCompleted() {
+
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<MovieItem> movieItems) {
+                        mMovieItemAdapter = new MovieItemAdapter<MovieItem>(getActivity(), movieItems);
+                        mRecyclerView.setAdapter(mMovieItemAdapter);
+                    }
+                });
+
+
+
+
+
 
         return rootView;
     }
