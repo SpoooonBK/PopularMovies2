@@ -4,7 +4,8 @@
         android:drawable="@color/colorPrimaryDark"/>
 
     <item>
-        <bitmap android:src="@drawable/happy_popcorn"
+        <bitmap android:gravity="center"
+            android:src="@drawable/happy_popcorn"/>
     </item>
 
 
