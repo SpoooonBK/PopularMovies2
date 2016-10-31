@@ -69,7 +69,10 @@ public class MovieItemAdapter<MovieItems> extends RecyclerView.Adapter<MovieItem
         MovieItem movieItem = mMovieItems.get(position);
 
 
-        Picasso.with(mContext).load(movieItem.getImageFetchURL()).placeholder(R.drawable.happy_popcorn).into(holder.mImageView);
+        Picasso.with(mContext).load(movieItem.getImageFetchURL())
+                .placeholder(R.drawable.happy_popcorn)
+                .error(R.drawable.sad_popcorn)
+                .into(holder.mImageView);
     }
 
 

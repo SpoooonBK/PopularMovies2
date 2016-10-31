@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.BuildConfig;
 import net.estebanrodriguez.apps.popularmovies.R;
@@ -20,13 +19,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Spoooon on 10/9/2016.
@@ -35,7 +27,6 @@ import rx.schedulers.Schedulers;
 public class MovieDAOImpl implements MovieDAO {
 
     private static Boolean isPreferenceChanged = null;
-    private boolean mIsCallBackTriggered = false;
     private Context mContext;
     private List<String> mMovieData = new ArrayList<>();
     private final String LOG_TAG = MovieDAOImpl.class.getSimpleName();
@@ -166,46 +157,5 @@ public class MovieDAOImpl implements MovieDAO {
     }
 
 
-    public void getMovieListData() {
-
-
-        Observable<String> movieDataObservable = Observable.fromCallable(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-
-                return fetchData(getBaseFetchURL());
-            }
-        });
-
-        Subscription movieDataSubscription = movieDataObservable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-                        Log.v(LOG_TAG, s);
-                        mMovieData.add(s);
-                    }
-                });
-
-        if (movieDataSubscription != null && !movieDataSubscription.isUnsubscribed()) {
-            movieDataSubscription.unsubscribe();
-        }
-
-    }
-
-    public void callBack(){
-
-    }
 
 }

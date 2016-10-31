@@ -44,38 +44,58 @@ public class RecyclerViewGridFragment extends Fragment {
     private final String LOG_TAG = RecyclerViewGridFragment.class.getSimpleName();
 
 
-
-
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootview = null;
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mMovieDAO = MovieDAOImpl.getInstance(getActivity());
 
-        //This line gets gets all the movies using the MovieDAOImpl
-
         View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.main_recycler_view);
         mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+        updateMovieData(setObservable());
 
-        Observable <List<MovieItem>> movieListObservable = Observable.fromCallable(new Callable<List<MovieItem>>() {
+        return rootView;
+    }
+
+
+    public void notifyOnPreferenceChanged() {
+
+        if (NetworkChecker.isNetworkAvailable(getActivity())) {
+            updateMovieData(setObservable());
+
+        } else {
+            Toast toast = Toast.makeText(getActivity(), ConstantsVault.NETWORK_ERROR_MESSAGE, Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+    }
+
+
+    public Observable<List<MovieItem>> setObservable() {
+
+        Observable<List<MovieItem>> observable = Observable.fromCallable(new Callable<List<MovieItem>>() {
             @Override
             public List<MovieItem> call() throws Exception {
                 return mMovieDAO.getAllMovies();
             }
         });
 
-        Subscription movieListSubsctition = movieListObservable.subscribeOn(Schedulers.io())
+        return observable;
+    }
+
+    /* Method updateMovieData used JavaRX to fire off another thread to fetch the movie data
+    and updates the UI when the data is ready.
+     */
+    public void updateMovieData(final Observable<List<MovieItem>> observable) {
+
+
+        final Subscription movieListSubscription = observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<MovieItem>>() {
                     @Override
                     public void onCompleted() {
-
-
                     }
 
                     @Override
@@ -85,39 +105,23 @@ public class RecyclerViewGridFragment extends Fragment {
 
                     @Override
                     public void onNext(List<MovieItem> movieItems) {
-                        mMovieItemAdapter = new MovieItemAdapter<MovieItem>(getActivity(), movieItems);
-                        mRecyclerView.setAdapter(mMovieItemAdapter);
+
+                        if (mMovieItemAdapter == null) {
+                            mMovieItemAdapter = new MovieItemAdapter<MovieItem>(getActivity(), movieItems);
+                            mRecyclerView.setAdapter(mMovieItemAdapter);
+
+                        } else {
+                            mMovieItemAdapter.swapData(movieItems);
+                            mMovieItemAdapter.notifyDataSetChanged();
+                        }
                     }
+
                 });
 
-
-
-
-
-
-        return rootView;
     }
-
-
-
-    public void notifyOnPreferenceChanged() {
-
-        if(NetworkChecker.isNetworkAvailable(getActivity())){
-            mMovieItems = mMovieDAO.getAllMovies();
-            mMovieItemAdapter.swapData(mMovieItems);
-            mMovieItemAdapter.notifyDataSetChanged();
-        }
-        else{
-            Toast toast = Toast.makeText(getActivity(), ConstantsVault.NETWORK_ERROR_MESSAGE, Toast.LENGTH_LONG);
-            toast.show();
-        }
-
-    }
-
-
-
-
-
 
 
 }
+
+
+

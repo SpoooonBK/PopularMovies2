@@ -2,7 +2,6 @@ package net.estebanrodriguez.apps.popularmovies.data_access;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.BuildConfig;
 
