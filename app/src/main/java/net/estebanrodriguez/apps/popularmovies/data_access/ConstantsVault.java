@@ -11,7 +11,7 @@ public final class ConstantsVault {
     //Array Keys
     public static final String JSON_ARRAY_KEY = "results";
 
-    //Item Keys
+    //movieItem Keys
     public static final String POSTER_PATH = "poster_path";
     public static final String ADULT = "adult";
     public static final String OVERVIEW = "overview";
@@ -26,6 +26,17 @@ public final class ConstantsVault {
     public static final String VOTE_COUNT = "vote_count";
     public static final String VIDEO = "video";
     public static final String VOTE_AVERAGE = "vote_average";
+
+    //movieClip Keys
+    public static final String CLIP_ID = "id";
+    public static final String LANGUAGE_CODE_639_1 = "iso_639_1";
+    public static final String LANGUAGE_CODE_3116_1 = "iso_3166_1";
+    public static final String CLIP_KEY = "key";
+    public static final String CLIP_NAME = "name";
+    public static final String CLIP_SITE = "site";
+    public static final String CLIP_SIZE = "size";
+    public static final String CLIP_TYPE = "type";
+
 
     //Image size constants
     public static final String IMAGE_SIZE_SMALLEST_W92 = "w92";
@@ -42,6 +53,7 @@ public final class ConstantsVault {
     //Database Fetch URLs
     public static final String DB_FETCH_POPULAR_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
     public static final String DB_FETCH_TOP_RATED_BASE_URL = "http://api.themoviedb.org/3/movie/top_rated?";
+    public static final String DB_FETCH_BASE_URL ="http://api.themoviedb.org/3/movie/";
 
     //Error Messages
     public static final String NETWORK_ERROR_MESSAGE = "Internet connectivity is required.  Please check your settings and restart.";

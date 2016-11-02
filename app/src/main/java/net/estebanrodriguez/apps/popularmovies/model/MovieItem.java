@@ -34,6 +34,8 @@ public class MovieItem implements Parcelable {
     private double mVoteAverage;
     private String mImageFetchURL;
 
+    private List<MovieClip> mMovieClips;
+
 
     public MovieItem() {
     }
@@ -161,35 +163,14 @@ public class MovieItem implements Parcelable {
         mVoteAverage = voteAverage;
     }
 
-
-
-
-
-
-
-    protected MovieItem(Parcel in) {
-        mPosterPath = in.readString();
-        mAdult = in.readByte() != 0x00;
-        mOverview = in.readString();
-        long tmpMReleaseDate = in.readLong();
-        mReleaseDate = tmpMReleaseDate != -1 ? new Date(tmpMReleaseDate) : null;
-        if (in.readByte() == 0x01) {
-            mGenreIds = new ArrayList<String>();
-            in.readList(mGenreIds, String.class.getClassLoader());
-        } else {
-            mGenreIds = null;
-        }
-        mID = in.readString();
-        mOriginalTitle = in.readString();
-        mOriginalLanguage = in.readString();
-        mTitle = in.readString();
-        mBackdropPath = in.readString();
-        mPopularity = in.readDouble();
-        mVoteCount = in.readDouble();
-        mVideo = in.readByte() != 0x00;
-        mVoteAverage = in.readDouble();
-        mImageFetchURL = in.readString();
+    public List<MovieClip> getMovieClips() {
+        return mMovieClips;
     }
+
+    public void setMovieClips(List<MovieClip> movieClips) {
+        mMovieClips = movieClips;
+    }
+
 
     @Override
     public int describeContents() {
@@ -198,33 +179,48 @@ public class MovieItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mPosterPath);
-        dest.writeByte((byte) (mAdult ? 0x01 : 0x00));
-        dest.writeString(mOverview);
-        dest.writeLong(mReleaseDate != null ? mReleaseDate.getTime() : -1L);
-        if (mGenreIds == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeList(mGenreIds);
-        }
-        dest.writeString(mID);
-        dest.writeString(mOriginalTitle);
-        dest.writeString(mOriginalLanguage);
-        dest.writeString(mTitle);
-        dest.writeString(mBackdropPath);
-        dest.writeDouble(mPopularity);
-        dest.writeDouble(mVoteCount);
-        dest.writeByte((byte) (mVideo ? 0x01 : 0x00));
-        dest.writeDouble(mVoteAverage);
-        dest.writeString(mImageFetchURL);
+        dest.writeString(this.mPosterPath);
+        dest.writeByte(this.mAdult ? (byte) 1 : (byte) 0);
+        dest.writeString(this.mOverview);
+        dest.writeLong(this.mReleaseDate != null ? this.mReleaseDate.getTime() : -1);
+        dest.writeStringList(this.mGenreIds);
+        dest.writeString(this.mID);
+        dest.writeString(this.mOriginalTitle);
+        dest.writeString(this.mOriginalLanguage);
+        dest.writeString(this.mTitle);
+        dest.writeString(this.mBackdropPath);
+        dest.writeDouble(this.mPopularity);
+        dest.writeDouble(this.mVoteCount);
+        dest.writeByte(this.mVideo ? (byte) 1 : (byte) 0);
+        dest.writeDouble(this.mVoteAverage);
+        dest.writeString(this.mImageFetchURL);
+        dest.writeTypedList(this.mMovieClips);
     }
 
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<MovieItem> CREATOR = new Parcelable.Creator<MovieItem>() {
+    protected MovieItem(Parcel in) {
+        this.mPosterPath = in.readString();
+        this.mAdult = in.readByte() != 0;
+        this.mOverview = in.readString();
+        long tmpMReleaseDate = in.readLong();
+        this.mReleaseDate = tmpMReleaseDate == -1 ? null : new Date(tmpMReleaseDate);
+        this.mGenreIds = in.createStringArrayList();
+        this.mID = in.readString();
+        this.mOriginalTitle = in.readString();
+        this.mOriginalLanguage = in.readString();
+        this.mTitle = in.readString();
+        this.mBackdropPath = in.readString();
+        this.mPopularity = in.readDouble();
+        this.mVoteCount = in.readDouble();
+        this.mVideo = in.readByte() != 0;
+        this.mVoteAverage = in.readDouble();
+        this.mImageFetchURL = in.readString();
+        this.mMovieClips = in.createTypedArrayList(MovieClip.CREATOR);
+    }
+
+    public static final Creator<MovieItem> CREATOR = new Creator<MovieItem>() {
         @Override
-        public MovieItem createFromParcel(Parcel in) {
-            return new MovieItem(in);
+        public MovieItem createFromParcel(Parcel source) {
+            return new MovieItem(source);
         }
 
         @Override

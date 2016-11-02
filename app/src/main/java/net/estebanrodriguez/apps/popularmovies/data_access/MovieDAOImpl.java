@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 
 import net.estebanrodriguez.apps.popularmovies.BuildConfig;
 import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.io.BufferedReader;
@@ -48,11 +49,22 @@ public class MovieDAOImpl implements MovieDAO {
     @Override
     public List<MovieItem> getAllMovies() {
 
-        List<Map<String, String>> mapList = MovieDataParser.parseJsonMovieDataString(fetchData(getBaseFetchURL()));
+        List<Map<String, String>> mapList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieDataURL()));
         isPreferenceChanged = false;
         mMovieData.clear();
+
+        List<MovieItem> movieItemList = MovieItemFactory.buildMovieList(mapList);
+        for(MovieItem movieItem: movieItemList){
+            movieItem.setMovieClips(getMovieClips(movieItem));
+        }
+
         return MovieItemFactory.buildMovieList(mapList);
 
+    }
+
+    public List<MovieClip> getMovieClips(MovieItem movieItem) {
+        List<Map<String, String>> mapList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieClipDataURL(movieItem)));
+        return MovieClipFactory.buildMovieClipList(mapList);
     }
 
     public static void NotifyPreferenceChange() {
@@ -68,33 +80,17 @@ public class MovieDAOImpl implements MovieDAO {
     }
 
     /*
-    * METHOD getBaseFetchURL():
+    * METHOD createURL():
     *  gets the proper base fetch url as defined in ConstantsVault by checking the shared preferences.
     *
     * */
-    private URL getBaseFetchURL() {
+    private URL createURL(String baseURL) {
 
-        String baseURL = null;
+
         URL url = null;
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String sortKey = mContext.getString(R.string.sort_preference_key);
-        String mostPopular = mContext.getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
-        String topRated = mContext.getResources().getStringArray(R.array.fetch_movies_list_preference)[1];
-        String currentPref = preferences.getString(sortKey, mostPopular);
-
-
-        if (currentPref.equals(mostPopular)) {
-            baseURL = ConstantsVault.DB_FETCH_POPULAR_BASE_URL;
-        }
-
-        if (currentPref.equals(topRated)) {
-            baseURL = ConstantsVault.DB_FETCH_TOP_RATED_BASE_URL;
-        }
 
         //Build URL
         final String API_PARAM = "api_key";
-
 
         Uri builtUri = Uri.parse(baseURL).buildUpon()
                 .appendQueryParameter(API_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
@@ -109,7 +105,7 @@ public class MovieDAOImpl implements MovieDAO {
         return url;
     }
 
-    private String fetchData(URL url) {
+    private String fetchMovieData(URL url) {
         String movieData = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -155,6 +151,42 @@ public class MovieDAOImpl implements MovieDAO {
 
         return movieData;
     }
+
+    public URL getMovieClipDataURL(MovieItem movieItem){
+
+        String baseURL  = ConstantsVault.DB_FETCH_BASE_URL + movieItem.getID() + "/videos";
+
+        return  createURL(baseURL);
+    }
+
+    public URL getFetchReviewsURL(MovieItem movieItem){
+
+        String baseURL = ConstantsVault.DB_FETCH_BASE_URL + movieItem.getID() + "/reviews";
+
+        return createURL(baseURL);
+    }
+
+    public URL getMovieDataURL(){
+        String baseURL = null;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String sortKey = mContext.getString(R.string.sort_preference_key);
+        String mostPopular = mContext.getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
+        String topRated = mContext.getResources().getStringArray(R.array.fetch_movies_list_preference)[1];
+        String currentPref = preferences.getString(sortKey, mostPopular);
+
+
+        if (currentPref.equals(mostPopular)) {
+            baseURL = ConstantsVault.DB_FETCH_POPULAR_BASE_URL;
+        }
+
+        if (currentPref.equals(topRated)) {
+            baseURL = ConstantsVault.DB_FETCH_TOP_RATED_BASE_URL;
+        }
+
+        return createURL(baseURL);
+    }
+
+
 
 
 

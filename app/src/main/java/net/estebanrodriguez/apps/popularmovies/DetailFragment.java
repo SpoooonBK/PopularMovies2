@@ -3,6 +3,7 @@ package net.estebanrodriguez.apps.popularmovies;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.util.Date;
@@ -53,6 +55,8 @@ public class DetailFragment extends Fragment {
         voteAverageTextView.setText(voteAverage.toString());
         popularityTextView.setText(popularity.toString());
         overviewTextView.setText(movieItem.getOverview());
+        Log.v(LOG_TAG, MovieDAOImpl.getInstance(getActivity()).getFetchReviewsURL(movieItem).toString());
+        Log.v(LOG_TAG, MovieDAOImpl.getInstance(getActivity()).getMovieClipDataURL(movieItem).toString());
 
         return rootView;
 
