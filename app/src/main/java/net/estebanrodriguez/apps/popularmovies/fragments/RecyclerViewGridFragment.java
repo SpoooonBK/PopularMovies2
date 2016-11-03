@@ -1,22 +1,16 @@
-package net.estebanrodriguez.apps.popularmovies;
+package net.estebanrodriguez.apps.popularmovies.fragments;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.adapters.RecyclerViewGridAdapter;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
@@ -36,7 +30,7 @@ import rx.schedulers.Schedulers;
  */
 public class RecyclerViewGridFragment extends Fragment {
 
-    private MovieItemAdapter<MovieItem> mMovieItemAdapter;
+    private RecyclerViewGridAdapter<MovieItem> mRecyclerViewGridAdapter;
     private List<MovieItem> mMovieItems;
     private RecyclerView mRecyclerView;
     private MovieDAOImpl mMovieDAO;
@@ -106,13 +100,13 @@ public class RecyclerViewGridFragment extends Fragment {
                     @Override
                     public void onNext(List<MovieItem> movieItems) {
 
-                        if (mMovieItemAdapter == null) {
-                            mMovieItemAdapter = new MovieItemAdapter<MovieItem>(getActivity(), movieItems);
-                            mRecyclerView.setAdapter(mMovieItemAdapter);
+                        if (mRecyclerViewGridAdapter == null) {
+                            mRecyclerViewGridAdapter = new RecyclerViewGridAdapter<MovieItem>(getActivity(), movieItems);
+                            mRecyclerView.setAdapter(mRecyclerViewGridAdapter);
 
                         } else {
-                            mMovieItemAdapter.swapData(movieItems);
-                            mMovieItemAdapter.notifyDataSetChanged();
+                            mRecyclerViewGridAdapter.swapData(movieItems);
+                            mRecyclerViewGridAdapter.notifyDataSetChanged();
                         }
                     }
 

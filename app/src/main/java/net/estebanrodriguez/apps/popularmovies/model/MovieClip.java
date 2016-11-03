@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by Spoooon on 11/2/2016.
  */
 
-public class MovieClip implements Parcelable{
+public class MovieClip implements Parcelable {
 
     private String mClipID;
     private String mLanguageCodeISO639;
@@ -75,9 +75,9 @@ public class MovieClip implements Parcelable{
 
     public void setSize(String size) {
 
-        try{
-           mSize = Integer.valueOf(size);
-        }catch (Exception e){
+        try {
+            mSize = Integer.valueOf(size);
+        } catch (Exception e) {
             mSize = 0;
         }
 

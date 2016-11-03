@@ -1,9 +1,11 @@
-package net.estebanrodriguez.apps.popularmovies;
+package net.estebanrodriguez.apps.popularmovies.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
+import net.estebanrodriguez.apps.popularmovies.activities.MainActivity;
 
 /**
  * Created by Spoooon on 10/27/2016.

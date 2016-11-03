@@ -5,12 +5,12 @@
     android:id="@+id/activity_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.estebanrodriguez.apps.popularmovies.DetailActivity">
+    tools:context="net.estebanrodriguez.apps.popularmovies.activities.DetailActivity">
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_detail"
-        android:name="net.estebanrodriguez.apps.popularmovies.DetailFragment"
+        android:name="net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment"
         />
 
 </FrameLayout>

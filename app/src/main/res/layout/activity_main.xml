@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
              android:background="@drawable/happy_popcorn"
-    tools:context="net.estebanrodriguez.apps.popularmovies.MainActivity"
+    tools:context="net.estebanrodriguez.apps.popularmovies.activities.MainActivity"
     >
 
 <fragment
 
-    android:name="net.estebanrodriguez.apps.popularmovies.RecyclerViewGridFragment"
+    android:name="net.estebanrodriguez.apps.popularmovies.fragments.RecyclerViewGridFragment"
     android:id="@+id/fragment_gridview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

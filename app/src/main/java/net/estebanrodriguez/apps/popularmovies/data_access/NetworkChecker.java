@@ -11,7 +11,7 @@ import android.net.NetworkInfo;
 public class NetworkChecker {
 
 
-    public static boolean isNetworkAvailable(Context context){
+    public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();

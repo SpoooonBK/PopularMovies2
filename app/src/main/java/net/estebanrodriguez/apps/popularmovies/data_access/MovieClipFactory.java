@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class MovieClipFactory {
 
-
+    public static final String LOG_TAG = MovieClipFactory.class.getSimpleName();
 
 
     public static List<MovieClip> buildMovieClipList(List<Map<String, String>> mapList) {
@@ -73,6 +73,7 @@ public class MovieClipFactory {
             }
 
         }
+        Log.v(LOG_TAG, movieClip.getName());
         return movieClip;
     }
 }

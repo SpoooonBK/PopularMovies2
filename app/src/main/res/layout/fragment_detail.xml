@@ -92,7 +92,8 @@
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+                android:layout_height="wrap_content"
+                android:id="@+id/detail_recyclerview_clips"/>
 
         </LinearLayout>
     </ScrollView>

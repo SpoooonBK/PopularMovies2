@@ -1,8 +1,11 @@
-package net.estebanrodriguez.apps.popularmovies;
+package net.estebanrodriguez.apps.popularmovies.fragments;
 
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +15,10 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
+import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.adapters.DetailRecyclerViewAdapter;
+import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
+import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.util.Date;
@@ -30,7 +36,10 @@ public class DetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-        MovieItem movieItem = (MovieItem) getActivity().getIntent().getExtras().getParcelable(MovieItem.PARCELABLE);
+        Intent intent = getActivity().getIntent();
+
+        MovieItem movieItem = (MovieItem) intent.getExtras().getParcelable(ConstantsVault.MOVIE_ITEM_PARCELABLE);
+
 
         String title = movieItem.getTitle();
         Date releaseDate = movieItem.getReleaseDate();
@@ -50,13 +59,25 @@ public class DetailFragment extends Fragment {
                 .placeholder(R.drawable.happy_popcorn)
                 .error(R.drawable.sad_popcorn)
                 .into(posterImageView);
-        titleTextView.setText(movieItem.getTitle());
+        titleTextView.setText(title);
         releaseDateTextView.setText(releaseDate.toString());
         voteAverageTextView.setText(voteAverage.toString());
         popularityTextView.setText(popularity.toString());
-        overviewTextView.setText(movieItem.getOverview());
-        Log.v(LOG_TAG, MovieDAOImpl.getInstance(getActivity()).getFetchReviewsURL(movieItem).toString());
-        Log.v(LOG_TAG, MovieDAOImpl.getInstance(getActivity()).getMovieClipDataURL(movieItem).toString());
+        overviewTextView.setText(overview);
+
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.detail_recyclerview_clips);
+        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieItem.getMovieClips());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
+
+
+        for(MovieClip movieClip: movieItem.getMovieClips()){
+            Log.v(LOG_TAG, movieClip.getName());
+        }
+
+
+
 
         return rootView;
 

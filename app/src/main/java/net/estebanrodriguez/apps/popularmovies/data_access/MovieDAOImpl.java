@@ -54,11 +54,12 @@ public class MovieDAOImpl implements MovieDAO {
         mMovieData.clear();
 
         List<MovieItem> movieItemList = MovieItemFactory.buildMovieList(mapList);
-        for(MovieItem movieItem: movieItemList){
-            movieItem.setMovieClips(getMovieClips(movieItem));
+        for (MovieItem movieItem : movieItemList) {
+            List<MovieClip> movieClips = getMovieClips(movieItem);
+            movieItem.setMovieClips(movieClips);
         }
 
-        return MovieItemFactory.buildMovieList(mapList);
+        return movieItemList;
 
     }
 
@@ -152,21 +153,21 @@ public class MovieDAOImpl implements MovieDAO {
         return movieData;
     }
 
-    public URL getMovieClipDataURL(MovieItem movieItem){
+    public URL getMovieClipDataURL(MovieItem movieItem) {
 
-        String baseURL  = ConstantsVault.DB_FETCH_BASE_URL + movieItem.getID() + "/videos";
+        String baseURL = ConstantsVault.DB_FETCH_BASE_URL + movieItem.getID() + "/videos";
 
-        return  createURL(baseURL);
+        return createURL(baseURL);
     }
 
-    public URL getFetchReviewsURL(MovieItem movieItem){
+    public URL getFetchReviewsURL(MovieItem movieItem) {
 
         String baseURL = ConstantsVault.DB_FETCH_BASE_URL + movieItem.getID() + "/reviews";
 
         return createURL(baseURL);
     }
 
-    public URL getMovieDataURL(){
+    public URL getMovieDataURL() {
         String baseURL = null;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         String sortKey = mContext.getString(R.string.sort_preference_key);
@@ -185,9 +186,6 @@ public class MovieDAOImpl implements MovieDAO {
 
         return createURL(baseURL);
     }
-
-
-
 
 
 }

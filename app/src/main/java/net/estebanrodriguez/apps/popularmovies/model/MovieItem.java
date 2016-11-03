@@ -4,10 +4,9 @@ package net.estebanrodriguez.apps.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import net.estebanrodriguez.apps.popularmovies.ImageSizer;
+import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import java.util.List;
  */
 public class MovieItem implements Parcelable {
 
-    public static String PARCELABLE = "Movie Item Parcelable";
+
 
     private String mPosterPath;
     private boolean mAdult;
@@ -39,7 +38,6 @@ public class MovieItem implements Parcelable {
 
     public MovieItem() {
     }
-
 
 
     public String getPosterPath() {

@@ -53,9 +53,13 @@ public final class ConstantsVault {
     //Database Fetch URLs
     public static final String DB_FETCH_POPULAR_BASE_URL = "http://api.themoviedb.org/3/movie/popular?";
     public static final String DB_FETCH_TOP_RATED_BASE_URL = "http://api.themoviedb.org/3/movie/top_rated?";
-    public static final String DB_FETCH_BASE_URL ="http://api.themoviedb.org/3/movie/";
+    public static final String DB_FETCH_BASE_URL = "http://api.themoviedb.org/3/movie/";
 
     //Error Messages
     public static final String NETWORK_ERROR_MESSAGE = "Internet connectivity is required.  Please check your settings and restart.";
+
+    //Parcalables
+    public static final String MOVIE_ITEM_PARCELABLE = "Movie Item Parcelable";
+    public static final String MOVIE_CLIP_PARCELABLE = "Movie Clip Parcelable";
 
 }

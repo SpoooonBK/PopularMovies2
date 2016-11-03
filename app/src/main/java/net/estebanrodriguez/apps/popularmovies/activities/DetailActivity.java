@@ -1,7 +1,9 @@
-package net.estebanrodriguez.apps.popularmovies;
+package net.estebanrodriguez.apps.popularmovies.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import net.estebanrodriguez.apps.popularmovies.R;
 
 public class DetailActivity extends AppCompatActivity {
 

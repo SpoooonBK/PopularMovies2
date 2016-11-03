@@ -1,4 +1,4 @@
-package net.estebanrodriguez.apps.popularmovies;
+package net.estebanrodriguez.apps.popularmovies.utility;
 
 import android.util.Log;
 
@@ -20,11 +20,11 @@ public class ImageSizer {
     public static void setDefaultImageSize(int width) {
 
 
-        if(width > 1000){
+        if (width > 1000) {
             sDefaultImageSize = ConstantsVault.IMAGE_SIZE_LARGE_W500;
         }
 
-        Log.v(LOG_TAG, "Screen Width: "+ width + " Default image size set to " + sDefaultImageSize);
+        Log.v(LOG_TAG, "Screen Width: " + width + " Default image size set to " + sDefaultImageSize);
     }
 
 }
