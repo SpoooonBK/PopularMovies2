@@ -36,9 +36,17 @@ public class DetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
+
         Intent intent = getActivity().getIntent();
 
         MovieItem movieItem = (MovieItem) intent.getExtras().getParcelable(ConstantsVault.MOVIE_ITEM_PARCELABLE);
+
+
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.detail_recyclerview_clips);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieItem.getMovieClips(), getActivity());
+        recyclerView.setAdapter(adapter);
 
 
         String title = movieItem.getTitle();
@@ -65,11 +73,7 @@ public class DetailFragment extends Fragment {
         popularityTextView.setText(popularity.toString());
         overviewTextView.setText(overview);
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.detail_recyclerview_clips);
-        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieItem.getMovieClips());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(adapter);
+
 
 
         for(MovieClip movieClip: movieItem.getMovieClips()){

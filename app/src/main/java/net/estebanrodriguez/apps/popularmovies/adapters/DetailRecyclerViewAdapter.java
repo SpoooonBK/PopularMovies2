@@ -1,5 +1,8 @@
 package net.estebanrodriguez.apps.popularmovies.adapters;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +24,11 @@ import java.util.List;
 public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecyclerViewAdapter.Viewholder> {
 
     private List<MovieClip> mMovieClips;
+    private Context mContext;
 
-    public DetailRecyclerViewAdapter(List<MovieClip> movieClips) {
+    public DetailRecyclerViewAdapter(List<MovieClip> movieClips, Context context) {
         mMovieClips = movieClips;
+        mContext = context;
     }
 
     public class Viewholder extends RecyclerView.ViewHolder {
@@ -41,13 +46,20 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
 
     @Override
     public void onBindViewHolder(DetailRecyclerViewAdapter.Viewholder holder, int position) {
-        MovieClip movieClip = mMovieClips.get(position);;
+        final MovieClip movieClip = mMovieClips.get(position);;
         holder.mMovieClipTitle.setText(movieClip.getName());
+        holder.mPlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(movieClip.getClipURI()));
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mMovieClips.size();
     }
 
 
@@ -59,6 +71,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<DetailRecycl
         Viewholder viewholder = new Viewholder(view);
         return viewholder;
     }
+
 
 
 }

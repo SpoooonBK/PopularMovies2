@@ -1,5 +1,7 @@
 package net.estebanrodriguez.apps.popularmovies.data_access;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +22,8 @@ public class MovieDataParser {
 
     //Parses original json string data into a list of movie data maps
     public static List<Map<String, String>> parseJsonMovieDataString(String jsonData) {
+
+        Log.v(LOG_TAG, jsonData);
         List<Map<String, String>> movieDataList = new ArrayList<>();
 
         try {

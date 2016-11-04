@@ -48,7 +48,7 @@ public class MovieClipFactory {
                         break;
                     }
                     case ConstantsVault.CLIP_KEY: {
-                        movieClip.setClipID(dataMap.get(key));
+                        movieClip.setKey(dataMap.get(key));
                         break;
                     }
                     case ConstantsVault.CLIP_NAME: {

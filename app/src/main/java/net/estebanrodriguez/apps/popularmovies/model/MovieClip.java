@@ -3,6 +3,8 @@ package net.estebanrodriguez.apps.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.net.URL;
+
 /**
  * Created by Spoooon on 11/2/2016.
  */
@@ -17,6 +19,7 @@ public class MovieClip implements Parcelable {
     private String mSite;
     private int mSize;
     private String mClipType;
+    private String mClipURI;
 
     public MovieClip() {
     }
@@ -51,6 +54,7 @@ public class MovieClip implements Parcelable {
 
     public void setKey(String key) {
         this.mKey = key;
+        setClipURI(key);
     }
 
     public String getName() {
@@ -91,6 +95,15 @@ public class MovieClip implements Parcelable {
         this.mClipType = clipType;
     }
 
+    public String getClipURI() {
+        return mClipURI;
+    }
+
+    public void setClipURI(String key) {
+        mClipURI = "https://www.youtube.com/watch?v=" + key;
+
+    }
+
 
     @Override
     public int describeContents() {
@@ -107,6 +120,7 @@ public class MovieClip implements Parcelable {
         dest.writeString(this.mSite);
         dest.writeInt(this.mSize);
         dest.writeString(this.mClipType);
+        dest.writeString(this.mClipURI);
     }
 
     protected MovieClip(Parcel in) {
@@ -118,6 +132,7 @@ public class MovieClip implements Parcelable {
         this.mSite = in.readString();
         this.mSize = in.readInt();
         this.mClipType = in.readString();
+        this.mClipURI = in.readString();
     }
 
     public static final Creator<MovieClip> CREATOR = new Creator<MovieClip>() {
