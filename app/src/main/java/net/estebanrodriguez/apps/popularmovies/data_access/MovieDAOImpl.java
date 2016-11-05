@@ -4,13 +4,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.BuildConfig;
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
+import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
+import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,18 +60,25 @@ public class MovieDAOImpl implements MovieDAO {
 
         List<MovieItem> movieItemList = MovieItemFactory.buildMovieList(mapList);
         for (MovieItem movieItem : movieItemList) {
-            List<MovieClip> movieClips = getMovieClips(movieItem);
-            movieItem.setMovieClips(movieClips);
+            movieItem.setMovieDetails(getMovieDetails(movieItem));
         }
 
         return movieItemList;
 
     }
 
-    public List<MovieClip> getMovieClips(MovieItem movieItem) {
-        List<Map<String, String>> mapList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieClipDataURL(movieItem)));
-        return MovieClipFactory.buildMovieClipList(mapList);
+    public Map<Integer, List<MovieDetail>> getMovieDetails(MovieItem movieItem) {
+
+        Map<Integer, List<MovieDetail>> map = new HashMap<>();
+        List<Map<String, String>> movieClipList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieClipDataURL(movieItem)));
+        List<Map<String, String>> movieReviewList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieReviewsURL(movieItem)));
+        map.put(MovieDetailFactory.MOVIE_CLIP, MovieDetailFactory.buildMovieDetails(movieClipList, MovieDetailFactory.MOVIE_CLIP));
+        map.put(MovieDetailFactory.MOVIE_REVIEW, MovieDetailFactory.buildMovieDetails(movieReviewList, MovieDetailFactory.MOVIE_REVIEW));
+        return map;
     }
+
+
+
 
     public static void NotifyPreferenceChange() {
         isPreferenceChanged = true;
@@ -106,7 +118,11 @@ public class MovieDAOImpl implements MovieDAO {
         return url;
     }
 
+
+
+
     private String fetchMovieData(URL url) {
+        Log.v(LOG_TAG, "Fetch URL: " + url.toString());
         String movieData = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -116,7 +132,11 @@ public class MovieDAOImpl implements MovieDAO {
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
+
             InputStream inputStream = urlConnection.getInputStream();
+
+
+
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 return null;
@@ -137,6 +157,7 @@ public class MovieDAOImpl implements MovieDAO {
 
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -160,7 +181,7 @@ public class MovieDAOImpl implements MovieDAO {
         return createURL(baseURL);
     }
 
-    public URL getFetchReviewsURL(MovieItem movieItem) {
+    public URL getMovieReviewsURL(MovieItem movieItem) {
 
         String baseURL = ConstantsVault.DB_FETCH_BASE_URL + movieItem.getID() + "/reviews";
 

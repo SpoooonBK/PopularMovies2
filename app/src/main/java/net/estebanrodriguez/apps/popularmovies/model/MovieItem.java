@@ -4,11 +4,16 @@ package net.estebanrodriguez.apps.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieDetailFactory;
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieItemFactory;
 import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Spoooon on 10/9/2016.
@@ -33,8 +38,8 @@ public class MovieItem implements Parcelable {
     private double mVoteAverage;
     private String mImageFetchURL;
 
-    private List<MovieClip> mMovieClips;
-
+    private List<MovieClip> mMovieClips = new ArrayList<>();
+    private List<MovieReview> mMovieReviews = new ArrayList<>();
 
     public MovieItem() {
     }
@@ -165,8 +170,31 @@ public class MovieItem implements Parcelable {
         return mMovieClips;
     }
 
+
     public void setMovieClips(List<MovieClip> movieClips) {
         mMovieClips = movieClips;
+    }
+
+    public List<MovieReview> getMovieReviews() {
+        return mMovieReviews;
+    }
+
+    public void setMovieReviews(List<MovieReview> movieReviews) {
+        mMovieReviews = movieReviews;
+    }
+
+    public void setMovieDetails(Map<Integer, List<MovieDetail>> map){
+
+        List<MovieDetail> movieClips = map.get(MovieDetailFactory.MOVIE_CLIP);
+        for(MovieDetail movieDetail: movieClips){
+            mMovieClips.add((MovieClip) movieDetail);
+        }
+
+        List<MovieDetail> movieReviews = map.get(MovieDetailFactory.MOVIE_REVIEW);
+        for(MovieDetail movieDetail: movieReviews){
+            mMovieReviews.add((MovieReview) movieDetail);
+        }
+
     }
 
 
@@ -193,6 +221,7 @@ public class MovieItem implements Parcelable {
         dest.writeDouble(this.mVoteAverage);
         dest.writeString(this.mImageFetchURL);
         dest.writeTypedList(this.mMovieClips);
+        dest.writeList(this.mMovieReviews);
     }
 
     protected MovieItem(Parcel in) {
@@ -213,6 +242,8 @@ public class MovieItem implements Parcelable {
         this.mVoteAverage = in.readDouble();
         this.mImageFetchURL = in.readString();
         this.mMovieClips = in.createTypedArrayList(MovieClip.CREATOR);
+        this.mMovieReviews = new ArrayList<MovieReview>();
+        in.readList(this.mMovieReviews, MovieReview.class.getClassLoader());
     }
 
     public static final Creator<MovieItem> CREATOR = new Creator<MovieItem>() {

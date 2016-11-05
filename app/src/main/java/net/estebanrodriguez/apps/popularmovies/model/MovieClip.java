@@ -9,7 +9,7 @@ import java.net.URL;
  * Created by Spoooon on 11/2/2016.
  */
 
-public class MovieClip implements Parcelable {
+public class MovieClip extends MovieDetail implements Parcelable {
 
     private String mClipID;
     private String mLanguageCodeISO639;

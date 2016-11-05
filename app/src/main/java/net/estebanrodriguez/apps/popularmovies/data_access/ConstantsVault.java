@@ -27,8 +27,8 @@ public final class ConstantsVault {
     public static final String VIDEO = "video";
     public static final String VOTE_AVERAGE = "vote_average";
 
-    //movieClip Keys
-    public static final String CLIP_ID = "id";
+    //movieDetail Keys
+    public static final String DETAIL_ID = "id";
     public static final String LANGUAGE_CODE_639_1 = "iso_639_1";
     public static final String LANGUAGE_CODE_3116_1 = "iso_3166_1";
     public static final String CLIP_KEY = "key";
@@ -36,6 +36,9 @@ public final class ConstantsVault {
     public static final String CLIP_SITE = "site";
     public static final String CLIP_SIZE = "size";
     public static final String CLIP_TYPE = "type";
+    public static final String DETAIL_AUTHOR = "author";
+    public static final String DETAIL_CONTENT = "content";
+    public static final String DETAIL_URL ="url";
 
 
     //Image size constants
