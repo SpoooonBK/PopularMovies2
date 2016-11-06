@@ -18,10 +18,21 @@ import com.squareup.picasso.Picasso;
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.adapters.DetailRecyclerViewAdapter;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
+import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -30,6 +41,8 @@ import java.util.Date;
 public class DetailFragment extends Fragment {
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+    private RecyclerView mRecyclerView;
+
 
 
     @Override
@@ -42,11 +55,10 @@ public class DetailFragment extends Fragment {
         MovieItem movieItem = (MovieItem) intent.getExtras().getParcelable(ConstantsVault.MOVIE_ITEM_PARCELABLE);
 
 
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.detail_recyclerview_clips);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.detail_recyclerview_clips);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieItem.getMovieClips(), getActivity());
-        recyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        showDetails(setObservable(movieItem));
 
 
         String title = movieItem.getTitle();
@@ -81,10 +93,46 @@ public class DetailFragment extends Fragment {
         }
 
 
-
-
         return rootView;
 
-
     }
-}
+
+
+    public Observable<MovieItem> setObservable(final MovieItem movieItem){
+
+        Observable<MovieItem> observable = Observable.fromCallable(new Callable<MovieItem>() {
+            @Override
+            public MovieItem call() throws Exception {
+
+                return MovieDAOImpl.getInstance(getActivity()).completeMovieDetails(movieItem);
+            }
+        });
+
+        return observable;
+    }
+
+    public void showDetails(Observable<MovieItem> observable) {
+        Subscription movieDetailSubscription = observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MovieItem>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(MovieItem movieItem) {
+                        List<MovieClip> movieClips = movieItem.getMovieClips();
+                        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieClips, getActivity());
+                        mRecyclerView.setAdapter(adapter);
+
+                    }
+                });
+    }
+    }
+

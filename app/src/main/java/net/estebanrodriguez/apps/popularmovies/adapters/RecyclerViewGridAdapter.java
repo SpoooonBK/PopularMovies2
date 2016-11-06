@@ -59,10 +59,9 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
         public void onClick(View view) {
 
             MovieItem movieItem = getMovieItem(getAdapterPosition());
-            Observable<Map<Integer, List<MovieDetail>>> observable = setObservable(observable, movieItem);
-            startDetailView(setObservable(observable, movieItem));
-
-
+            Intent intent = new Intent(mContext, DetailActivity.class);
+            intent.putExtra(ConstantsVault.MOVIE_ITEM_PARCELABLE, movieItem);
+            mContext.startActivity(intent);
         }
     }
 
@@ -117,43 +116,10 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
     }
 
 
-    public Observable<Map<Integer, List<MovieDetail>>> setObservable(final MovieItem movieItem) {
 
 
 
-        Observable<Map<Integer, List<MovieDetail>>> observable = Observable.fromCallable(new Callable<Map<Integer, List<MovieDetail>>>() {
-            @Override
-            public Map<Integer, List<MovieDetail>> call() throws Exception {
-                return MovieDAOImpl.getInstance(mContext).getMovieDetails(movieItem);
-            }
-        });
-        return observable;
-    }
 
-    public void startDetailView(Observable<Map<Integer, List<MovieDetail>>> observable, final MovieItem movieItem) {
-        Subscription movieDetailSubscription = observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Map<Integer, List<MovieDetail>>>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Map<Integer, List<MovieDetail>> integerListMap) {
-
-                        Intent intent = new Intent(mContext, DetailActivity.class);
-                        intent.putExtra(ConstantsVault.MOVIE_ITEM_PARCELABLE, movieItem);
-                        mContext.startActivity(intent);
-
-                    }
-                });
-    }
 }
 
 

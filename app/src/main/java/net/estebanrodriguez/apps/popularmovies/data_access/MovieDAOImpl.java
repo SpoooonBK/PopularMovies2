@@ -8,13 +8,10 @@ import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.BuildConfig;
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
-import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -67,25 +64,41 @@ public class MovieDAOImpl implements MovieDAO {
 
     }
 
-    public Map<Integer, List<MovieDetail>> getMovieDetails(MovieItem movieItem) {
+//    public Map<Integer, List<MovieDetail>> getMovieDetails(MovieItem movieItem) {
+//
+//        Map<Integer, List<MovieDetail>> map = new HashMap<>();
+//
+//        URL movieClipURL = getMovieClipDataURL(movieItem);
+//        String movieClipJSONString = fetchMovieData(movieClipURL);
+//
+//        List<MovieDetail> movieDetailClips = MovieDetailFactory.buildMovieDetails(movieClipList, MovieDetailFactory.MOVIE_CLIP);
+//        map.put(MovieDetailFactory.MOVIE_CLIP, movieDetailClips);
+//
+//
+//
+//
+////        map.put(MovieDetailFactory.MOVIE_CLIP, MovieDetailFactory.buildMovieDetails(movieClipList, MovieDetailFactory.MOVIE_CLIP));
+////
+////
+////        List<Map<String, String>> movieReviewList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieReviewsURL(movieItem)));
+////        map.put(MovieDetailFactory.MOVIE_REVIEW, MovieDetailFactory.buildMovieDetails(movieReviewList, MovieDetailFactory.MOVIE_REVIEW));
+//        return map;
+//    }
 
-        Map<Integer, List<MovieDetail>> map = new HashMap<>();
+
+    public MovieItem completeMovieDetails(MovieItem movieItem){
 
         URL movieClipURL = getMovieClipDataURL(movieItem);
-        String movieClipJSONString = fetchMovieData(movieClipURL);
-        List<Map<String, String>> movieClipList = MovieDataParser.parseJsonMovieDataString(movieClipJSONString);
-        List<MovieDetail> movieDetailClips = MovieDetailFactory.buildMovieDetails(movieClipList, MovieDetailFactory.MOVIE_CLIP);
-        map.put(MovieDetailFactory.MOVIE_CLIP, movieDetailClips);
+        String movieClipData = fetchMovieData(movieClipURL);
+        List<Map<String, String>> movieClipList = MovieDataParser.parseJsonMovieDataString(movieClipData);
+        movieItem.setMovieClips(MovieDetailFactory.buildMovieClipList(movieClipList));
 
+        URL movieReviewURL = getMovieReviewsURL(movieItem);
+        String movieReviewData = fetchMovieData(movieReviewURL);
+        List<Map<String, String>> movieReviewList = MovieDataParser.parseJsonMovieDataString(movieReviewData);
+        movieItem.setMovieReviews(MovieDetailFactory.buildMovieReviewList(movieReviewList));
 
-
-
-//        map.put(MovieDetailFactory.MOVIE_CLIP, MovieDetailFactory.buildMovieDetails(movieClipList, MovieDetailFactory.MOVIE_CLIP));
-//
-//
-//        List<Map<String, String>> movieReviewList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieReviewsURL(movieItem)));
-//        map.put(MovieDetailFactory.MOVIE_REVIEW, MovieDetailFactory.buildMovieDetails(movieReviewList, MovieDetailFactory.MOVIE_REVIEW));
-        return map;
+        return movieItem;
     }
 
 

@@ -38,9 +38,24 @@ public class MovieDetailFactory {
             }
         }
 
-
-
         return movieDetails;
+    }
+
+
+    public static List<MovieClip> buildMovieClipList(List<Map<String, String>> mapList){
+        List<MovieClip> movieClips = new ArrayList<>();
+        for (Map<String, String> map : mapList){
+            movieClips.add(buildMovieClip(map));
+        }
+       return movieClips;
+    }
+
+    public static List<MovieReview> buildMovieReviewList(List<Map<String, String>> mapList) {
+        List<MovieReview> movieReviews = new ArrayList<>();
+        for(Map<String, String> map : mapList ){
+            movieReviews.add(buildMovieReview(map));
+        }
+        return movieReviews;
     }
 
     private static MovieReview buildMovieReview(Map<String, String> map) {
@@ -123,5 +138,6 @@ public class MovieDetailFactory {
         }
         return movieClip;
     }
+
 
 }
