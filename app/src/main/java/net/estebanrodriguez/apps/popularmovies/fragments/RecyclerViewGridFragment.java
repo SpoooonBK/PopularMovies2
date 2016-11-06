@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,6 +91,7 @@ public class RecyclerViewGridFragment extends Fragment {
                 .subscribe(new Observer<List<MovieItem>>() {
                     @Override
                     public void onCompleted() {
+                        Log.v(LOG_TAG, "Data retrieved");
                     }
 
                     @Override

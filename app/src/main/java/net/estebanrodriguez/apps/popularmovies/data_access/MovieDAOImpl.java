@@ -59,9 +59,9 @@ public class MovieDAOImpl implements MovieDAO {
         mMovieData.clear();
 
         List<MovieItem> movieItemList = MovieItemFactory.buildMovieList(mapList);
-        for (MovieItem movieItem : movieItemList) {
-            movieItem.setMovieDetails(getMovieDetails(movieItem));
-        }
+//        for (MovieItem movieItem : movieItemList) {
+//            movieItem.setMovieDetails(getMovieDetails(movieItem));
+//        }
 
         return movieItemList;
 
@@ -70,10 +70,21 @@ public class MovieDAOImpl implements MovieDAO {
     public Map<Integer, List<MovieDetail>> getMovieDetails(MovieItem movieItem) {
 
         Map<Integer, List<MovieDetail>> map = new HashMap<>();
-        List<Map<String, String>> movieClipList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieClipDataURL(movieItem)));
-        List<Map<String, String>> movieReviewList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieReviewsURL(movieItem)));
-        map.put(MovieDetailFactory.MOVIE_CLIP, MovieDetailFactory.buildMovieDetails(movieClipList, MovieDetailFactory.MOVIE_CLIP));
-        map.put(MovieDetailFactory.MOVIE_REVIEW, MovieDetailFactory.buildMovieDetails(movieReviewList, MovieDetailFactory.MOVIE_REVIEW));
+
+        URL movieClipURL = getMovieClipDataURL(movieItem);
+        String movieClipJSONString = fetchMovieData(movieClipURL);
+        List<Map<String, String>> movieClipList = MovieDataParser.parseJsonMovieDataString(movieClipJSONString);
+        List<MovieDetail> movieDetailClips = MovieDetailFactory.buildMovieDetails(movieClipList, MovieDetailFactory.MOVIE_CLIP);
+        map.put(MovieDetailFactory.MOVIE_CLIP, movieDetailClips);
+
+
+
+
+//        map.put(MovieDetailFactory.MOVIE_CLIP, MovieDetailFactory.buildMovieDetails(movieClipList, MovieDetailFactory.MOVIE_CLIP));
+//
+//
+//        List<Map<String, String>> movieReviewList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieReviewsURL(movieItem)));
+//        map.put(MovieDetailFactory.MOVIE_REVIEW, MovieDetailFactory.buildMovieDetails(movieReviewList, MovieDetailFactory.MOVIE_REVIEW));
         return map;
     }
 

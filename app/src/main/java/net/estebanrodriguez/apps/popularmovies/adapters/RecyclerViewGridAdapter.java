@@ -13,9 +13,19 @@ import com.squareup.picasso.Picasso;
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.activities.DetailActivity;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
+import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Spoooon on 10/12/2016.
@@ -49,11 +59,10 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
         public void onClick(View view) {
 
             MovieItem movieItem = getMovieItem(getAdapterPosition());
+            Observable<Map<Integer, List<MovieDetail>>> observable = setObservable(observable, movieItem);
+            startDetailView(setObservable(observable, movieItem));
 
-            Intent intent = new Intent(mContext, DetailActivity.class);
-            intent.putExtra(ConstantsVault.MOVIE_ITEM_PARCELABLE, movieItem);
-            mContext.startActivity(intent);
-            getAdapterPosition();
+
         }
     }
 
@@ -107,4 +116,44 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
         return mMovieItems.get(index);
     }
 
+
+    public Observable<Map<Integer, List<MovieDetail>>> setObservable(final MovieItem movieItem) {
+
+
+
+        Observable<Map<Integer, List<MovieDetail>>> observable = Observable.fromCallable(new Callable<Map<Integer, List<MovieDetail>>>() {
+            @Override
+            public Map<Integer, List<MovieDetail>> call() throws Exception {
+                return MovieDAOImpl.getInstance(mContext).getMovieDetails(movieItem);
+            }
+        });
+        return observable;
+    }
+
+    public void startDetailView(Observable<Map<Integer, List<MovieDetail>>> observable, final MovieItem movieItem) {
+        Subscription movieDetailSubscription = observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Map<Integer, List<MovieDetail>>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Map<Integer, List<MovieDetail>> integerListMap) {
+
+                        Intent intent = new Intent(mContext, DetailActivity.class);
+                        intent.putExtra(ConstantsVault.MOVIE_ITEM_PARCELABLE, movieItem);
+                        mContext.startActivity(intent);
+
+                    }
+                });
+    }
 }
+
+
