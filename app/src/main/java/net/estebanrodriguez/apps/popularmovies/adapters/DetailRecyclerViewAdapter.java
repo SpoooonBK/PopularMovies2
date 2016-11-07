@@ -11,6 +11,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
@@ -18,6 +20,7 @@ import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +37,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private final int MOVIE_CLIP = 0;
     private final int MOVIE_REVIEW = 1;
+    private final int MOVIE_ITEM = 2;
 
     public DetailRecyclerViewAdapter(MovieItem movieItem, Context context) {
         mMovieItem = movieItem;
@@ -68,6 +72,28 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 ((MovieReviewViewholder) holder).getURLTextView().setText(movieReview.getUrl());
                 break;
             }
+
+            case (MOVIE_ITEM): {
+
+                MovieItem movieItem = (MovieItem)mMovieDetails.get(position);
+                Date releaseDate = movieItem.getReleaseDate();
+                String overview = movieItem.getOverview();
+                Double rating = movieItem.getVoteAverage();
+                Double popularity = movieItem.getPopularity();
+                String fetchImage = movieItem.getImageFetchURL();
+
+                ((MovieItemDetailsViewHolder) holder).getTextViewPopularity().setText(popularity.toString());
+                ((MovieItemDetailsViewHolder) holder).getTextViewRating().setText(rating.toString());
+                ((MovieItemDetailsViewHolder) holder).getTextViewReleaseDate().setText(releaseDate.toString());
+                ((MovieItemDetailsViewHolder) holder).getTextViewOverview().setText(overview);
+
+                ImageView imageView = ((MovieItemDetailsViewHolder) holder).getImageViewPoster();
+                Picasso.with(mContext).load(fetchImage)
+                        .placeholder(R.drawable.happy_popcorn)
+                        .error(R.drawable.sad_popcorn)
+                        .into(imageView);
+
+            }
         }
 
     }
@@ -101,6 +127,13 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 break;
             }
 
+            case MOVIE_ITEM:
+            {
+                View detailView = inflater.inflate(R.layout.recycler_view_basic_details, parent, false);
+                viewHolder = new MovieItemDetailsViewHolder(detailView);
+                break;
+            }
+
         }
         return viewHolder;
     }
@@ -112,6 +145,9 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
         if (mMovieDetails.get(position) instanceof MovieReview) {
             return MOVIE_REVIEW;
+        }
+        if (mMovieDetails.get(position) instanceof MovieItem) {
+            return MOVIE_ITEM;
         }
         return -1;
     }
@@ -162,6 +198,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         TextView mContent;
         TextView mURL;
 
+
         public MovieReviewViewholder(View itemView) {
             super(itemView);
 
@@ -197,15 +234,59 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     public class MovieItemDetailsViewHolder  extends RecyclerView.ViewHolder{
 
-        ImageView mImageViewPoster;
-        TextView mTextViewReleaseDate;
-        TextView mTextViewRating;
-        TextView mTextViewPopularity;
+        private ImageView mImageViewPoster;
+        private TextView mTextViewReleaseDate;
+        private TextView mTextViewRating;
+        private TextView mTextViewPopularity;
+        private TextView mTextViewOverview;
 
         public MovieItemDetailsViewHolder(View itemView) {
             super(itemView);
             mImageViewPoster = (ImageView) itemView.findViewById(R.id.detail_imageview_poster);
             mTextViewReleaseDate = (TextView) itemView.findViewById(R.id.detail_textview_release_date);
+            mTextViewRating =(TextView)itemView.findViewById(R.id.detail_textview_vote_average);
+            mTextViewPopularity =(TextView)itemView.findViewById(R.id.detail_textview_popularity);
+            mTextViewOverview = (TextView)itemView.findViewById(R.id.detail_textview_overview);
+        }
+
+        public ImageView getImageViewPoster() {
+            return mImageViewPoster;
+        }
+
+        public void setImageViewPoster(ImageView imageViewPoster) {
+            mImageViewPoster = imageViewPoster;
+        }
+
+        public TextView getTextViewReleaseDate() {
+            return mTextViewReleaseDate;
+        }
+
+        public void setTextViewReleaseDate(TextView textViewReleaseDate) {
+            mTextViewReleaseDate = textViewReleaseDate;
+        }
+
+        public TextView getTextViewRating() {
+            return mTextViewRating;
+        }
+
+        public void setTextViewRating(TextView textViewRating) {
+            mTextViewRating = textViewRating;
+        }
+
+        public TextView getTextViewPopularity() {
+            return mTextViewPopularity;
+        }
+
+        public void setTextViewPopularity(TextView textViewPopularity) {
+            mTextViewPopularity = textViewPopularity;
+        }
+
+        public TextView getTextViewOverview() {
+            return mTextViewOverview;
+        }
+
+        public void setTextViewOverview(TextView textViewOverview) {
+            mTextViewOverview = textViewOverview;
         }
     }
 

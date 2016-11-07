@@ -20,12 +20,9 @@ import net.estebanrodriguez.apps.popularmovies.adapters.DetailRecyclerViewAdapte
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
-import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
@@ -55,37 +52,14 @@ public class DetailFragment extends Fragment {
         MovieItem movieItem = (MovieItem) intent.getExtras().getParcelable(ConstantsVault.MOVIE_ITEM_PARCELABLE);
 
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.detail_recyclerview_clips);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.detail_recyclerview_details);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         showDetails(setObservable(movieItem));
 
 
-        String title = movieItem.getTitle();
-        Date releaseDate = movieItem.getReleaseDate();
-        String overview = movieItem.getOverview();
-        Double voteAverage = movieItem.getVoteAverage();
-        Double popularity = movieItem.getPopularity();
-        String fetchImage = movieItem.getImageFetchURL();
-
-        ImageView posterImageView = (ImageView) rootView.findViewById(R.id.detail_imageview_poster);
         TextView titleTextView = (TextView) rootView.findViewById(R.id.detail_textview_title);
-        TextView releaseDateTextView = (TextView) rootView.findViewById(R.id.detail_textview_release_date);
-        TextView voteAverageTextView = (TextView) rootView.findViewById(R.id.detail_textview_vote_average);
-        TextView popularityTextView = (TextView) rootView.findViewById(R.id.detail_textview_popularity);
-        TextView overviewTextView = (TextView) rootView.findViewById(R.id.detail_textview_overview);
-
-        Picasso.with(getActivity()).load(fetchImage)
-                .placeholder(R.drawable.happy_popcorn)
-                .error(R.drawable.sad_popcorn)
-                .into(posterImageView);
-        titleTextView.setText(title);
-        releaseDateTextView.setText(releaseDate.toString());
-        voteAverageTextView.setText(voteAverage.toString());
-        popularityTextView.setText(popularity.toString());
-        overviewTextView.setText(overview);
-
-
+        titleTextView.setText(movieItem.getTitle());
 
 
         for(MovieClip movieClip: movieItem.getMovieClips()){
@@ -127,10 +101,8 @@ public class DetailFragment extends Fragment {
 
                     @Override
                     public void onNext(MovieItem movieItem) {
-                        List<MovieDetail> movieDetails = movieItem.getMovieDetails();
-                        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieDetails, getActivity());
+                        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieItem, getActivity());
                         mRecyclerView.setAdapter(adapter);
-
                     }
                 });
     }
