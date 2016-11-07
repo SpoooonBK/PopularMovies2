@@ -197,6 +197,14 @@ public class MovieItem implements Parcelable {
 
     }
 
+    public List<Object> getMovieDetails(){
+        List<Object> movieDetails = new ArrayList<>();
+        movieDetails.add(this);
+        movieDetails.addAll(mMovieClips);
+        movieDetails.addAll(mMovieReviews);
+        return movieDetails;
+    }
+
 
 
 

@@ -79,7 +79,7 @@ public class MovieDetailFactory {
                         break;
                     }
                     case ConstantsVault.DETAIL_URL:{
-                        movieReview.setContent((map.get(key)));
+                        movieReview.setUrl((map.get(key)));
                     }
 
                 }

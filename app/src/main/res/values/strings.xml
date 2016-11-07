@@ -7,6 +7,7 @@
     <string name="release_date" translatable="true">Release Date:</string>
     <string name="sort_preference_key" translatable="false">sort_preference_key</string>
     <string name="settings" translatable="true">Settings</string>
+    <string name="author_header">Author:</string>
 
 
 </resources>
