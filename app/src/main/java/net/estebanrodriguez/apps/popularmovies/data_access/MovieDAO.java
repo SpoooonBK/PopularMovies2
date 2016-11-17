@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MovieDAO {
 
-    public List<MovieItem> getAllMovies();
+    List<MovieItem> getAllMovies();
 
 
 }

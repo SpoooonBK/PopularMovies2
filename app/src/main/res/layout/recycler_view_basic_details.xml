@@ -56,6 +56,13 @@
                 android:id="@+id/detail_textview_popularity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/detail_imagebutton_save"
+                android:src="@drawable/star"
+                android:background="#00ffffff"
+                />
 
 
         </LinearLayout>

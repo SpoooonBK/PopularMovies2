@@ -13,7 +13,7 @@ public class NetworkChecker {
 
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager =
-                (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }

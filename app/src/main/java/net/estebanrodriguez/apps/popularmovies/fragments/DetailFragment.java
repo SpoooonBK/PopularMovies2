@@ -49,7 +49,7 @@ public class DetailFragment extends Fragment {
 
         Intent intent = getActivity().getIntent();
 
-        MovieItem movieItem = (MovieItem) intent.getExtras().getParcelable(ConstantsVault.MOVIE_ITEM_PARCELABLE);
+        MovieItem movieItem = intent.getExtras().getParcelable(ConstantsVault.MOVIE_ITEM_PARCELABLE);
 
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.detail_recyclerview_details);

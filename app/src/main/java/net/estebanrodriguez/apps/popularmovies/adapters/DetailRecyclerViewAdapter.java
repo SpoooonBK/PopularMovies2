@@ -81,12 +81,14 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             case (MOVIE_ITEM): {
 
-                MovieItem movieItem = (MovieItem)mMovieDetails.get(position);
+                final MovieItem movieItem = (MovieItem)mMovieDetails.get(position);
                 Date releaseDate = movieItem.getReleaseDate();
                 String overview = movieItem.getOverview();
                 Double rating = movieItem.getVoteAverage();
                 Double popularity = movieItem.getPopularity();
                 String fetchImage = movieItem.getImageFetchURL();
+
+
 
                 ((MovieItemDetailsViewHolder) holder).getTextViewPopularity().setText(popularity.toString());
                 ((MovieItemDetailsViewHolder) holder).getTextViewRating().setText(rating.toString());
@@ -98,14 +100,25 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         .placeholder(R.drawable.happy_popcorn)
                         .error(R.drawable.sad_popcorn)
                         .into(imageView);
+                ImageButton starButton = ((MovieItemDetailsViewHolder) holder).getStarButton();
+                starButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        movieItem.getID();
+                    }
+                });
+
+                break;
 
             }
             case (MOVIE_REVIEW_HEADER): {
                 ((MovieDetailsHeaderViewHolder) holder).getHeader().setText(R.string.reviews);
+                break;
             }
 
             case (MOVIE_CLIP_HEADER): {
                 ((MovieDetailsHeaderViewHolder) holder).getHeader().setText(R.string.trailers);
+                break;
             }
         }
 
@@ -115,15 +128,15 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemCount() {
-        int extraRows = 0;
-        if(hasMovieClip()){
-            extraRows++;
-        }
-        if(hasMovieReview()){
-            extraRows++;
-        }
+//        int extraRows = 0;
+//        if(hasMovieClip()){
+//            extraRows++;
+//        }
+//        if(hasMovieReview()){
+//            extraRows++;
+//        }
 
-        return (mMovieDetails.size() + extraRows);
+        return (mMovieDetails.size());
     }
 
 
@@ -162,23 +175,23 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemViewType(int position) {
 
-        if(position > 0
-                && hasMovieClip()
-                && mMovieDetails.get(position - 1) instanceof MovieItem
-                && mMovieDetails.get(position) instanceof MovieClip)
-            return MOVIE_CLIP_HEADER;
-
-        if(position > 0
-                && hasMovieReview()
-                && mMovieDetails.get(position -1) instanceof MovieItem
-                && mMovieDetails.get(position) instanceof MovieReview)
-            return MOVIE_REVIEW_HEADER;
-
-        if(position > 0
-                && hasMovieReview()
-                && mMovieDetails.get(position -1) instanceof MovieClip
-                && mMovieDetails.get(position) instanceof MovieReview)
-            return MOVIE_REVIEW_HEADER;
+//        if(position > 0
+//                && hasMovieClip()
+//                && mMovieDetails.get(position - 1) instanceof MovieItem
+//                && mMovieDetails.get(position) instanceof MovieClip)
+//            return MOVIE_CLIP_HEADER;
+//
+//        if(position > 0
+//                && hasMovieReview()
+//                && mMovieDetails.get(position -1) instanceof MovieItem
+//                && mMovieDetails.get(position) instanceof MovieReview)
+//            return MOVIE_REVIEW_HEADER;
+//
+//        if(position > 0
+//                && hasMovieReview()
+//                && mMovieDetails.get(position -1) instanceof MovieClip
+//                && mMovieDetails.get(position) instanceof MovieReview)
+//            return MOVIE_REVIEW_HEADER;
 
         if(mMovieDetails.get(position) instanceof MovieClip){
             return MOVIE_CLIP;
@@ -194,12 +207,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private void setHasMovieReview(){
         for(Object movieDetail: mMovieDetails){
-            if(movieDetail instanceof MovieReview){
-                mHasMovieReview = true;
-            }
-            else{
-                mHasMovieReview = false;
-            }
+            mHasMovieReview = movieDetail instanceof MovieReview;
         }
 
     }
@@ -299,6 +307,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         private TextView mTextViewRating;
         private TextView mTextViewPopularity;
         private TextView mTextViewOverview;
+        private ImageButton mStarButton;
 
         public MovieItemDetailsViewHolder(View itemView) {
             super(itemView);
@@ -307,6 +316,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             mTextViewRating =(TextView)itemView.findViewById(R.id.detail_textview_vote_average);
             mTextViewPopularity =(TextView)itemView.findViewById(R.id.detail_textview_popularity);
             mTextViewOverview = (TextView)itemView.findViewById(R.id.detail_textview_overview);
+            mStarButton = (ImageButton)itemView.findViewById(R.id.detail_imagebutton_save);
         }
 
         public ImageView getImageViewPoster() {
@@ -349,6 +359,13 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             mTextViewOverview = textViewOverview;
         }
 
+        public ImageButton getStarButton() {
+            return mStarButton;
+        }
+
+        public void setStarButton(ImageButton starButton) {
+            mStarButton = starButton;
+        }
     }
 
     public class MovieDetailsHeaderViewHolder extends RecyclerView.ViewHolder{
