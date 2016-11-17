@@ -8,6 +8,9 @@
     <string name="sort_preference_key" translatable="false">sort_preference_key</string>
     <string name="settings" translatable="true">Settings</string>
     <string name="author_header">Author:</string>
+    <string name="review">Review</string>
+    <string name="reviews">Reviews:</string>
+    <string name="trailers">Trailers:</string>
 
 
 </resources>

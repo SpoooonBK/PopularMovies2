@@ -34,15 +34,21 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     private List<MovieReview> mMovieReviews;
     private MovieItem mMovieItem;
     private Context mContext;
+    private boolean mHasMovieClip;
+    private boolean mHasMovieReview;
 
     private final int MOVIE_CLIP = 0;
     private final int MOVIE_REVIEW = 1;
     private final int MOVIE_ITEM = 2;
+    private final int MOVIE_CLIP_HEADER = 4;
+    private final int MOVIE_REVIEW_HEADER = 5;
 
     public DetailRecyclerViewAdapter(MovieItem movieItem, Context context) {
         mMovieItem = movieItem;
         mContext = context;
         mMovieDetails = movieItem.getMovieDetails();
+        setHasMovieClip();
+        setHasMovieReview();
     }
 
 
@@ -94,6 +100,13 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         .into(imageView);
 
             }
+            case (MOVIE_REVIEW_HEADER): {
+                ((MovieDetailsHeaderViewHolder) holder).getHeader().setText(R.string.reviews);
+            }
+
+            case (MOVIE_CLIP_HEADER): {
+                ((MovieDetailsHeaderViewHolder) holder).getHeader().setText(R.string.trailers);
+            }
         }
 
     }
@@ -102,7 +115,15 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemCount() {
-        return mMovieDetails.size();
+        int extraRows = 0;
+        if(hasMovieClip()){
+            extraRows++;
+        }
+        if(hasMovieReview()){
+            extraRows++;
+        }
+
+        return (mMovieDetails.size() + extraRows);
     }
 
 
@@ -140,6 +161,25 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemViewType(int position) {
+
+        if(position > 0
+                && hasMovieClip()
+                && mMovieDetails.get(position - 1) instanceof MovieItem
+                && mMovieDetails.get(position) instanceof MovieClip)
+            return MOVIE_CLIP_HEADER;
+
+        if(position > 0
+                && hasMovieReview()
+                && mMovieDetails.get(position -1) instanceof MovieItem
+                && mMovieDetails.get(position) instanceof MovieReview)
+            return MOVIE_REVIEW_HEADER;
+
+        if(position > 0
+                && hasMovieReview()
+                && mMovieDetails.get(position -1) instanceof MovieClip
+                && mMovieDetails.get(position) instanceof MovieReview)
+            return MOVIE_REVIEW_HEADER;
+
         if(mMovieDetails.get(position) instanceof MovieClip){
             return MOVIE_CLIP;
         }
@@ -152,18 +192,38 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         return -1;
     }
 
-//    @Override
-//    public void onBindViewHolder(MovieClipViewholder holder, int position) {
-//        final MovieClip movieClip = mMovieClips.get(position);;
-//        holder.mMovieClipTitle.setText(movieClip.getName());
-//        holder.mPlayButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(movieClip.getClipURI()));
-//                mContext.startActivity(intent);
-//            }
-//        });
-//    }
+    private void setHasMovieReview(){
+        for(Object movieDetail: mMovieDetails){
+            if(movieDetail instanceof MovieReview){
+                mHasMovieReview = true;
+            }
+            else{
+                mHasMovieReview = false;
+            }
+        }
+
+    }
+
+    private void setHasMovieClip(){
+        for(Object movieDetail: mMovieDetails){
+            if(movieDetail instanceof MovieClip){
+                mHasMovieClip = true;
+            }
+            else{
+                mHasMovieReview = false;
+            }
+        }
+    }
+
+    public boolean hasMovieClip() {
+        return mHasMovieClip;
+    }
+
+    public boolean hasMovieReview() {
+        return mHasMovieReview;
+    }
+
+
 
     public class MovieClipViewholder extends RecyclerView.ViewHolder {
         private ImageButton mPlayButton;
@@ -287,6 +347,25 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         public void setTextViewOverview(TextView textViewOverview) {
             mTextViewOverview = textViewOverview;
+        }
+
+    }
+
+    public class MovieDetailsHeaderViewHolder extends RecyclerView.ViewHolder{
+
+        private TextView mHeader;
+
+        public MovieDetailsHeaderViewHolder(View itemView) {
+            super(itemView);
+            mHeader = (TextView) itemView.findViewById(R.id.detail_recyclerview_header);
+        }
+
+        public TextView getHeader() {
+            return mHeader;
+        }
+
+        public void setHeader(TextView header) {
+            mHeader = header;
         }
     }
 
