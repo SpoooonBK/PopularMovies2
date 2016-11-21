@@ -273,6 +273,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             mAuthor = (TextView)itemView.findViewById(R.id.review_text_view_author_name);
             mContent = (TextView)itemView.findViewById(R.id.review_text_view_content);
             mURL = (TextView)itemView.findViewById(R.id.review_text_view_url);
+            
         }
 
         public TextView getAuthorTextView() {
