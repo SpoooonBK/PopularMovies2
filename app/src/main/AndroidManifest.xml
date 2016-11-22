@@ -27,6 +27,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <provider
+            android:authorities="net.estebanrodriguez.apps.popularmovies"
+            android:name=".database.LocalMovieItemProvider"/>
     </application>
 
 </manifest>

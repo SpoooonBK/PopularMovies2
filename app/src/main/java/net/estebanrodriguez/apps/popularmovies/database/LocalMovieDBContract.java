@@ -1,5 +1,8 @@
 package net.estebanrodriguez.apps.popularmovies.database;
 
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
 
@@ -9,9 +12,18 @@ import android.provider.BaseColumns;
 
 public final class LocalMovieDBContract {
 
+    public static final String CONTENT_AUTHORITY = "net.estebanrodriguez.apps.popularmovies";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+
+    public static final String PATH_MOVIE_BASIC_DETAILS = LocalMovieBasicDetailEntries.TABLE_NAME;
+    public static final String PATH_MOVIE_CLIPS = LocalMovieClipEntries.TABLE_NAME;
+    public static final String PATH_MOVIE_REVIEWS = LocalMovieReviewEntries.TABLE_NAME;
+
     private LocalMovieDBContract() {}
 
     public static class LocalMovieBasicDetailEntries implements BaseColumns {
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE_BASIC_DETAILS).build();
 
         public static final String TABLE_NAME = "movies";
 
@@ -30,9 +42,21 @@ public final class LocalMovieDBContract {
         public static final String COLUMN_NAME_IMAGE_FETCH_URL = "image_fetch_url";
         public static final String COLUMN_NAME_TITLE ="title";
 
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/net.estebanrodriguez.apps.popularmovies.movies";
+
+        public static final String CONTENT_TYPE_ITEM =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/net.estebanrodriguez.apps.popularmovies.movies";
+
+        public static Uri buildGetMovieDetailsURI(Integer movie_id){
+            return CONTENT_URI.buildUpon().appendPath(movie_id.toString()).build();
+        }
+
     }
 
     public static class LocalMovieClipEntries implements BaseColumns {
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE_CLIPS).build();
 
         public static final String TABLE_NAME ="clips";
 
@@ -45,9 +69,21 @@ public final class LocalMovieDBContract {
         public static final String COLUMN_NAME_SITE = "site";
         public static final String COLUMN_NAME_CLIP_TYPE = "clip_type";
         public static final String COLUMN_NAME_CLIP_URI = "clip_uri";
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/net.estebanrodriguez.apps.popularmovies.clips";
+
+        public static final String CONTENT_TYPE_ITEM =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/net.estebanrodriguez.apps.popularmovies.clips";
+
+        public static Uri buildGetMovieClipsURI (Integer movie_id){
+            return CONTENT_URI.buildUpon().appendPath(movie_id.toString()).build();
+        }
     }
 
     public static class LocalMovieReviewEntries implements BaseColumns {
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE_REVIEWS).build();
 
         public static final String TABLE_NAME ="reviews";
 
@@ -56,5 +92,17 @@ public final class LocalMovieDBContract {
         public static final String COLUMN_NAME_AUTHOR = "author";
         public static final String COLUMN_NAME_CONTENT = "content";
         public static final String COLUMN_NAME_REVIEW_URL = "review_url";
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/net.estebanrodriguez.apps.popularmovies.reviews";
+
+        public static final String CONTENT_TYPE_ITEM =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/net.estebanrodriguez.apps.popularmovies.reviews";
+
+        public static Uri buildGetReviewsURI(Integer movie_id){
+         return   CONTENT_URI.buildUpon().appendPath(movie_id.toString()).build();
+        }
     }
+
+
 }
