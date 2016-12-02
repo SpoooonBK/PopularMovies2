@@ -48,33 +48,24 @@ public class LocalMovieItemProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         switch (URI_MATCHER.match(uri)){
-            case MOVIE_ITEM_LIST: {
+
+            case MOVIE_ITEM_LIST:
                 return LocalMovieDBContract.LocalMovieBasicDetailEntries.CONTENT_TYPE;
-            }
 
-            case  MOVIE_ITEM_ID:{
+            case  MOVIE_ITEM_ID:
                 return LocalMovieDBContract.LocalMovieBasicDetailEntries.CONTENT_TYPE_ITEM;
-            }
 
-
-            case MOVIE_CLIP_LIST: {
+            case MOVIE_CLIP_LIST:
                 return LocalMovieDBContract.LocalMovieClipEntries.CONTENT_TYPE;
-            }
 
-
-            case MOVIE_CLIP_ID: {
+            case MOVIE_CLIP_ID:
                 return LocalMovieDBContract.LocalMovieClipEntries.CONTENT_TYPE_ITEM;
-            }
 
-
-            case MOVIE_REVIEW_LIST: {
+            case MOVIE_REVIEW_LIST:
                 return LocalMovieDBContract.LocalMovieReviewEntries.CONTENT_TYPE;
-            }
 
-
-            case MOVIE_REVIEW_ID: {
+            case MOVIE_REVIEW_ID:
                 return LocalMovieDBContract.LocalMovieReviewEntries.CONTENT_TYPE_ITEM;
-            }
 
             default:
                 return null;
