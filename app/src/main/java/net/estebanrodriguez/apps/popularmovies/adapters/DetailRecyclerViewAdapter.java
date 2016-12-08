@@ -1,5 +1,7 @@
 package net.estebanrodriguez.apps.popularmovies.adapters;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,8 +16,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.database.MovieItemDatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
-import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
@@ -29,7 +31,7 @@ import java.util.List;
 
 public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Object> mMovieDetails;
+    private List<Object> mMovieDetailsList;
     private List<MovieClip> mMovieClips;
     private List<MovieReview> mMovieReviews;
     private MovieItem mMovieItem;
@@ -46,7 +48,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     public DetailRecyclerViewAdapter(MovieItem movieItem, Context context) {
         mMovieItem = movieItem;
         mContext = context;
-        mMovieDetails = movieItem.getMovieDetails();
+        mMovieDetailsList = movieItem.getMovieDetails();
         setHasMovieClip();
         setHasMovieReview();
     }
@@ -59,7 +61,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         switch (viewtype){
             case(MOVIE_CLIP):{
-                final MovieClip movieClip = (MovieClip) mMovieDetails.get(position);
+                final MovieClip movieClip = (MovieClip) mMovieDetailsList.get(position);
                 ((MovieClipViewholder) holder).getMovieClipTitle().setText(movieClip.getName());
                 ((MovieClipViewholder) holder).getPlayButton().setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -72,7 +74,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             }
 
             case (MOVIE_REVIEW): {
-                MovieReview movieReview = (MovieReview)mMovieDetails.get(position);
+                MovieReview movieReview = (MovieReview) mMovieDetailsList.get(position);
                 ((MovieReviewViewholder) holder).getAuthorTextView().setText(movieReview.getAuthor());
                 ((MovieReviewViewholder) holder).getContentTextView().setText(movieReview.getContent());
                 ((MovieReviewViewholder) holder).getURLTextView().setText(movieReview.getUrl());
@@ -81,7 +83,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             case (MOVIE_ITEM): {
 
-                final MovieItem movieItem = (MovieItem)mMovieDetails.get(position);
+                final MovieItem movieItem = (MovieItem) mMovieDetailsList.get(position);
                 Date releaseDate = movieItem.getReleaseDate();
                 String overview = movieItem.getOverview();
                 Double rating = movieItem.getVoteAverage();
@@ -104,7 +106,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 starButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        movieItem.getID();
+                        favoriteMovie(mMovieItem);
                     }
                 });
 
@@ -124,6 +126,76 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     }
 
+    public void favoriteMovie(MovieItem movieItem){
+
+        ContentResolver contentResolver = mContext.getContentResolver();
+
+        List<MovieClip> movieClips = movieItem.getMovieClips();
+        List<MovieReview> movieReviews = movieItem.getMovieReviews();
+
+
+        ContentValues basicDetailsValues = new ContentValues();
+
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ID, movieItem.getID());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORGINAL_TITLE, movieItem.getOriginalTitle());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH, movieItem.getBackdropPath());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_IMAGE_FETCH_URL, movieItem.getImageFetchURL());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORIGINAL_LANGUAGE, movieItem.getOriginalLanguage());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_OVERVIEW, movieItem.getOverview());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY, movieItem.getPopularity());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH, movieItem.getPosterPath());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE, movieItem.getReleaseDate().toString());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE, movieItem.getTitle());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO, movieItem.isVideo());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE, movieItem.getVoteAverage());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT, movieItem.getVoteCount());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT, movieItem.isAdult());
+
+        contentResolver.insert(
+                MovieItemDatabaseContract.BasicMovieDetailEntries.CONTENT_URI,
+                basicDetailsValues
+        );
+
+
+
+        for(MovieClip movieClip: movieClips){
+            ContentValues movieClipValues = new ContentValues();
+            movieClipValues.put(MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_KEY, movieClip.getKey());
+            movieClipValues.put(MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_TYPE, movieClip.getClipType());
+            movieClipValues.put(MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_URI, movieClip.getClipURI());
+            movieClipValues.put(MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO639, movieClip.getLanguageCodeISO639());
+            movieClipValues.put(MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO3166, movieClip.getLanguagecodeiso3166());
+            movieClipValues.put(MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
+            movieClipValues.put(MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_NAME, movieClip.getName());
+            movieClipValues.put(MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_SITE, movieClip.getSite());
+
+            contentResolver.insert(
+                    MovieItemDatabaseContract.MovieClipEntries.CONTENT_URI,
+                    movieClipValues
+            );
+
+
+        }
+
+        for(MovieReview movieReview: movieReviews){
+            ContentValues reviewValues = new ContentValues();
+            reviewValues.put(MovieItemDatabaseContract.MovieReviewEntries.COLUMN_NAME_AUTHOR, movieReview.getAuthor());
+            reviewValues.put(MovieItemDatabaseContract.MovieReviewEntries.COLUMN_NAME_CONTENT, movieReview.getContent());
+            reviewValues.put(MovieItemDatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
+            reviewValues.put(MovieItemDatabaseContract.MovieReviewEntries.COLUMN_NAME_REVIEW_URL, movieReview.getUrl());
+
+            contentResolver.insert(
+                    MovieItemDatabaseContract.MovieReviewEntries.CONTENT_URI,
+                    reviewValues
+            );
+        }
+
+
+
+
+
+    }
+
 
 
     @Override
@@ -136,7 +208,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 //            extraRows++;
 //        }
 
-        return (mMovieDetails.size());
+        return (mMovieDetailsList.size());
     }
 
 
@@ -177,43 +249,43 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
 //        if(position > 0
 //                && hasMovieClip()
-//                && mMovieDetails.get(position - 1) instanceof MovieItem
-//                && mMovieDetails.get(position) instanceof MovieClip)
+//                && mMovieDetailsList.get(position - 1) instanceof MovieItem
+//                && mMovieDetailsList.get(position) instanceof MovieClip)
 //            return MOVIE_CLIP_HEADER;
 //
 //        if(position > 0
 //                && hasMovieReview()
-//                && mMovieDetails.get(position -1) instanceof MovieItem
-//                && mMovieDetails.get(position) instanceof MovieReview)
+//                && mMovieDetailsList.get(position -1) instanceof MovieItem
+//                && mMovieDetailsList.get(position) instanceof MovieReview)
 //            return MOVIE_REVIEW_HEADER;
 //
 //        if(position > 0
 //                && hasMovieReview()
-//                && mMovieDetails.get(position -1) instanceof MovieClip
-//                && mMovieDetails.get(position) instanceof MovieReview)
+//                && mMovieDetailsList.get(position -1) instanceof MovieClip
+//                && mMovieDetailsList.get(position) instanceof MovieReview)
 //            return MOVIE_REVIEW_HEADER;
 
-        if(mMovieDetails.get(position) instanceof MovieClip){
+        if(mMovieDetailsList.get(position) instanceof MovieClip){
             return MOVIE_CLIP;
         }
-        if (mMovieDetails.get(position) instanceof MovieReview) {
+        if (mMovieDetailsList.get(position) instanceof MovieReview) {
             return MOVIE_REVIEW;
         }
-        if (mMovieDetails.get(position) instanceof MovieItem) {
+        if (mMovieDetailsList.get(position) instanceof MovieItem) {
             return MOVIE_ITEM;
         }
         return -1;
     }
 
     private void setHasMovieReview(){
-        for(Object movieDetail: mMovieDetails){
+        for(Object movieDetail: mMovieDetailsList){
             mHasMovieReview = movieDetail instanceof MovieReview;
         }
 
     }
 
     private void setHasMovieClip(){
-        for(Object movieDetail: mMovieDetails){
+        for(Object movieDetail: mMovieDetailsList){
             if(movieDetail instanceof MovieClip){
                 mHasMovieClip = true;
             }

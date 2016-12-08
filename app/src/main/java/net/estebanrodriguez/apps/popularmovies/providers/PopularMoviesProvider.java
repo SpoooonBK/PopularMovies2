@@ -1,21 +1,23 @@
-package net.estebanrodriguez.apps.popularmovies.database;
+package net.estebanrodriguez.apps.popularmovies.providers;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+
+import net.estebanrodriguez.apps.popularmovies.database.MovieItemDatabaseContract;
+import net.estebanrodriguez.apps.popularmovies.database.MovieItemDatabaseHelper;
 
 /**
  * Created by Spoooon on 11/21/2016.
  */
 
-public class LocalMovieItemProvider extends ContentProvider {
+public class PopularMoviesProvider extends ContentProvider {
 
-    private LocalMovieDBHelper mLocalMovieDBHelper;
+    private MovieItemDatabaseHelper mLocalMovieDBHelper;
     private SQLiteDatabase db;
 
     //UriMatcher constants
@@ -32,7 +34,7 @@ public class LocalMovieItemProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
 
-        mLocalMovieDBHelper = new LocalMovieDBHelper(getContext());
+        mLocalMovieDBHelper = new MovieItemDatabaseHelper(getContext());
 
         return true;
     }
@@ -50,22 +52,22 @@ public class LocalMovieItemProvider extends ContentProvider {
         switch (URI_MATCHER.match(uri)){
 
             case MOVIE_ITEM_LIST:
-                return LocalMovieDBContract.LocalMovieBasicDetailEntries.CONTENT_TYPE;
+                return MovieItemDatabaseContract.BasicMovieDetailEntries.CONTENT_TYPE;
 
             case  MOVIE_ITEM_ID:
-                return LocalMovieDBContract.LocalMovieBasicDetailEntries.CONTENT_TYPE_ITEM;
+                return MovieItemDatabaseContract.BasicMovieDetailEntries.CONTENT_TYPE_ITEM;
 
             case MOVIE_CLIP_LIST:
-                return LocalMovieDBContract.LocalMovieClipEntries.CONTENT_TYPE;
+                return MovieItemDatabaseContract.MovieClipEntries.CONTENT_TYPE;
 
             case MOVIE_CLIP_ID:
-                return LocalMovieDBContract.LocalMovieClipEntries.CONTENT_TYPE_ITEM;
+                return MovieItemDatabaseContract.MovieClipEntries.CONTENT_TYPE_ITEM;
 
             case MOVIE_REVIEW_LIST:
-                return LocalMovieDBContract.LocalMovieReviewEntries.CONTENT_TYPE;
+                return MovieItemDatabaseContract.MovieReviewEntries.CONTENT_TYPE;
 
             case MOVIE_REVIEW_ID:
-                return LocalMovieDBContract.LocalMovieReviewEntries.CONTENT_TYPE_ITEM;
+                return MovieItemDatabaseContract.MovieReviewEntries.CONTENT_TYPE_ITEM;
 
             default:
                 return null;
@@ -95,28 +97,28 @@ public class LocalMovieItemProvider extends ContentProvider {
 
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
-        URI_MATCHER.addURI(LocalMovieDBContract.CONTENT_AUTHORITY,
-                LocalMovieDBContract.PATH_MOVIE_BASIC_DETAILS,
+        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
+                MovieItemDatabaseContract.PATH_MOVIE_BASIC_DETAILS,
                 MOVIE_ITEM_LIST);
 
-        URI_MATCHER.addURI(LocalMovieDBContract.CONTENT_AUTHORITY,
-                LocalMovieDBContract.PATH_MOVIE_BASIC_DETAILS +"/#",
+        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
+                MovieItemDatabaseContract.PATH_MOVIE_BASIC_DETAILS +"/#",
                 MOVIE_ITEM_ID);
 
-        URI_MATCHER.addURI(LocalMovieDBContract.CONTENT_AUTHORITY,
-                LocalMovieDBContract.PATH_MOVIE_CLIPS,
+        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
+                MovieItemDatabaseContract.PATH_MOVIE_CLIPS,
                 MOVIE_CLIP_LIST);
 
-        URI_MATCHER.addURI(LocalMovieDBContract.CONTENT_AUTHORITY,
-                LocalMovieDBContract.PATH_MOVIE_CLIPS + "/#",
+        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
+                MovieItemDatabaseContract.PATH_MOVIE_CLIPS + "/#",
                 MOVIE_CLIP_ID);
 
-        URI_MATCHER.addURI(LocalMovieDBContract.CONTENT_AUTHORITY,
-                LocalMovieDBContract.PATH_MOVIE_REVIEWS,
+        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
+                MovieItemDatabaseContract.PATH_MOVIE_REVIEWS,
                 MOVIE_REVIEW_LIST);
 
-        URI_MATCHER.addURI(LocalMovieDBContract.CONTENT_AUTHORITY,
-                LocalMovieDBContract.PATH_MOVIE_REVIEWS + "/#",
+        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
+                MovieItemDatabaseContract.PATH_MOVIE_REVIEWS + "/#",
                 MOVIE_REVIEW_ID);
 
     }
