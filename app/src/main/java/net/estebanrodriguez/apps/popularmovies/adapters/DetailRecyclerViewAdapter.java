@@ -136,7 +136,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         ContentValues basicDetailsValues = new ContentValues();
 
-        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ID, movieItem.getID());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
         basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORGINAL_TITLE, movieItem.getOriginalTitle());
         basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH, movieItem.getBackdropPath());
         basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_IMAGE_FETCH_URL, movieItem.getImageFetchURL());

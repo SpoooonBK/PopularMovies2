@@ -19,7 +19,7 @@ public class MovieItemDatabaseHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "LocalMovies.db";
     public static final int DB_VERSION = 1;
     private static final String TEXT_TYPE = " TEXT";
-    private static final String COMMA_SEP = ",";
+    private static final String COMMA_SEP = ", ";
 
 
 
@@ -52,8 +52,9 @@ public class MovieItemDatabaseHelper extends SQLiteOpenHelper {
         List<String> stringList= new ArrayList<>();
 
 
-        String createMovieTable = "CREATE TABLE " + MovieItemDatabaseContract.BasicMovieDetailEntries.TABLE_NAME +
+        String createMovieTable = "CREATE TABLE IF NOT EXISTS " + MovieItemDatabaseContract.BasicMovieDetailEntries.TABLE_NAME +
                 " ( " + MovieItemDatabaseContract.BasicMovieDetailEntries._ID + " INTEGER PRIMARY KEY, " +
+                MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID + " INTEGER, " +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_IMAGE_FETCH_URL + TEXT_TYPE + COMMA_SEP +
@@ -64,28 +65,27 @@ public class MovieItemDatabaseHelper extends SQLiteOpenHelper {
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO + TEXT_TYPE + COMMA_SEP +
-                MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_IMAGE_FETCH_URL + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT + TEXT_TYPE + COMMA_SEP +
-                MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +" )";
+                MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE + TEXT_TYPE + ")";
 
-        String createMovieClipTable = "CREATE TABLE " + MovieItemDatabaseContract.MovieClipEntries.TABLE_NAME + " ( " +
+        String createMovieClipTable = "CREATE TABLE IF NOT EXISTS " + MovieItemDatabaseContract.MovieClipEntries.TABLE_NAME + " ( " +
                 MovieItemDatabaseContract.MovieClipEntries._ID + " INTEGER PRIMARY KEY, " +
                 MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_TYPE + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_URI + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_KEY + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO639 + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO3166 + TEXT_TYPE + COMMA_SEP +
-                MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID + "INTEGER, " +
+                MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID + " INTEGER, " +
                 MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
-                MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_SITE + TEXT_TYPE + COMMA_SEP + " )";
+                MovieItemDatabaseContract.MovieClipEntries.COLUMN_NAME_SITE + TEXT_TYPE + ")";
 
-        String createMovieReviewTable = "CREATE TABLE " + MovieItemDatabaseContract.MovieReviewEntries.TABLE_NAME + " ( " +
+        String createMovieReviewTable = "CREATE TABLE IF NOT EXISTS " + MovieItemDatabaseContract.MovieReviewEntries.TABLE_NAME + " ( " +
                 MovieItemDatabaseContract.MovieReviewEntries._ID + " INTEGER PRIMARY KEY, " +
                 MovieItemDatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID + " INTEGER, " +
                 MovieItemDatabaseContract.MovieReviewEntries.COLUMN_NAME_AUTHOR + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.MovieReviewEntries.COLUMN_NAME_CONTENT + TEXT_TYPE + COMMA_SEP +
-                MovieItemDatabaseContract.MovieReviewEntries.COLUMN_NAME_REVIEW_URL + TEXT_TYPE + COMMA_SEP + " )";
+                MovieItemDatabaseContract.MovieReviewEntries.COLUMN_NAME_REVIEW_URL + TEXT_TYPE +  ")";
 
         stringList.add(createMovieTable);
         stringList.add(createMovieClipTable);

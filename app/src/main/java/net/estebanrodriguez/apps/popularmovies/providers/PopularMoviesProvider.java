@@ -1,9 +1,11 @@
 package net.estebanrodriguez.apps.popularmovies.providers;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -43,6 +45,17 @@ public class PopularMoviesProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {
         db = mLocalMovieDBHelper.getReadableDatabase();
+
+        if(URI_MATCHER.match(uri) != MOVIE_ITEM_LIST &&
+                URI_MATCHER.match(uri) != MOVIE_ITEM_ID){
+            throw new IllegalArgumentException("Unsupported URI for query");
+        }
+
+        switch (URI_MATCHER.match(uri)){
+
+
+        }
+
         return null;
     }
 
@@ -77,7 +90,34 @@ public class PopularMoviesProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
+        if(URI_MATCHER.match(uri) != MOVIE_ITEM_LIST &&
+                URI_MATCHER.match(uri) != MOVIE_CLIP_LIST &&
+                URI_MATCHER.match(uri) != MOVIE_REVIEW_LIST
+                ){
+            throw new IllegalArgumentException("Unsupported uri for insertion: " + uri);
+        }
+
+
         db = mLocalMovieDBHelper.getWritableDatabase();
+
+        switch (URI_MATCHER.match(uri)){
+
+            case MOVIE_ITEM_LIST:{
+                long id = db.insert(MovieItemDatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
+                return (getUriForId(id, uri));
+            }
+
+            case MOVIE_CLIP_LIST:{
+                long id = db.insert(MovieItemDatabaseContract.MovieClipEntries.TABLE_NAME, null, contentValues);
+                return (getUriForId(id, uri));
+            }
+
+            case MOVIE_REVIEW_LIST:{
+                long id = db.insert(MovieItemDatabaseContract.MovieReviewEntries.TABLE_NAME, null, contentValues);
+                return (getUriForId(id, uri));
+            }
+
+        }
 
 
         return null;
@@ -92,6 +132,24 @@ public class PopularMoviesProvider extends ContentProvider {
     public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
         return 0;
     }
+
+    private Uri getUriForId(long id, Uri uri) {
+        if (id > 0) {
+            Uri itemUri = ContentUris.withAppendedId(uri, id);
+//            if (!isInBatchMode()) {
+//                // notify all listeners of changes:
+//                getContext().
+//                        getContentResolver().
+//                        notifyChange(itemUri, null);
+//            }
+            return itemUri;
+        }
+        // s.th. went wrong:
+        throw new SQLException(
+                "Problem while inserting into uri: " + uri);
+    }
+
+
 
     static {
 

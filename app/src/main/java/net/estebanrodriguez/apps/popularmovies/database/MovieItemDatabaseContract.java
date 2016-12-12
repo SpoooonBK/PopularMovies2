@@ -27,6 +27,7 @@ public final class MovieItemDatabaseContract {
 
 
         public static final String COLUMN_NAME_ID = "_ID";
+        public static final String COLUMN_NAME_MOVIE_ID = "movie_id";
         public static final String COLUMN_NAME_ADULT= "adult";
         public static final String COLUMN_NAME_OVERVIEW = "overview";
         public static final String COLUMN_NAME_POSTER_PATH = "poster_path";
