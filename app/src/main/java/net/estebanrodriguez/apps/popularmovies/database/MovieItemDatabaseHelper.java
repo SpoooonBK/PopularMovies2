@@ -61,12 +61,12 @@ public class MovieItemDatabaseHelper extends SQLiteOpenHelper {
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORGINAL_TITLE + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORIGINAL_LANGUAGE + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_OVERVIEW + TEXT_TYPE + COMMA_SEP +
-                MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY + TEXT_TYPE + COMMA_SEP +
+                MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY + " REAL " + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE + TEXT_TYPE + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO + TEXT_TYPE + COMMA_SEP +
-                MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE + TEXT_TYPE + COMMA_SEP +
-                MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT + TEXT_TYPE + COMMA_SEP +
+                MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE + " REAL " + COMMA_SEP +
+                MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT + " REAL " + COMMA_SEP +
                 MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE + TEXT_TYPE + ")";
 
         String createMovieClipTable = "CREATE TABLE IF NOT EXISTS " + MovieItemDatabaseContract.MovieClipEntries.TABLE_NAME + " ( " +

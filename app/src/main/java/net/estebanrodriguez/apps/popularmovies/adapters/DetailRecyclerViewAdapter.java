@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieItemFactory;
 import net.estebanrodriguez.apps.popularmovies.database.MovieItemDatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
@@ -207,6 +208,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     public void showFavorites(){
 
         Cursor cursor = mContext.getContentResolver().query(MovieItemDatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
+        MovieItemFactory.buildMovieList(cursor);
         cursor.moveToFirst();
         String[] colNames = cursor.getColumnNames();
 

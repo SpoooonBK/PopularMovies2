@@ -2,6 +2,7 @@ package net.estebanrodriguez.apps.popularmovies.data_access;
 
 import android.database.Cursor;
 
+import net.estebanrodriguez.apps.popularmovies.database.MovieItemDatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.sql.Date;
@@ -21,8 +22,11 @@ public class MovieItemFactory {
 
 
     /**
-     * Method: buildMovieList(List<Map<String, String>> mapList
+     * Method: buildMovieList(List<Map<String, String>> mapList)
      * Builds an ArrayList of movies from maps of parsed Json data
+     *
+     * @param mapList
+     * @return List<MovieItem>
      */
 
     public static List<MovieItem> buildMovieList(List<Map<String, String>> mapList) {
@@ -35,16 +39,87 @@ public class MovieItemFactory {
 
     }
 
+    /**
+     * Method: Builds movie list from cursor data
+     *
+     * @param cursor
+     * @return List<MovieItems>
+     */
     public static List<MovieItem> buildMovieList(Cursor cursor) {
         List<MovieItem> movieItems = new ArrayList<>();
 
-            Map<String, String> dataMap = new HashMap<>();
-            String[] colNames = cursor.getColumnNames();
-            cursor.moveToFirst();
-            while (cursor.moveToNext()){
+        Map<String, String> dataMap = new HashMap<>();
+        String[] colNames = cursor.getColumnNames();
 
+
+        cursor.moveToFirst();
+        while (cursor.moveToNext()) {
+            for (String column : colNames) {
+
+
+                switch (column) {
+
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH: {
+                        dataMap.put(ConstantsVault.POSTER_PATH, cursor.getString(cursor.getColumnIndex(column)));
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT: {
+                        dataMap.put(ConstantsVault.ADULT, cursor.getString(cursor.getColumnIndex(column)));
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE: {
+                        dataMap.put(ConstantsVault.RELEASE_DATE, cursor.getString(cursor.getColumnIndex(column)));
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID: {
+                        Integer id = cursor.getInt(cursor.getColumnIndex(column));
+                        dataMap.put(ConstantsVault.ID, id.toString());
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORGINAL_TITLE: {
+                        dataMap.put(ConstantsVault.ORIGINAL_TITLE, cursor.getString(cursor.getColumnIndex(column)));
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORIGINAL_LANGUAGE:{
+                        dataMap.put(ConstantsVault.ORIGINAL_LANGUAGE, cursor.getString(cursor.getColumnIndex(column)));
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE: {
+                        dataMap.put(ConstantsVault.TITLE, cursor.getString(cursor.getColumnIndex(column)));
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH: {
+                        dataMap.put(ConstantsVault.BACKDROP_PATH, cursor.getString(cursor.getColumnIndex(column)));
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY: {
+                        Double popularity = cursor.getDouble(cursor.getColumnIndex(column));
+                        dataMap.put(ConstantsVault.POPULARITY, popularity.toString());
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT: {
+                        Double voteCount = cursor.getDouble(cursor.getColumnIndex(column));
+                        dataMap.put(ConstantsVault.VOTE_COUNT, voteCount.toString());
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO: {
+                        dataMap.put(ConstantsVault.VIDEO, cursor.getString(cursor.getColumnIndex(column)));
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE: {
+                        Double voteAverage = cursor.getDouble(cursor.getColumnIndex(column));
+                        dataMap.put(ConstantsVault.ORIGINAL_TITLE, voteAverage.toString());
+                        break;
+                    }
+                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_OVERVIEW: {
+                        dataMap.put(ConstantsVault.OVERVIEW, cursor.getString(cursor.getColumnIndex(column)));
+                        break;
+                    }
+
+
+                }
             }
-  //Todo implement reconstruction of Movie Items from database       
+            movieItems.add(buildMovie(dataMap));
+        }
 
         return movieItems;
     }
@@ -53,6 +128,9 @@ public class MovieItemFactory {
     /**
      * Method: MovieItem buildMovie(Map<String,String> dataMap)
      * Uses a map of parsed json data to instantiate a single MovieItem
+     *
+     * @param dataMap
+     * @return MovieItem
      */
     public static MovieItem buildMovie(Map<String, String> dataMap) {
         //TODO Implement
@@ -118,6 +196,7 @@ public class MovieItemFactory {
                     }
                     case ConstantsVault.OVERVIEW: {
                         movieItem.setOverview(dataMap.get(key));
+                        break;
                     }
                 }
 
@@ -129,8 +208,6 @@ public class MovieItemFactory {
 
         return movieItem;
     }
-
-
 
 
 }
