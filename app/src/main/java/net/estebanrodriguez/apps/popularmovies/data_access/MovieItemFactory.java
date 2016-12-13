@@ -1,9 +1,12 @@
 package net.estebanrodriguez.apps.popularmovies.data_access;
 
+import android.database.Cursor;
+
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +33,20 @@ public class MovieItemFactory {
             movieItems.add(buildMovie(map));
         return movieItems;
 
+    }
+
+    public static List<MovieItem> buildMovieList(Cursor cursor) {
+        List<MovieItem> movieItems = new ArrayList<>();
+
+            Map<String, String> dataMap = new HashMap<>();
+            String[] colNames = cursor.getColumnNames();
+            cursor.moveToFirst();
+            while (cursor.moveToNext()){
+
+            }
+  //Todo implement reconstruction of Movie Items from database       
+
+        return movieItems;
     }
 
 
@@ -112,6 +129,8 @@ public class MovieItemFactory {
 
         return movieItem;
     }
+
+
 
 
 }

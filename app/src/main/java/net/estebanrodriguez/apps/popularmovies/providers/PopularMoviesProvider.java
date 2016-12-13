@@ -46,15 +46,30 @@ public class PopularMoviesProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {
         db = mLocalMovieDBHelper.getReadableDatabase();
 
-        if(URI_MATCHER.match(uri) != MOVIE_ITEM_LIST &&
-                URI_MATCHER.match(uri) != MOVIE_ITEM_ID){
-            throw new IllegalArgumentException("Unsupported URI for query");
+        try{
+
+            switch (URI_MATCHER.match(uri)){
+
+                case MOVIE_ITEM_LIST:{
+                    String query = "SELECT * from " + MovieItemDatabaseContract.BasicMovieDetailEntries.TABLE_NAME;
+                    if(db != null){
+                        return db.rawQuery(query, null);
+                    }
+                }
+
+            }
+
+            } catch (SQLException e){
+
         }
+//        finally {
+//            if(db != null){
+//                db.close();
+//            }
+//        }
 
-        switch (URI_MATCHER.match(uri)){
 
 
-        }
 
         return null;
     }
@@ -98,28 +113,36 @@ public class PopularMoviesProvider extends ContentProvider {
         }
 
 
-        db = mLocalMovieDBHelper.getWritableDatabase();
+        try {
 
-        switch (URI_MATCHER.match(uri)){
 
-            case MOVIE_ITEM_LIST:{
-                long id = db.insert(MovieItemDatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
-                return (getUriForId(id, uri));
+            db = mLocalMovieDBHelper.getWritableDatabase();
+
+            switch (URI_MATCHER.match(uri)) {
+
+                case MOVIE_ITEM_LIST: {
+                    long id = db.insert(MovieItemDatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
+                    return (getUriForId(id, uri));
+                }
+
+                case MOVIE_CLIP_LIST: {
+                    long id = db.insert(MovieItemDatabaseContract.MovieClipEntries.TABLE_NAME, null, contentValues);
+                    return (getUriForId(id, uri));
+                }
+
+                case MOVIE_REVIEW_LIST: {
+                    long id = db.insert(MovieItemDatabaseContract.MovieReviewEntries.TABLE_NAME, null, contentValues);
+                    return (getUriForId(id, uri));
+                }
+
             }
-
-            case MOVIE_CLIP_LIST:{
-                long id = db.insert(MovieItemDatabaseContract.MovieClipEntries.TABLE_NAME, null, contentValues);
-                return (getUriForId(id, uri));
-            }
-
-            case MOVIE_REVIEW_LIST:{
-                long id = db.insert(MovieItemDatabaseContract.MovieReviewEntries.TABLE_NAME, null, contentValues);
-                return (getUriForId(id, uri));
-            }
-
+        } catch (SQLException e){
         }
-
-
+        finally {
+            if(db != null){
+                db.close();
+            }
+        }
         return null;
     }
 

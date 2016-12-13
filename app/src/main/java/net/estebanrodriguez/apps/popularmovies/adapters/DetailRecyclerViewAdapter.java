@@ -4,8 +4,10 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +46,8 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     private final int MOVIE_ITEM = 2;
     private final int MOVIE_CLIP_HEADER = 4;
     private final int MOVIE_REVIEW_HEADER = 5;
+
+    public static String LOG_TAG = DetailRecyclerViewAdapter.class.getName();
 
     public DetailRecyclerViewAdapter(MovieItem movieItem, Context context) {
         mMovieItem = movieItem;
@@ -102,11 +106,16 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         .placeholder(R.drawable.happy_popcorn)
                         .error(R.drawable.sad_popcorn)
                         .into(imageView);
+
+
                 ImageButton starButton = ((MovieItemDetailsViewHolder) holder).getStarButton();
                 starButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         favoriteMovie(mMovieItem);
+                        showFavorites();
+
+
                     }
                 });
 
@@ -192,7 +201,25 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
 
 
+    }
 
+    //TODO remove after testing
+    public void showFavorites(){
+
+        Cursor cursor = mContext.getContentResolver().query(MovieItemDatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
+        cursor.moveToFirst();
+        String[] colNames = cursor.getColumnNames();
+
+        while(cursor.moveToNext())
+            for(String column: colNames){
+                try{
+                    Log.e(LOG_TAG, column + ": " + cursor.getString(cursor.getColumnIndex(column)));
+
+                }catch (Exception e){
+                    Log.e(LOG_TAG, column + ": " + cursor.getInt(cursor.getColumnIndex(column)));
+                }
+
+            }
 
     }
 
