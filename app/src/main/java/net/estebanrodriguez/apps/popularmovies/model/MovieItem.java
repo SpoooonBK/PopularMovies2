@@ -6,9 +6,12 @@ import android.os.Parcelable;
 
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDetailFactory;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieItemFactory;
+import net.estebanrodriguez.apps.popularmovies.utility.DateParser;
 import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -82,8 +85,21 @@ public class MovieItem implements Parcelable {
         return mReleaseDate;
     }
 
-    public void setReleaseDate(Date releaseDate) {
-        mReleaseDate = releaseDate;
+    public String getFormattedReleaseDate() {
+        return DateParser.parseDate(mReleaseDate);
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        try{
+            mReleaseDate = java.sql.Date.valueOf(releaseDate);
+        }catch (IllegalArgumentException e){
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+            try {
+                mReleaseDate = simpleDateFormat.parse(releaseDate);
+            } catch (ParseException e1) {
+                e1.printStackTrace();
+            }
+        }
     }
 
     public List<String> getGenreIds() {

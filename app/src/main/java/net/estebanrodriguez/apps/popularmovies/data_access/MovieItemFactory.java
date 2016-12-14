@@ -151,7 +151,7 @@ public class MovieItemFactory {
                         break;
                     }
                     case ConstantsVault.RELEASE_DATE: {
-                        movieItem.setReleaseDate(Date.valueOf(dataMap.get(key)));
+                        movieItem.setReleaseDate((dataMap.get(key)));
                         break;
                     }
                     case ConstantsVault.GENRE_IDS: {

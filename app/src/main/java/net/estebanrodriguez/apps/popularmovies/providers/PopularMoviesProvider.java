@@ -159,12 +159,6 @@ public class PopularMoviesProvider extends ContentProvider {
     private Uri getUriForId(long id, Uri uri) {
         if (id > 0) {
             Uri itemUri = ContentUris.withAppendedId(uri, id);
-//            if (!isInBatchMode()) {
-//                // notify all listeners of changes:
-//                getContext().
-//                        getContentResolver().
-//                        notifyChange(itemUri, null);
-//            }
             return itemUri;
         }
         // s.th. went wrong:

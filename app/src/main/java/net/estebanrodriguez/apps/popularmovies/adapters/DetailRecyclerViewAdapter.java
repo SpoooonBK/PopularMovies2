@@ -23,6 +23,7 @@ import net.estebanrodriguez.apps.popularmovies.database.MovieItemDatabaseContrac
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
+import net.estebanrodriguez.apps.popularmovies.utility.DateParser;
 
 
 import java.util.Date;
@@ -89,7 +90,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             case (MOVIE_ITEM): {
 
                 final MovieItem movieItem = (MovieItem) mMovieDetailsList.get(position);
-                Date releaseDate = movieItem.getReleaseDate();
+                String releaseDate = movieItem.getFormattedReleaseDate();
                 String overview = movieItem.getOverview();
                 Double rating = movieItem.getVoteAverage();
                 Double popularity = movieItem.getPopularity();
@@ -99,7 +100,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
                 ((MovieItemDetailsViewHolder) holder).getTextViewPopularity().setText(popularity.toString());
                 ((MovieItemDetailsViewHolder) holder).getTextViewRating().setText(rating.toString());
-                ((MovieItemDetailsViewHolder) holder).getTextViewReleaseDate().setText(releaseDate.toString());
+                ((MovieItemDetailsViewHolder) holder).getTextViewReleaseDate().setText(releaseDate);
                 ((MovieItemDetailsViewHolder) holder).getTextViewOverview().setText(overview);
 
                 ImageView imageView = ((MovieItemDetailsViewHolder) holder).getImageViewPoster();
@@ -144,6 +145,8 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         List<MovieReview> movieReviews = movieItem.getMovieReviews();
 
 
+
+
         ContentValues basicDetailsValues = new ContentValues();
 
         basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
@@ -154,7 +157,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_OVERVIEW, movieItem.getOverview());
         basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY, movieItem.getPopularity());
         basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH, movieItem.getPosterPath());
-        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE, movieItem.getReleaseDate().toString());
+        basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE, movieItem.getFormattedReleaseDate());
         basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE, movieItem.getTitle());
         basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO, movieItem.isVideo());
         basicDetailsValues.put(MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE, movieItem.getVoteAverage());
