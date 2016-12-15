@@ -64,26 +64,6 @@ public class MovieDAOImpl implements MovieDAO {
 
     }
 
-//    public Map<Integer, List<MovieDetail>> getMovieDetails(MovieItem movieItem) {
-//
-//        Map<Integer, List<MovieDetail>> map = new HashMap<>();
-//
-//        URL movieClipURL = getMovieClipDataURL(movieItem);
-//        String movieClipJSONString = fetchMovieData(movieClipURL);
-//
-//        List<MovieDetail> movieDetailClips = MovieDetailFactory.buildMovieDetails(movieClipList, MovieDetailFactory.MOVIE_CLIP);
-//        map.put(MovieDetailFactory.MOVIE_CLIP, movieDetailClips);
-//
-//
-//
-//
-////        map.put(MovieDetailFactory.MOVIE_CLIP, MovieDetailFactory.buildMovieDetails(movieClipList, MovieDetailFactory.MOVIE_CLIP));
-////
-////
-////        List<Map<String, String>> movieReviewList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieReviewsURL(movieItem)));
-////        map.put(MovieDetailFactory.MOVIE_REVIEW, MovieDetailFactory.buildMovieDetails(movieReviewList, MovieDetailFactory.MOVIE_REVIEW));
-//        return map;
-//    }
 
 
     public MovieItem completeMovieDetails(MovieItem movieItem){

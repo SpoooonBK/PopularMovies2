@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieDetailFactory;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieItemFactory;
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
@@ -209,21 +210,19 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     //TODO remove after testing
     public void showFavorites(){
 
-        Cursor cursor = mContext.getContentResolver().query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
-        MovieItemFactory.buildMovieList(cursor);
-        cursor.moveToFirst();
-        String[] colNames = cursor.getColumnNames();
+        ContentResolver contentResolver = mContext.getContentResolver();
 
-        while(cursor.moveToNext())
-            for(String column: colNames){
-                try{
-                    Log.e(LOG_TAG, column + ": " + cursor.getString(cursor.getColumnIndex(column)));
+        Cursor cursor = contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
+        List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
+        for(MovieItem movieItem : movieItems)
+        {
+            String id = movieItem.getID();
+            cursor = contentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
+            List<MovieClip> movieClips = MovieDetailFactory.buildMovieClipList(cursor);
 
-                }catch (Exception e){
-                    Log.e(LOG_TAG, column + ": " + cursor.getInt(cursor.getColumnIndex(column)));
-                }
-
-            }
+            cursor = contentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
+            List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
+        }
 
     }
 
@@ -231,13 +230,6 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemCount() {
-//        int extraRows = 0;
-//        if(hasMovieClip()){
-//            extraRows++;
-//        }
-//        if(hasMovieReview()){
-//            extraRows++;
-//        }
 
         return (mMovieDetailsList.size());
     }
@@ -278,23 +270,6 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public int getItemViewType(int position) {
 
-//        if(position > 0
-//                && hasMovieClip()
-//                && mMovieDetailsList.get(position - 1) instanceof MovieItem
-//                && mMovieDetailsList.get(position) instanceof MovieClip)
-//            return MOVIE_CLIP_HEADER;
-//
-//        if(position > 0
-//                && hasMovieReview()
-//                && mMovieDetailsList.get(position -1) instanceof MovieItem
-//                && mMovieDetailsList.get(position) instanceof MovieReview)
-//            return MOVIE_REVIEW_HEADER;
-//
-//        if(position > 0
-//                && hasMovieReview()
-//                && mMovieDetailsList.get(position -1) instanceof MovieClip
-//                && mMovieDetailsList.get(position) instanceof MovieReview)
-//            return MOVIE_REVIEW_HEADER;
 
         if(mMovieDetailsList.get(position) instanceof MovieClip){
             return MOVIE_CLIP;

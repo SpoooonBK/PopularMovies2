@@ -43,7 +43,7 @@ public class PopularMoviesProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         db = mLocalMovieDBHelper.getReadableDatabase();
 
         try{
@@ -52,6 +52,24 @@ public class PopularMoviesProvider extends ContentProvider {
 
                 case MOVIE_ITEM_LIST:{
                     String query = "SELECT * from " + DatabaseContract.BasicMovieDetailEntries.TABLE_NAME;
+                    if(db != null){
+                        return db.rawQuery(query, null);
+                    }
+                }
+
+                case MOVIE_CLIP_LIST:{
+                    String query = "SELECT * from " + DatabaseContract.MovieClipEntries.TABLE_NAME
+                            + " WHERE " + DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID
+                            + " = " + selection;
+                    if(db != null){
+                        return db.rawQuery(query, null);
+                    }
+                }
+
+                case MOVIE_REVIEW_LIST:{
+                    String query = "SELECT * from " + DatabaseContract.MovieReviewEntries.TABLE_NAME
+                            + " WHERE " + DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID
+                            + " = " + selection;
                     if(db != null){
                         return db.rawQuery(query, null);
                     }

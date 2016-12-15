@@ -8,6 +8,7 @@ import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,111 +25,125 @@ public class MovieDetailFactory {
     public static final int MOVIE_CLIP = 0;
     public static final int MOVIE_REVIEW = 1;
 
-    public static List<MovieDetail> buildMovieDetails(List<Map<String, String>> mapList, Integer detail_type) {
-        List<MovieDetail> movieDetails = new ArrayList<>();
 
-        switch (detail_type){
-
-            case MOVIE_CLIP:{
-                for (Map<String, String> map : mapList)
-                    movieDetails.add((buildMovieClip(map)));
-                break;
-            }
-            case MOVIE_REVIEW: {
-                for (Map<String, String> map : mapList)
-                    movieDetails.add(buildMovieReview(map));
-            }
-        }
-
-        return movieDetails;
-    }
-
-    public static List<MovieDetail> buildMovieDetails(Cursor cursor){
-        List<MovieDetail> movieDetails = new ArrayList<>();
+    public static List<MovieClip> buildMovieClipList(Cursor cursor) {
 
         String[] colNames = cursor.getColumnNames();
-
-
-        int detailType;
         List<Map<String, String>> detailsList = new ArrayList<>();
 
         cursor.moveToFirst();
-        while(cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             Map<String, String> dataMap = new HashMap<>();
-            for(String column: colNames){
+            for (String column : colNames) {
                 int index = cursor.getColumnIndex(column);
 
-                switch (column){
+                switch (column) {
 
-                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID:{
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID: {
                         dataMap.put(ConstantsVault.DETAIL_ID, cursor.getString(index));
+                        break;
                     }
 
-                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO3166:{
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO3166: {
                         dataMap.put(ConstantsVault.LANGUAGE_CODE_3116_1, cursor.getString(index));
+                        break;
                     }
 
-                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO639:{
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO639: {
                         dataMap.put(ConstantsVault.LANGUAGE_CODE_639_1, cursor.getString(index));
+                        break;
                     }
-                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_URL_KEY:{
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_URL_KEY: {
                         dataMap.put(ConstantsVault.CLIP_KEY, cursor.getString(index));
+                        break;
                     }
-                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_NAME:{
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_NAME: {
                         dataMap.put(ConstantsVault.CLIP_NAME, cursor.getString(index));
+                        break;
                     }
 
 
-                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_SIZE:{
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_SIZE: {
                         dataMap.put(ConstantsVault.CLIP_SIZE, cursor.getString(index));
+                        break;
                     }
 
-                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_SITE:{
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_SITE: {
                         Integer size = cursor.getInt(cursor.getInt(index));
                         dataMap.put(ConstantsVault.CLIP_SITE, size.toString());
+                        break;
                     }
 
-                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_TYPE:{
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_TYPE: {
                         dataMap.put(ConstantsVault.CLIP_TYPE, cursor.getString(cursor.getColumnIndex(column)));
-                        detailType = MOVIE_CLIP;
+                        break;
                     }
-
-
-
-
-
                 }
-
-
             }
 
             detailsList.add(dataMap);
 
         }
 
-        if(detailType == MOVIE_CLIP){
+        return buildMovieClipList(detailsList);
 
-        }
-
-
-
-        return movieDetails;
     }
 
 
-
-
-    public static List<MovieClip> buildMovieClipList(List<Map<String, String>> mapList){
+    public static List<MovieClip> buildMovieClipList(List<Map<String, String>> mapList) {
         List<MovieClip> movieClips = new ArrayList<>();
-        for (Map<String, String> map : mapList){
+        for (Map<String, String> map : mapList) {
             movieClips.add(buildMovieClip(map));
         }
-       return movieClips;
+        return movieClips;
     }
+
+
+    public static List<MovieReview> buildMovieReviewList(Cursor cursor) {
+        String[] colNames = cursor.getColumnNames();
+        List<Map<String, String>> detailsList = new ArrayList<>();
+
+        cursor.moveToFirst();
+        while (cursor.moveToNext()) {
+            Map<String, String> dataMap = new HashMap<>();
+            for (String column : colNames) {
+                int index = cursor.getColumnIndex(column);
+
+                switch (column) {
+
+                    case DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID: {
+                        dataMap.put(ConstantsVault.DETAIL_ID, cursor.getString(index));
+                        break;
+                    }
+
+                    case DatabaseContract.MovieReviewEntries.COLUMN_NAME_AUTHOR: {
+                        dataMap.put(ConstantsVault.DETAIL_AUTHOR, cursor.getString(index));
+                        break;
+                    }
+
+                    case DatabaseContract.MovieReviewEntries.COLUMN_NAME_CONTENT: {
+                        dataMap.put(ConstantsVault.DETAIL_CONTENT, cursor.getString(index));
+                        break;
+                    }
+                    case DatabaseContract.MovieReviewEntries.COLUMN_NAME_REVIEW_URL: {
+                        dataMap.put(ConstantsVault.DETAIL_URL, cursor.getString(index));
+                        break;
+                    }
+
+                }
+            }
+
+            detailsList.add(dataMap);
+
+        }
+
+        return buildMovieReviewList(detailsList);
+    }
+
 
     public static List<MovieReview> buildMovieReviewList(List<Map<String, String>> mapList) {
         List<MovieReview> movieReviews = new ArrayList<>();
-        for(Map<String, String> map : mapList ){
+        for (Map<String, String> map : mapList) {
             movieReviews.add(buildMovieReview(map));
         }
         return movieReviews;
@@ -142,25 +157,25 @@ public class MovieDetailFactory {
             if (map.get(key) != null) {
                 switch (key) {
 
-                    case ConstantsVault.DETAIL_ID:{
+                    case ConstantsVault.DETAIL_ID: {
                         movieReview.setId(map.get(key));
                         break;
                     }
-                    case ConstantsVault.DETAIL_AUTHOR:{
+                    case ConstantsVault.DETAIL_AUTHOR: {
                         movieReview.setAuthor(map.get(key));
                         break;
                     }
-                    case ConstantsVault.DETAIL_CONTENT:{
+                    case ConstantsVault.DETAIL_CONTENT: {
                         movieReview.setContent(map.get(key));
                         break;
                     }
-                    case ConstantsVault.DETAIL_URL:{
+                    case ConstantsVault.DETAIL_URL: {
                         movieReview.setUrl((map.get(key)));
                     }
 
                 }
-                }
-                }
+            }
+        }
 
         return movieReview;
     }
