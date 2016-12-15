@@ -1,12 +1,14 @@
 package net.estebanrodriguez.apps.popularmovies.data_access;
 
-import android.util.Log;
+import android.database.Cursor;
 
+import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +42,80 @@ public class MovieDetailFactory {
 
         return movieDetails;
     }
+
+    public static List<MovieDetail> buildMovieDetails(Cursor cursor){
+        List<MovieDetail> movieDetails = new ArrayList<>();
+
+        String[] colNames = cursor.getColumnNames();
+
+
+        int detailType;
+        List<Map<String, String>> detailsList = new ArrayList<>();
+
+        cursor.moveToFirst();
+        while(cursor.moveToNext()){
+            Map<String, String> dataMap = new HashMap<>();
+            for(String column: colNames){
+                int index = cursor.getColumnIndex(column);
+
+                switch (column){
+
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID:{
+                        dataMap.put(ConstantsVault.DETAIL_ID, cursor.getString(index));
+                    }
+
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO3166:{
+                        dataMap.put(ConstantsVault.LANGUAGE_CODE_3116_1, cursor.getString(index));
+                    }
+
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO639:{
+                        dataMap.put(ConstantsVault.LANGUAGE_CODE_639_1, cursor.getString(index));
+                    }
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_URL_KEY:{
+                        dataMap.put(ConstantsVault.CLIP_KEY, cursor.getString(index));
+                    }
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_NAME:{
+                        dataMap.put(ConstantsVault.CLIP_NAME, cursor.getString(index));
+                    }
+
+
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_SIZE:{
+                        dataMap.put(ConstantsVault.CLIP_SIZE, cursor.getString(index));
+                    }
+
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_SITE:{
+                        Integer size = cursor.getInt(cursor.getInt(index));
+                        dataMap.put(ConstantsVault.CLIP_SITE, size.toString());
+                    }
+
+                    case DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_TYPE:{
+                        dataMap.put(ConstantsVault.CLIP_TYPE, cursor.getString(cursor.getColumnIndex(column)));
+                        detailType = MOVIE_CLIP;
+                    }
+
+
+
+
+
+                }
+
+
+            }
+
+            detailsList.add(dataMap);
+
+        }
+
+        if(detailType == MOVIE_CLIP){
+
+        }
+
+
+
+        return movieDetails;
+    }
+
+
 
 
     public static List<MovieClip> buildMovieClipList(List<Map<String, String>> mapList){

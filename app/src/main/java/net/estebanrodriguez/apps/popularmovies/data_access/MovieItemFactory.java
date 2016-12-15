@@ -2,10 +2,9 @@ package net.estebanrodriguez.apps.popularmovies.data_access;
 
 import android.database.Cursor;
 
-import net.estebanrodriguez.apps.popularmovies.database.MovieItemDatabaseContract;
+import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,58 +58,58 @@ public class MovieItemFactory {
 
                 switch (column) {
 
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH: {
                         dataMap.put(ConstantsVault.POSTER_PATH, cursor.getString(cursor.getColumnIndex(column)));
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT: {
                         dataMap.put(ConstantsVault.ADULT, cursor.getString(cursor.getColumnIndex(column)));
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE: {
                         dataMap.put(ConstantsVault.RELEASE_DATE, cursor.getString(cursor.getColumnIndex(column)));
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID: {
                         Integer id = cursor.getInt(cursor.getColumnIndex(column));
                         dataMap.put(ConstantsVault.ID, id.toString());
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORGINAL_TITLE: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORGINAL_TITLE: {
                         dataMap.put(ConstantsVault.ORIGINAL_TITLE, cursor.getString(cursor.getColumnIndex(column)));
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORIGINAL_LANGUAGE:{
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORIGINAL_LANGUAGE:{
                         dataMap.put(ConstantsVault.ORIGINAL_LANGUAGE, cursor.getString(cursor.getColumnIndex(column)));
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE: {
                         dataMap.put(ConstantsVault.TITLE, cursor.getString(cursor.getColumnIndex(column)));
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH: {
                         dataMap.put(ConstantsVault.BACKDROP_PATH, cursor.getString(cursor.getColumnIndex(column)));
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY: {
                         Double popularity = cursor.getDouble(cursor.getColumnIndex(column));
                         dataMap.put(ConstantsVault.POPULARITY, popularity.toString());
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT: {
                         Double voteCount = cursor.getDouble(cursor.getColumnIndex(column));
                         dataMap.put(ConstantsVault.VOTE_COUNT, voteCount.toString());
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO: {
                         dataMap.put(ConstantsVault.VIDEO, cursor.getString(cursor.getColumnIndex(column)));
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE: {
                         Double voteAverage = cursor.getDouble(cursor.getColumnIndex(column));
                         dataMap.put(ConstantsVault.ORIGINAL_TITLE, voteAverage.toString());
                         break;
                     }
-                    case MovieItemDatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_OVERVIEW: {
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_OVERVIEW: {
                         dataMap.put(ConstantsVault.OVERVIEW, cursor.getString(cursor.getColumnIndex(column)));
                         break;
                     }

@@ -10,8 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
-import net.estebanrodriguez.apps.popularmovies.database.MovieItemDatabaseContract;
-import net.estebanrodriguez.apps.popularmovies.database.MovieItemDatabaseHelper;
+import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
+import net.estebanrodriguez.apps.popularmovies.database.DatabaseHelper;
 
 /**
  * Created by Spoooon on 11/21/2016.
@@ -19,7 +19,7 @@ import net.estebanrodriguez.apps.popularmovies.database.MovieItemDatabaseHelper;
 
 public class PopularMoviesProvider extends ContentProvider {
 
-    private MovieItemDatabaseHelper mLocalMovieDBHelper;
+    private DatabaseHelper mLocalMovieDBHelper;
     private SQLiteDatabase db;
 
     //UriMatcher constants
@@ -36,7 +36,7 @@ public class PopularMoviesProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
 
-        mLocalMovieDBHelper = new MovieItemDatabaseHelper(getContext());
+        mLocalMovieDBHelper = new DatabaseHelper(getContext());
 
         return true;
     }
@@ -51,7 +51,7 @@ public class PopularMoviesProvider extends ContentProvider {
             switch (URI_MATCHER.match(uri)){
 
                 case MOVIE_ITEM_LIST:{
-                    String query = "SELECT * from " + MovieItemDatabaseContract.BasicMovieDetailEntries.TABLE_NAME;
+                    String query = "SELECT * from " + DatabaseContract.BasicMovieDetailEntries.TABLE_NAME;
                     if(db != null){
                         return db.rawQuery(query, null);
                     }
@@ -80,22 +80,22 @@ public class PopularMoviesProvider extends ContentProvider {
         switch (URI_MATCHER.match(uri)){
 
             case MOVIE_ITEM_LIST:
-                return MovieItemDatabaseContract.BasicMovieDetailEntries.CONTENT_TYPE;
+                return DatabaseContract.BasicMovieDetailEntries.CONTENT_TYPE;
 
             case  MOVIE_ITEM_ID:
-                return MovieItemDatabaseContract.BasicMovieDetailEntries.CONTENT_TYPE_ITEM;
+                return DatabaseContract.BasicMovieDetailEntries.CONTENT_TYPE_ITEM;
 
             case MOVIE_CLIP_LIST:
-                return MovieItemDatabaseContract.MovieClipEntries.CONTENT_TYPE;
+                return DatabaseContract.MovieClipEntries.CONTENT_TYPE;
 
             case MOVIE_CLIP_ID:
-                return MovieItemDatabaseContract.MovieClipEntries.CONTENT_TYPE_ITEM;
+                return DatabaseContract.MovieClipEntries.CONTENT_TYPE_ITEM;
 
             case MOVIE_REVIEW_LIST:
-                return MovieItemDatabaseContract.MovieReviewEntries.CONTENT_TYPE;
+                return DatabaseContract.MovieReviewEntries.CONTENT_TYPE;
 
             case MOVIE_REVIEW_ID:
-                return MovieItemDatabaseContract.MovieReviewEntries.CONTENT_TYPE_ITEM;
+                return DatabaseContract.MovieReviewEntries.CONTENT_TYPE_ITEM;
 
             default:
                 return null;
@@ -121,17 +121,17 @@ public class PopularMoviesProvider extends ContentProvider {
             switch (URI_MATCHER.match(uri)) {
 
                 case MOVIE_ITEM_LIST: {
-                    long id = db.insert(MovieItemDatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
+                    long id = db.insert(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
                     return (getUriForId(id, uri));
                 }
 
                 case MOVIE_CLIP_LIST: {
-                    long id = db.insert(MovieItemDatabaseContract.MovieClipEntries.TABLE_NAME, null, contentValues);
+                    long id = db.insert(DatabaseContract.MovieClipEntries.TABLE_NAME, null, contentValues);
                     return (getUriForId(id, uri));
                 }
 
                 case MOVIE_REVIEW_LIST: {
-                    long id = db.insert(MovieItemDatabaseContract.MovieReviewEntries.TABLE_NAME, null, contentValues);
+                    long id = db.insert(DatabaseContract.MovieReviewEntries.TABLE_NAME, null, contentValues);
                     return (getUriForId(id, uri));
                 }
 
@@ -172,28 +172,28 @@ public class PopularMoviesProvider extends ContentProvider {
 
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
 
-        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
-                MovieItemDatabaseContract.PATH_MOVIE_BASIC_DETAILS,
+        URI_MATCHER.addURI(DatabaseContract.CONTENT_AUTHORITY,
+                DatabaseContract.PATH_MOVIE_BASIC_DETAILS,
                 MOVIE_ITEM_LIST);
 
-        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
-                MovieItemDatabaseContract.PATH_MOVIE_BASIC_DETAILS +"/#",
+        URI_MATCHER.addURI(DatabaseContract.CONTENT_AUTHORITY,
+                DatabaseContract.PATH_MOVIE_BASIC_DETAILS +"/#",
                 MOVIE_ITEM_ID);
 
-        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
-                MovieItemDatabaseContract.PATH_MOVIE_CLIPS,
+        URI_MATCHER.addURI(DatabaseContract.CONTENT_AUTHORITY,
+                DatabaseContract.PATH_MOVIE_CLIPS,
                 MOVIE_CLIP_LIST);
 
-        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
-                MovieItemDatabaseContract.PATH_MOVIE_CLIPS + "/#",
+        URI_MATCHER.addURI(DatabaseContract.CONTENT_AUTHORITY,
+                DatabaseContract.PATH_MOVIE_CLIPS + "/#",
                 MOVIE_CLIP_ID);
 
-        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
-                MovieItemDatabaseContract.PATH_MOVIE_REVIEWS,
+        URI_MATCHER.addURI(DatabaseContract.CONTENT_AUTHORITY,
+                DatabaseContract.PATH_MOVIE_REVIEWS,
                 MOVIE_REVIEW_LIST);
 
-        URI_MATCHER.addURI(MovieItemDatabaseContract.CONTENT_AUTHORITY,
-                MovieItemDatabaseContract.PATH_MOVIE_REVIEWS + "/#",
+        URI_MATCHER.addURI(DatabaseContract.CONTENT_AUTHORITY,
+                DatabaseContract.PATH_MOVIE_REVIEWS + "/#",
                 MOVIE_REVIEW_ID);
 
     }

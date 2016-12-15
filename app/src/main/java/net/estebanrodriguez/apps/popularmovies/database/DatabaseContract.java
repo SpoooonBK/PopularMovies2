@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
  * Created by Spoooon on 11/17/2016.
  */
 
-public final class MovieItemDatabaseContract {
+public final class DatabaseContract {
 
     public static final String CONTENT_AUTHORITY = "net.estebanrodriguez.apps.popularmovies";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -17,7 +17,7 @@ public final class MovieItemDatabaseContract {
     public static final String PATH_MOVIE_CLIPS = MovieClipEntries.TABLE_NAME;
     public static final String PATH_MOVIE_REVIEWS = MovieReviewEntries.TABLE_NAME;
 
-    private MovieItemDatabaseContract() {}
+    private DatabaseContract() {}
 
     public static class BasicMovieDetailEntries implements BaseColumns {
 
@@ -64,11 +64,12 @@ public final class MovieItemDatabaseContract {
         public static final String COLUMN_NAME_MOVIE_ID = "movie_id";
         public static final String COLUMN_NAME_LANGUAGE_ISO639 = "iso_639";
         public static final String COLUMN_NAME_LANGUAGE_ISO3166 = "iso_3166";
-        public static final String COLUMN_NAME_KEY = "key";
+        public static final String COLUMN_NAME_URL_KEY = "url_key";
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_SITE = "site";
         public static final String COLUMN_NAME_CLIP_TYPE = "clip_type";
         public static final String COLUMN_NAME_CLIP_URI = "clip_uri";
+        public static final String COLUMN_NAME_CLIP_SIZE = "clip_size";
 
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/net.estebanrodriguez.apps.popularmovies.clips";
