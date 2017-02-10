@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseHelper;
@@ -31,6 +32,7 @@ public class PopularMoviesProvider extends ContentProvider {
     private static final int MOVIE_REVIEW_LIST = 5;
     private static final int MOVIE_REVIEW_ID = 6;
 
+    private static final String LOG_TAG= PopularMoviesProvider.class.getName();
 
 
     @Override
@@ -136,11 +138,25 @@ public class PopularMoviesProvider extends ContentProvider {
 
             db = mLocalMovieDBHelper.getWritableDatabase();
 
+//TODO make sure movies are unique
+
             switch (URI_MATCHER.match(uri)) {
 
                 case MOVIE_ITEM_LIST: {
-                    long id = db.insert(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
-                    return (getUriForId(id, uri));
+                    String movieId = (String) contentValues.get(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID);
+                    String dupeCheckQuery = "SELECT * FROM " + DatabaseContract.BasicMovieDetailEntries.TABLE_NAME
+                            + " WHERE " + DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID
+                            + "= " + movieId;
+
+                    // CHECK FOR DUPLICATE ENTRIES
+                    Cursor cursor = db.rawQuery(dupeCheckQuery, null);
+                    Log.d(LOG_TAG, "Entries for movieID " + movieId + ":" + cursor.getCount());
+                    // IF NO DUPES INSERT DATA
+                    if(cursor.getCount()== 0){
+                        long id = db.insert(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
+                        return (getUriForId(id, uri));
+                    }
+                    break;
                 }
 
                 case MOVIE_CLIP_LIST: {

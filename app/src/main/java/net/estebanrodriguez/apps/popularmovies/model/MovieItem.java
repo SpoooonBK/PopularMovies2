@@ -24,16 +24,17 @@ import java.util.Set;
 public class MovieItem implements Parcelable {
 
 
-
+    private String mTitle;
+    private String mID;
     private String mPosterPath;
     private boolean mAdult;
     private String mOverview;
     private Date mReleaseDate;
     private List<String> mGenreIds;
-    private String mID;
+
     private String mOriginalTitle;
     private String mOriginalLanguage;
-    private String mTitle;
+
     private String mBackdropPath;
     private double mPopularity;
     private double mVoteCount;
@@ -283,4 +284,27 @@ public class MovieItem implements Parcelable {
             return new MovieItem[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "MovieItem{" +
+                "mTitle='" + mTitle + '\'' +
+                ", mID='" + mID + '\'' +
+                ", mPosterPath='" + mPosterPath + '\'' +
+                ", mAdult=" + mAdult +
+                ", mOverview='" + mOverview + '\'' +
+                ", mReleaseDate=" + mReleaseDate +
+                ", mGenreIds=" + mGenreIds +
+                ", mOriginalTitle='" + mOriginalTitle + '\'' +
+                ", mOriginalLanguage='" + mOriginalLanguage + '\'' +
+                ", mBackdropPath='" + mBackdropPath + '\'' +
+                ", mPopularity=" + mPopularity +
+                ", mVoteCount=" + mVoteCount +
+                ", mVideo=" + mVideo +
+                ", mVoteAverage=" + mVoteAverage +
+                ", mImageFetchURL='" + mImageFetchURL + '\'' +
+                ", mMovieClips=" + mMovieClips +
+                ", mMovieReviews=" + mMovieReviews +
+                '}';
+    }
 }

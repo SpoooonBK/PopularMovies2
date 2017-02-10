@@ -9,6 +9,7 @@ import net.estebanrodriguez.apps.popularmovies.activities.MainActivity;
 
 /**
  * Created by Spoooon on 10/27/2016.
+ * This is the Activity for the splash page.
  */
 
 public class SplashActivity extends AppCompatActivity {

@@ -18,10 +18,12 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteChecker;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDetailFactory;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieItemFactory;
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
+import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
@@ -109,7 +111,13 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         .into(imageView);
 
 
+
+
                 ImageButton starButton = ((MovieItemDetailsViewHolder) holder).getStarButton();
+                if(FavoriteChecker.isFavorited(movieItem.getID(), mContext)){
+                    starButton.setSelected(true);
+                }
+
                 starButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -222,6 +230,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             cursor = contentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
             List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
+            Log.v(LOG_TAG, movieItem.toString());
         }
 
     }

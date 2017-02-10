@@ -1,5 +1,7 @@
 package net.estebanrodriguez.apps.popularmovies.adapters;
 
+import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -59,6 +61,11 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
         public void onClick(View view) {
 
             MovieItem movieItem = getMovieItem(getAdapterPosition());
+
+            String MovieId = movieItem.getID();
+
+
+
             Intent intent = new Intent(mContext, DetailActivity.class);
             intent.putExtra(ConstantsVault.MOVIE_ITEM_PARCELABLE, movieItem);
             mContext.startActivity(intent);
@@ -114,6 +121,7 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
     public MovieItem getMovieItem(int index) {
         return mMovieItems.get(index);
     }
+
 
 
 

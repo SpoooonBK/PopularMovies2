@@ -146,4 +146,19 @@ public class MovieClip extends MovieDetail implements Parcelable {
             return new MovieClip[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "MovieClip{" +
+                "mClipID='" + mClipID + '\'' +
+                ", mLanguageCodeISO639='" + mLanguageCodeISO639 + '\'' +
+                ", mLanguagecodeiso3166='" + mLanguagecodeiso3166 + '\'' +
+                ", mKey='" + mKey + '\'' +
+                ", mName='" + mName + '\'' +
+                ", mSite='" + mSite + '\'' +
+                ", mSize=" + mSize +
+                ", mClipType='" + mClipType + '\'' +
+                ", mClipURI='" + mClipURI + '\'' +
+                '}';
+    }
 }
