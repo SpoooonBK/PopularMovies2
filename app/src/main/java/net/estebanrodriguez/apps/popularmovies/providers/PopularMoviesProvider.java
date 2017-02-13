@@ -53,10 +53,17 @@ public class PopularMoviesProvider extends ContentProvider {
             switch (URI_MATCHER.match(uri)){
 
                 case MOVIE_ITEM_LIST:{
-                    String query = "SELECT * from " + DatabaseContract.BasicMovieDetailEntries.TABLE_NAME;
-                    if(db != null){
-                        return db.rawQuery(query, null);
+
+                    if(selectionArgs == null){
+                        String query = "SELECT * from " + DatabaseContract.BasicMovieDetailEntries.TABLE_NAME;
+                        if(db != null){
+                            return db.rawQuery(query, null);
+                        }
                     }
+                    else{
+                        return db.query(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, projection,selection, selectionArgs,null, null, null);
+                    }
+                    break;
                 }
 
                 case MOVIE_CLIP_LIST:{
@@ -66,6 +73,7 @@ public class PopularMoviesProvider extends ContentProvider {
                     if(db != null){
                         return db.rawQuery(query, null);
                     }
+                    break;
                 }
 
                 case MOVIE_REVIEW_LIST:{
@@ -75,6 +83,7 @@ public class PopularMoviesProvider extends ContentProvider {
                     if(db != null){
                         return db.rawQuery(query, null);
                     }
+                    break;
                 }
 
             }
@@ -138,7 +147,7 @@ public class PopularMoviesProvider extends ContentProvider {
 
             db = mLocalMovieDBHelper.getWritableDatabase();
 
-//TODO make sure movies are unique
+
 
             switch (URI_MATCHER.match(uri)) {
 

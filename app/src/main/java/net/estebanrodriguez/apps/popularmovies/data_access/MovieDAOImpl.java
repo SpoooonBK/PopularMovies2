@@ -1,13 +1,16 @@
 package net.estebanrodriguez.apps.popularmovies.data_access;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.BuildConfig;
 import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
@@ -51,11 +54,36 @@ public class MovieDAOImpl implements MovieDAO {
     @Override
     public List<MovieItem> getAllMovies() {
 
-        List<Map<String, String>> mapList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieDataURL()));
+        String sortby = null;
+        List<Map<String, String>> mapList = null;
+        List<MovieItem> movieItemList = null;
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        if(sharedPreferences.contains("sort_preference_key")){
+            sortby = sharedPreferences.getString("sort_preference_key", null);
+            Log.e(LOG_TAG, "Sorting by " + sortby);
+        }
+
+        switch (sortby){
+
+            case "Favorites":{
+                ContentResolver contentResolver = mContext.getContentResolver();
+
+                Cursor cursor = contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
+                return MovieItemFactory.buildMovieList(cursor);
+            }
+            default:{
+                mapList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieDataURL()));
+
+            }
+
+        }
+
+
         isPreferenceChanged = false;
         mMovieData.clear();
 
-        List<MovieItem> movieItemList = MovieItemFactory.buildMovieList(mapList);
+         movieItemList= MovieItemFactory.buildMovieList(mapList);
 //        for (MovieItem movieItem : movieItemList) {
 //            movieItem.setMovieDetails(getMovieDetails(movieItem));
 //        }

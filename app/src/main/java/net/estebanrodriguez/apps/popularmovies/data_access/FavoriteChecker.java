@@ -37,7 +37,7 @@ public class FavoriteChecker {
     public static boolean isFavorited (String movieID, Context context){
 
         boolean favorited = false;
-        String selectionClause = DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID;
+        String selectionClause = DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID + " = ?";
         String[] selectionArgs = {movieID};
 
 
