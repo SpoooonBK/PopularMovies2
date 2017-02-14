@@ -41,6 +41,7 @@ public final class DatabaseContract {
         public static final String COLUMN_NAME_VOTE_AVERAGE = "vote_average";
         public static final String COLUMN_NAME_IMAGE_FETCH_URL = "image_fetch_url";
         public static final String COLUMN_NAME_TITLE ="title";
+        public static final String COLUMN_NAME_FAVORITED ="favorited";
 
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/net.estebanrodriguez.apps.popularmovies.movies";

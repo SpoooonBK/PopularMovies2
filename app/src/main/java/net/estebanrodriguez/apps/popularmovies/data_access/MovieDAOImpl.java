@@ -54,16 +54,20 @@ public class MovieDAOImpl implements MovieDAO {
     @Override
     public List<MovieItem> getAllMovies() {
 
-        String sortby = null;
+
+
         List<Map<String, String>> mapList = null;
         List<MovieItem> movieItemList = null;
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-        if(sharedPreferences.contains("sort_preference_key")){
-            sortby = sharedPreferences.getString("sort_preference_key", null);
-            Log.e(LOG_TAG, "Sorting by " + sortby);
-        }
+        String sortby = sharedPreferences.getString("sort_preference_key", null);
 
+        if(sortby == null){
+            mapList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieDataURL()));
+        }else
+
+
+//Uses local db to fetch favorites
         switch (sortby){
 
             case "Favorites":{
@@ -72,6 +76,7 @@ public class MovieDAOImpl implements MovieDAO {
                 Cursor cursor = contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
                 return MovieItemFactory.buildMovieList(cursor);
             }
+
             default:{
                 mapList = MovieDataParser.parseJsonMovieDataString(fetchMovieData(getMovieDataURL()));
 

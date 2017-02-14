@@ -31,10 +31,9 @@ public class MovieItem implements Parcelable {
     private String mOverview;
     private Date mReleaseDate;
     private List<String> mGenreIds;
-
+    private boolean mFavorited = false;
     private String mOriginalTitle;
     private String mOriginalLanguage;
-
     private String mBackdropPath;
     private double mPopularity;
     private double mVoteCount;
@@ -222,7 +221,13 @@ public class MovieItem implements Parcelable {
         return movieDetails;
     }
 
+    public boolean isFavorited() {
+        return mFavorited;
+    }
 
+    public void setFavorited(boolean favorited) {
+        mFavorited = favorited;
+    }
 
 
     @Override
@@ -232,15 +237,16 @@ public class MovieItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.mTitle);
+        dest.writeString(this.mID);
         dest.writeString(this.mPosterPath);
         dest.writeByte(this.mAdult ? (byte) 1 : (byte) 0);
         dest.writeString(this.mOverview);
         dest.writeLong(this.mReleaseDate != null ? this.mReleaseDate.getTime() : -1);
         dest.writeStringList(this.mGenreIds);
-        dest.writeString(this.mID);
+        dest.writeByte(this.mFavorited ? (byte) 1 : (byte) 0);
         dest.writeString(this.mOriginalTitle);
         dest.writeString(this.mOriginalLanguage);
-        dest.writeString(this.mTitle);
         dest.writeString(this.mBackdropPath);
         dest.writeDouble(this.mPopularity);
         dest.writeDouble(this.mVoteCount);
@@ -252,16 +258,17 @@ public class MovieItem implements Parcelable {
     }
 
     protected MovieItem(Parcel in) {
+        this.mTitle = in.readString();
+        this.mID = in.readString();
         this.mPosterPath = in.readString();
         this.mAdult = in.readByte() != 0;
         this.mOverview = in.readString();
         long tmpMReleaseDate = in.readLong();
         this.mReleaseDate = tmpMReleaseDate == -1 ? null : new Date(tmpMReleaseDate);
         this.mGenreIds = in.createStringArrayList();
-        this.mID = in.readString();
+        this.mFavorited = in.readByte() != 0;
         this.mOriginalTitle = in.readString();
         this.mOriginalLanguage = in.readString();
-        this.mTitle = in.readString();
         this.mBackdropPath = in.readString();
         this.mPopularity = in.readDouble();
         this.mVoteCount = in.readDouble();
@@ -295,6 +302,7 @@ public class MovieItem implements Parcelable {
                 ", mOverview='" + mOverview + '\'' +
                 ", mReleaseDate=" + mReleaseDate +
                 ", mGenreIds=" + mGenreIds +
+                ", mFavorited=" + mFavorited +
                 ", mOriginalTitle='" + mOriginalTitle + '\'' +
                 ", mOriginalLanguage='" + mOriginalLanguage + '\'' +
                 ", mBackdropPath='" + mBackdropPath + '\'' +

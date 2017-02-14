@@ -18,12 +18,10 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteChecker;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDetailFactory;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieItemFactory;
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
-import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
@@ -90,12 +88,12 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             case (MOVIE_ITEM): {
 
-                final MovieItem movieItem = (MovieItem) mMovieDetailsList.get(position);
-                String releaseDate = movieItem.getFormattedReleaseDate();
-                String overview = movieItem.getOverview();
-                Double rating = movieItem.getVoteAverage();
-                Double popularity = movieItem.getPopularity();
-                String fetchImage = movieItem.getImageFetchURL();
+//                final MovieItem mMovieItem = (MovieItem) mMovieDetailsList.get(position);
+                String releaseDate = mMovieItem.getFormattedReleaseDate();
+                String overview = mMovieItem.getOverview();
+                Double rating = mMovieItem.getVoteAverage();
+                Double popularity = mMovieItem.getPopularity();
+                String fetchImage = mMovieItem.getImageFetchURL();
 
 
 
@@ -114,15 +112,22 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
 
                 ImageButton starButton = ((MovieItemDetailsViewHolder) holder).getStarButton();
-                if(FavoriteChecker.isFavorited(movieItem.getID(), mContext)){
+                if(mMovieItem.isFavorited()){
                     starButton.setSelected(true);
                 }
 
                 starButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        favoriteMovie(mMovieItem);
-                        showFavorites();
+                        if(!mMovieItem.isFavorited()){
+                            mMovieItem.setFavorited(true);
+                            favoriteMovie();
+                            showFavorites();
+                        }else
+                        {
+                            mMovieItem.setFavorited(false);
+                        }
+
 
 
                     }
@@ -144,32 +149,35 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     }
 
-    public void favoriteMovie(MovieItem movieItem){
+    public void favoriteMovie(){
+
+        Log.v(LOG_TAG, "Favorited: " + mMovieItem.toString());
 
         ContentResolver contentResolver = mContext.getContentResolver();
 
-        List<MovieClip> movieClips = movieItem.getMovieClips();
-        List<MovieReview> movieReviews = movieItem.getMovieReviews();
-
-
+        List<MovieClip> movieClips = mMovieItem.getMovieClips();
+        List<MovieReview> movieReviews = mMovieItem.getMovieReviews();
 
 
         ContentValues basicDetailsValues = new ContentValues();
 
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORGINAL_TITLE, movieItem.getOriginalTitle());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH, movieItem.getBackdropPath());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_IMAGE_FETCH_URL, movieItem.getImageFetchURL());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORIGINAL_LANGUAGE, movieItem.getOriginalLanguage());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_OVERVIEW, movieItem.getOverview());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY, movieItem.getPopularity());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH, movieItem.getPosterPath());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE, movieItem.getFormattedReleaseDate());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE, movieItem.getTitle());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO, movieItem.isVideo());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE, movieItem.getVoteAverage());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT, movieItem.getVoteCount());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT, movieItem.isAdult());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID, mMovieItem.getID());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORGINAL_TITLE, mMovieItem.getOriginalTitle());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH, mMovieItem.getBackdropPath());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_IMAGE_FETCH_URL, mMovieItem.getImageFetchURL());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORIGINAL_LANGUAGE, mMovieItem.getOriginalLanguage());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_OVERVIEW, mMovieItem.getOverview());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY, mMovieItem.getPopularity());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH, mMovieItem.getPosterPath());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE, mMovieItem.getFormattedReleaseDate());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE, mMovieItem.getTitle());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO, mMovieItem.isVideo());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE, mMovieItem.getVoteAverage());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT, mMovieItem.getVoteCount());
+
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT, mMovieItem.isAdult());
+        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_FAVORITED, mMovieItem.isFavorited());
+
 
         contentResolver.insert(
                 DatabaseContract.BasicMovieDetailEntries.CONTENT_URI,
@@ -185,7 +193,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_URI, movieClip.getClipURI());
             movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO639, movieClip.getLanguageCodeISO639());
             movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO3166, movieClip.getLanguagecodeiso3166());
-            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
+            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID, mMovieItem.getID());
             movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_NAME, movieClip.getName());
             movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_SITE, movieClip.getSite());
             movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_SIZE, movieClip.getSize());
@@ -202,7 +210,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             ContentValues reviewValues = new ContentValues();
             reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_AUTHOR, movieReview.getAuthor());
             reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_CONTENT, movieReview.getContent());
-            reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
+            reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID, mMovieItem.getID());
             reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_REVIEW_URL, movieReview.getUrl());
 
             contentResolver.insert(

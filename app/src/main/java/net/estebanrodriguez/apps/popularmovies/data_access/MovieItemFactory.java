@@ -1,6 +1,7 @@
 package net.estebanrodriguez.apps.popularmovies.data_access;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
@@ -60,6 +61,7 @@ public class MovieItemFactory {
 
                     case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH: {
                         dataMap.put(ConstantsVault.POSTER_PATH, cursor.getString(cursor.getColumnIndex(column)));
+                        break;
                     }
                     case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT: {
                         dataMap.put(ConstantsVault.ADULT, cursor.getString(cursor.getColumnIndex(column)));
@@ -113,6 +115,10 @@ public class MovieItemFactory {
                         dataMap.put(ConstantsVault.OVERVIEW, cursor.getString(cursor.getColumnIndex(column)));
                         break;
                     }
+                    case DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_FAVORITED: {
+                        dataMap.put(ConstantsVault.FAVORITED, cursor.getString(cursor.getColumnIndex(column)));
+                        break;
+                    }
 
 
                 }
@@ -146,7 +152,16 @@ public class MovieItemFactory {
                         break;
                     }
                     case ConstantsVault.ADULT: {
-                        movieItem.setAdult(Boolean.parseBoolean(dataMap.get(key)));
+                        try{
+                            int value = Integer.parseInt(dataMap.get(key));
+                            if(value == 1){
+                                movieItem.setAdult(true);
+                            }else if(value == 0){
+                                movieItem.setAdult(false);
+                            }
+                        }catch (Exception e){
+                            movieItem.setAdult(Boolean.parseBoolean(dataMap.get(key)));
+                        }
                         break;
                     }
                     case ConstantsVault.RELEASE_DATE: {
@@ -186,7 +201,16 @@ public class MovieItemFactory {
                         break;
                     }
                     case ConstantsVault.VIDEO: {
-                        movieItem.setVideo(Boolean.parseBoolean(dataMap.get(key)));
+                        try{
+                            int value = Integer.parseInt(dataMap.get(key));
+                            if(value == 1){
+                                movieItem.setVideo(true);
+                            }else if(value == 0){
+                                movieItem.setVideo(false);
+                            }
+                        }catch (Exception e){
+                            movieItem.setVideo(Boolean.parseBoolean(dataMap.get(key)));
+                        }
                         break;
                     }
                     case ConstantsVault.VOTE_AVERAGE: {
@@ -195,6 +219,19 @@ public class MovieItemFactory {
                     }
                     case ConstantsVault.OVERVIEW: {
                         movieItem.setOverview(dataMap.get(key));
+                        break;
+                    }
+                    case ConstantsVault.FAVORITED: {
+                        try{
+                            int value = Integer.parseInt(dataMap.get(key));
+                            if(value == 1){
+                                movieItem.setFavorited(true);
+                            }else if(value == 0){
+                                movieItem.setFavorited(false);
+                            }
+                        }catch (Exception e){
+                            movieItem.setFavorited(Boolean.parseBoolean(dataMap.get(key)));
+                        }
                         break;
                     }
                 }

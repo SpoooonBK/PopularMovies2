@@ -54,7 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String createMovieTable = "CREATE TABLE IF NOT EXISTS " + DatabaseContract.BasicMovieDetailEntries.TABLE_NAME +
                 " ( " + DatabaseContract.BasicMovieDetailEntries._ID + " INTEGER PRIMARY KEY, " +
-                DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID + TEXT_TYPE +
+                DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_IMAGE_FETCH_URL + TEXT_TYPE + COMMA_SEP +
@@ -67,6 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE + " REAL " + COMMA_SEP +
                 DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT + " REAL " + COMMA_SEP +
+                DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_FAVORITED + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE + TEXT_TYPE + ")";
 
         String createMovieClipTable = "CREATE TABLE IF NOT EXISTS " + DatabaseContract.MovieClipEntries.TABLE_NAME + " ( " +
@@ -77,13 +78,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_SIZE + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO639 + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO3166 + TEXT_TYPE + COMMA_SEP +
-                DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID + TEXT_TYPE +
+                DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.MovieClipEntries.COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.MovieClipEntries.COLUMN_NAME_SITE + TEXT_TYPE + ")";
 
         String createMovieReviewTable = "CREATE TABLE IF NOT EXISTS " + DatabaseContract.MovieReviewEntries.TABLE_NAME + " ( " +
                 DatabaseContract.MovieReviewEntries._ID + " INTEGER PRIMARY KEY, " +
-                DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID + TEXT_TYPE +
+                DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.MovieReviewEntries.COLUMN_NAME_AUTHOR + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.MovieReviewEntries.COLUMN_NAME_CONTENT + TEXT_TYPE + COMMA_SEP +
                 DatabaseContract.MovieReviewEntries.COLUMN_NAME_REVIEW_URL + TEXT_TYPE +  ")";
