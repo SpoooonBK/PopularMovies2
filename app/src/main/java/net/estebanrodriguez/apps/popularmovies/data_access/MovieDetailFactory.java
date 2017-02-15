@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by Spoooon on 11/2/2016.
+ * Builds MovieDetail objects -reviews and clips
  */
 
 

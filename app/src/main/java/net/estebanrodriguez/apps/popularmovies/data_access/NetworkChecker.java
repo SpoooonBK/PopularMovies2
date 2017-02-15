@@ -5,7 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 /**
- * Created by Spoooon on 10/27/2016.
+ * Confirms if network connected to network
  */
 
 public class NetworkChecker {

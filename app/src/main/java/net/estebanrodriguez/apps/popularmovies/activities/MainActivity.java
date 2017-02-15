@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         //Dynamically set image sizes
         ImageSizer.setDefaultImageSize(getDisplaySizeWidth());
 
+        //Confirms network is working.  If not, show error message
+
         if (NetworkChecker.isNetworkAvailable(this)) {
             setContentView(R.layout.activity_main);
         } else {

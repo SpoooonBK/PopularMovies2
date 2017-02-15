@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by Spoooon on 10/9/2016.
+ * Builds MovieItems
  */
 
 public class MovieItemFactory {
