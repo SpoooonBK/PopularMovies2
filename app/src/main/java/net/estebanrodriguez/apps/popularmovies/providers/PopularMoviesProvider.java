@@ -32,7 +32,7 @@ public class PopularMoviesProvider extends ContentProvider {
     private static final int MOVIE_REVIEW_LIST = 5;
     private static final int MOVIE_REVIEW_ID = 6;
 
-    private static final String LOG_TAG= PopularMoviesProvider.class.getName();
+    private static final String LOG_TAG = PopularMoviesProvider.class.getName();
 
 
     @Override
@@ -48,39 +48,38 @@ public class PopularMoviesProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         db = mLocalMovieDBHelper.getReadableDatabase();
 
-        try{
+        try {
 
-            switch (URI_MATCHER.match(uri)){
+            switch (URI_MATCHER.match(uri)) {
 
-                case MOVIE_ITEM_LIST:{
+                case MOVIE_ITEM_LIST: {
 
-                    if(selectionArgs == null){
+                    if (selectionArgs == null) {
                         String query = "SELECT * from " + DatabaseContract.BasicMovieDetailEntries.TABLE_NAME;
-                        if(db != null){
+                        if (db != null) {
                             return db.rawQuery(query, null);
                         }
-                    }
-                    else{
-                        return db.query(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, projection,selection, selectionArgs,null, null, null);
+                    } else {
+                        return db.query(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
                     }
                     break;
                 }
 
-                case MOVIE_CLIP_LIST:{
+                case MOVIE_CLIP_LIST: {
                     String query = "SELECT * from " + DatabaseContract.MovieClipEntries.TABLE_NAME
                             + " WHERE " + DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID
                             + " = " + selection;
-                    if(db != null){
+                    if (db != null) {
                         return db.rawQuery(query, null);
                     }
                     break;
                 }
 
-                case MOVIE_REVIEW_LIST:{
+                case MOVIE_REVIEW_LIST: {
                     String query = "SELECT * from " + DatabaseContract.MovieReviewEntries.TABLE_NAME
                             + " WHERE " + DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID
                             + " = " + selection;
-                    if(db != null){
+                    if (db != null) {
                         return db.rawQuery(query, null);
                     }
                     break;
@@ -88,7 +87,7 @@ public class PopularMoviesProvider extends ContentProvider {
 
             }
 
-            } catch (SQLException e){
+        } catch (SQLException e) {
 
         }
 //        finally {
@@ -98,20 +97,18 @@ public class PopularMoviesProvider extends ContentProvider {
 //        }
 
 
-
-
         return null;
     }
 
     @Nullable
     @Override
     public String getType(Uri uri) {
-        switch (URI_MATCHER.match(uri)){
+        switch (URI_MATCHER.match(uri)) {
 
             case MOVIE_ITEM_LIST:
                 return DatabaseContract.BasicMovieDetailEntries.CONTENT_TYPE;
 
-            case  MOVIE_ITEM_ID:
+            case MOVIE_ITEM_ID:
                 return DatabaseContract.BasicMovieDetailEntries.CONTENT_TYPE_ITEM;
 
             case MOVIE_CLIP_LIST:
@@ -134,10 +131,10 @@ public class PopularMoviesProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        if(URI_MATCHER.match(uri) != MOVIE_ITEM_LIST &&
+        if (URI_MATCHER.match(uri) != MOVIE_ITEM_LIST &&
                 URI_MATCHER.match(uri) != MOVIE_CLIP_LIST &&
                 URI_MATCHER.match(uri) != MOVIE_REVIEW_LIST
-                ){
+                ) {
             throw new IllegalArgumentException("Unsupported uri for insertion: " + uri);
         }
 
@@ -146,7 +143,6 @@ public class PopularMoviesProvider extends ContentProvider {
 
 
             db = mLocalMovieDBHelper.getWritableDatabase();
-
 
 
             switch (URI_MATCHER.match(uri)) {
@@ -159,9 +155,8 @@ public class PopularMoviesProvider extends ContentProvider {
 
                     // CHECK FOR DUPLICATE ENTRIES
                     Cursor cursor = db.rawQuery(dupeCheckQuery, null);
-                    Log.d(LOG_TAG, "Entries for movieID " + movieId + ":" + cursor.getCount());
                     // IF NO DUPES INSERT DATA
-                    if(cursor.getCount()== 0){
+                    if (cursor.getCount() == 0) {
                         long id = db.insert(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
                         return (getUriForId(id, uri));
                     }
@@ -179,10 +174,9 @@ public class PopularMoviesProvider extends ContentProvider {
                 }
 
             }
-        } catch (SQLException e){
-        }
-        finally {
-            if(db != null){
+        } catch (SQLException e) {
+        } finally {
+            if (db != null) {
                 db.close();
             }
         }
@@ -190,7 +184,42 @@ public class PopularMoviesProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
+    public int delete(Uri uri, String selectionClause, String[] selectionArgs) {
+
+        int id;
+
+        if (URI_MATCHER.match(uri) != MOVIE_ITEM_LIST &&
+                URI_MATCHER.match(uri) != MOVIE_CLIP_LIST &&
+                URI_MATCHER.match(uri) != MOVIE_REVIEW_LIST
+                ) {
+            throw new IllegalArgumentException("Unsupported uri for deletion: " + uri);
+        }
+        try {
+            db = mLocalMovieDBHelper.getWritableDatabase();
+
+            switch (URI_MATCHER.match(uri)) {
+
+                case MOVIE_ITEM_LIST:{
+                    id = db.delete(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, selectionClause, selectionArgs);
+                    return id;
+                }
+                case MOVIE_CLIP_LIST: {
+                    id = db.delete(DatabaseContract.MovieClipEntries.TABLE_NAME, selectionClause, selectionArgs);
+                    return id;
+                }
+                case MOVIE_REVIEW_LIST: {
+                    id = db.delete(DatabaseContract.MovieReviewEntries.TABLE_NAME, selectionClause, selectionArgs);
+                    return id;
+                }
+
+            }
+        }catch (SQLException e){
+
+        }finally {
+            if (db != null) {
+                db.close();
+            }
+        }
         return 0;
     }
 
@@ -210,7 +239,6 @@ public class PopularMoviesProvider extends ContentProvider {
     }
 
 
-
     static {
 
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
@@ -220,7 +248,7 @@ public class PopularMoviesProvider extends ContentProvider {
                 MOVIE_ITEM_LIST);
 
         URI_MATCHER.addURI(DatabaseContract.CONTENT_AUTHORITY,
-                DatabaseContract.PATH_MOVIE_BASIC_DETAILS +"/#",
+                DatabaseContract.PATH_MOVIE_BASIC_DETAILS + "/#",
                 MOVIE_ITEM_ID);
 
         URI_MATCHER.addURI(DatabaseContract.CONTENT_AUTHORITY,

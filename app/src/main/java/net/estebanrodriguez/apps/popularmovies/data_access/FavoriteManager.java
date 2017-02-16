@@ -19,14 +19,47 @@ import rx.Observable;
 /**
  * Created by spoooon on 2/15/17.
  */
-
 public class FavoriteManager {
 
     private FavoriteManager() {
     }
 
+    /**
+     * The constant LOG_TAG.
+     */
     public static String LOG_TAG = FavoriteManager.class.getName();
 
+    /**
+     * Toggle favorite int.
+     *
+     *
+     * @param movieItem the movie item
+     * @param context   the context
+     * @return the int
+     */
+
+    public static int toggleFavorite(MovieItem movieItem, Context context){
+
+        if (isFavorited(movieItem, context)) {
+            unfavoriteMovie(movieItem, context);
+            movieItem.setFavorited(false);
+            return -1;
+        } else {
+            favoriteMovie(movieItem, context);
+            movieItem.setFavorited(true);
+            return 0;
+        }
+
+    }
+
+    /**
+     * Favorite movie.
+     *
+     * Saves a movieItem and its details into the local database
+     *
+     * @param movieItem the movie item
+     * @param context   the context
+     */
     public static void favoriteMovie(MovieItem movieItem, Context context){
 
 
@@ -102,7 +135,14 @@ public class FavoriteManager {
 
     }
 
-    public static void unfavoriteMovie(MovieItem movieItem, Context context){
+    /**
+     * Unfavorite movie boolean.
+     *
+     * @param movieItem the movie item
+     * @param context   the context
+     * @return the boolean
+     */
+    public static Boolean unfavoriteMovie(MovieItem movieItem, Context context){
 
         ContentResolver contentResolver = context.getContentResolver();
         String[] selection = {movieItem.getID()};
@@ -110,10 +150,23 @@ public class FavoriteManager {
         contentResolver.delete(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI,DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID, selection);
         contentResolver.delete(DatabaseContract.MovieClipEntries.CONTENT_URI, DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID, selection);
         contentResolver.delete(DatabaseContract.MovieReviewEntries.CONTENT_URI,DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID, selection);
-        showFavorites(context);
 
+
+        boolean unfavorited = !isFavorited(movieItem, context);
+        if(unfavorited){
+            Log.v(LOG_TAG, movieItem.getTitle() + " unfavorited.");
+        }
+
+        showFavorites(context);
+        return !isFavorited(movieItem, context);
     }
 
+    /**
+     * Get favorites list.
+     *
+     * @param context the context
+     * @return the list
+     */
     public static List<MovieItem> getFavorites(Context context){
 
         ContentResolver contentResolver = context.getContentResolver();
@@ -136,7 +189,12 @@ public class FavoriteManager {
         return movieItems;
     }
 
-    //TODO remove after testing
+    /**
+     * Show favorites.
+     *
+     * @param context the context
+     */
+//TODO remove after testing
     public static void showFavorites(Context context){
 
         ContentResolver contentResolver = context.getContentResolver();
@@ -159,6 +217,12 @@ public class FavoriteManager {
 
     }
 
+    /**
+     * Set observable observable.
+     *
+     * @param context the context
+     * @return the observable
+     */
     public static Observable<List<MovieItem>> setObservable(final Context context){
         Observable<List<MovieItem>> observable = Observable.fromCallable(new Callable<List<MovieItem>>() {
             @Override
@@ -167,5 +231,53 @@ public class FavoriteManager {
             }
         });
         return observable;
+    }
+
+    /**
+     * Set observable observable.
+     *
+     * @param movieItem the movie item
+     * @param context   the context
+     * @return the observable
+     */
+    public static Observable<Boolean> setObservable(final MovieItem movieItem, final Context context){
+        Observable<Boolean> observable = Observable.fromCallable(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                return unfavoriteMovie(movieItem, context);
+            }
+        });
+        return observable;
+    }
+
+    /**
+     * Is favorited boolean.
+     *
+     * @param movieItem the movie item
+     * @param context   the context
+     * @return the boolean
+     */
+    public static boolean isFavorited(MovieItem movieItem, Context context){
+        Cursor cursor = null;
+        ContentResolver contentResolver = context.getContentResolver();
+        String selectionClause = DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID + " = ?";
+        String[] selectionArgs = {movieItem.getID()};
+        Boolean favorited = null;
+
+        try{
+            cursor =contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI,null,selectionClause, selectionArgs, null);
+
+            if(cursor.getCount() > 0){
+                favorited = true;
+            }else favorited = false;
+
+        }catch (Exception e){
+
+        }finally {
+            if(cursor != null){
+                cursor.close();
+            }
+        }
+        return favorited;
     }
 }

@@ -118,21 +118,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 starButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(!mMovieItem.isFavorited()){
-                            mMovieItem.setFavorited(true);
-                            starButton.setPressed(mMovieItem.isFavorited());
-                            FavoriteManager.favoriteMovie(mMovieItem, mContext);
-
-                        }else
-                        {
-                            mMovieItem.setFavorited(false);
-                            starButton.setPressed(mMovieItem.isFavorited());
-                            FavoriteManager.unfavoriteMovie(mMovieItem, mContext);
-
-                        }
-
-
-
+                        FavoriteManager.toggleFavorite(mMovieItem, mContext);
                     }
                 });
 
