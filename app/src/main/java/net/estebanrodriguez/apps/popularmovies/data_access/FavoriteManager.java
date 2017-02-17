@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by spoooon on 2/15/17.
@@ -50,7 +54,11 @@ public class FavoriteManager {
      * @return the int
      */
 
-    public int toggleFavorite(MovieItem movieItem, Context context){
+    public void toggleFavorite(MovieItem movieItem, Context context){
+        subscribeOnMain(setObservable(movieItem, context));
+    }
+
+    public int handleFavorite(MovieItem movieItem, Context context){
 
         if (isFavorited(movieItem, context)) {
             unfavoriteMovie(movieItem, context);
@@ -253,15 +261,17 @@ public class FavoriteManager {
      * @param context   the context
      * @return the observable
      */
-    public Observable<Boolean> setObservable(final MovieItem movieItem, final Context context){
-        Observable<Boolean> observable = Observable.fromCallable(new Callable<Boolean>() {
+    private Observable<Integer> setObservable(final MovieItem movieItem, final Context context){
+        Observable<Integer> observable = Observable.fromCallable(new Callable<Integer>() {
             @Override
-            public Boolean call() throws Exception {
-                return unfavoriteMovie(movieItem, context);
+            public Integer call() throws Exception {
+                return handleFavorite(movieItem, context);
             }
         });
         return observable;
     }
+
+
 
     /**
      * Is favorited boolean.
@@ -280,9 +290,7 @@ public class FavoriteManager {
         try{
             cursor =contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI,null,selectionClause, selectionArgs, null);
 
-            if(cursor.getCount() > 0){
-                favorited = true;
-            }else favorited = false;
+            favorited = cursor.getCount() > 0;
 
         }catch (Exception e){
 
@@ -308,6 +316,30 @@ public class FavoriteManager {
             }
         }
 
+    }
+
+
+
+    private void subscribeOnMain(Observable<Integer> observable){
+
+        final Subscription favoriteMoviesSubscription = observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+
+                    }
+                });
 
     }
 

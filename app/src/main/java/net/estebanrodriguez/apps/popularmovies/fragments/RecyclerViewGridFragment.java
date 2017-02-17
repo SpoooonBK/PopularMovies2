@@ -31,7 +31,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by Spoooon on 10/18/2016.
+ * The type Recycler view grid fragment.
  */
 public class RecyclerViewGridFragment extends Fragment {
 
@@ -56,6 +56,7 @@ public class RecyclerViewGridFragment extends Fragment {
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.main_recycler_view);
         mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
+        updateMovieData(setObservable());
 
         mFavoriteManager.setFavoritesUpdatedListener(new FavoritesUpdatedListener() {
             @Override
@@ -68,6 +69,9 @@ public class RecyclerViewGridFragment extends Fragment {
     }
 
 
+    /**
+     * Notify on preference changed.
+     */
     public void notifyOnPreferenceChanged() {
 
         if (NetworkChecker.isNetworkAvailable(getActivity())) {
@@ -92,6 +96,11 @@ public class RecyclerViewGridFragment extends Fragment {
     }
 
 
+    /**
+     * Sets observable.
+     *
+     * @return the observable
+     */
     public Observable<List<MovieItem>> setObservable() {
 
         Observable<List<MovieItem>> observable = Observable.fromCallable(new Callable<List<MovieItem>>() {
@@ -104,7 +113,12 @@ public class RecyclerViewGridFragment extends Fragment {
         return observable;
     }
 
-    /* Method updateMovieData used JavaRX to fire off another thread to fetch the movie data
+    /**
+     * Update movie data.
+     *
+     * @param observable the observable
+     */
+/* Method updateMovieData used JavaRX to fire off another thread to fetch the movie data
     and updates the UI when the data is ready.
      */
     public void updateMovieData(final Observable<List<MovieItem>> observable) {
@@ -140,6 +154,9 @@ public class RecyclerViewGridFragment extends Fragment {
 
     }
 
+    /**
+     * Update favorite data.
+     */
     public void updateFavoriteData(){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         String key = getString(R.string.sort_preference_key);

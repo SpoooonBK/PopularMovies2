@@ -107,9 +107,5 @@ public class DetailFragment extends Fragment {
                 });
     }
 
-//    public void NotifyDataChanged(){
-//        RecyclerViewGridFragment gridViewFragment = (RecyclerViewGridFragment) getFragmentManager().findFragmentById(R.id.fragment_gridview);
-//        gridViewFragment.notifyOnPreferenceChanged();
-//    }
     }
 

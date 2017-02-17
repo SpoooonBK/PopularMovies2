@@ -36,7 +36,6 @@ import java.util.List;
 /**
  * Created by Spoooon on 11/2/2016.
  */
-
 public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Object> mMovieDetailsList;
@@ -47,6 +46,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     private boolean mHasMovieClip;
     private boolean mHasMovieReview;
     private DetailFragment mFragment;
+    private FavoriteManager mFavoriteManager;
 
     private final int MOVIE_CLIP = 0;
     private final int MOVIE_REVIEW = 1;
@@ -54,15 +54,28 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     private final int MOVIE_CLIP_HEADER = 4;
     private final int MOVIE_REVIEW_HEADER = 5;
 
+    /**
+     * The constant LOG_TAG.
+     */
     public static String LOG_TAG = DetailRecyclerViewAdapter.class.getName();
 
+    /**
+     * Instantiates a new Detail recycler view adapter.
+     *
+     * @param movieItem the movie item
+     * @param context   the context
+     * @param fragment  the fragment
+     */
     public DetailRecyclerViewAdapter(MovieItem movieItem, Context context, DetailFragment fragment) {
+
+        mFavoriteManager = FavoriteManager.getInstance();
         mMovieItem = movieItem;
         mContext = context;
         mMovieDetailsList = movieItem.getMovieDetails();
         mFragment = fragment;
         setHasMovieClip();
         setHasMovieReview();
+        mMovieItem.setFavorited(mFavoriteManager.isFavorited(movieItem, mContext));
     }
 
 
@@ -126,6 +139,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                     public void onClick(View view) {
                         FavoriteManager favoriteManager = FavoriteManager.getInstance();
                         favoriteManager.toggleFavorite(mMovieItem, mContext);
+                        starButton.setPressed(mMovieItem.isFavorited());
                     }
                 });
 
@@ -224,50 +238,104 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    /**
+     * Has movie clip boolean.
+     *
+     * @return the boolean
+     */
     public boolean hasMovieClip() {
         return mHasMovieClip;
     }
 
+    /**
+     * Has movie review boolean.
+     *
+     * @return the boolean
+     */
     public boolean hasMovieReview() {
         return mHasMovieReview;
     }
 
 
-
+    /**
+     * The type Movie clip viewholder.
+     */
     public class MovieClipViewholder extends RecyclerView.ViewHolder {
         private ImageButton mPlayButton;
         private TextView mMovieClipTitle;
 
+        /**
+         * Instantiates a new Movie clip viewholder.
+         *
+         * @param itemView the item view
+         */
         public MovieClipViewholder(View itemView) {
             super(itemView);
             mPlayButton = (ImageButton) itemView.findViewById(R.id.button_play);
             mMovieClipTitle = (TextView) itemView.findViewById(R.id.text_view_movie_clip_title);
         }
 
+        /**
+         * Gets play button.
+         *
+         * @return the play button
+         */
         public ImageButton getPlayButton() {
             return mPlayButton;
         }
 
+        /**
+         * Sets play button.
+         *
+         * @param playButton the play button
+         */
         public void setPlayButton(ImageButton playButton) {
             mPlayButton = playButton;
         }
 
+        /**
+         * Gets movie clip title.
+         *
+         * @return the movie clip title
+         */
         public TextView getMovieClipTitle() {
             return mMovieClipTitle;
         }
 
+        /**
+         * Sets movie clip title.
+         *
+         * @param movieClipTitle the movie clip title
+         */
         public void setMovieClipTitle(TextView movieClipTitle) {
             mMovieClipTitle = movieClipTitle;
         }
     }
 
+    /**
+     * The type Movie review viewholder.
+     */
     public class MovieReviewViewholder extends RecyclerView.ViewHolder{
 
+        /**
+         * The M author.
+         */
         TextView mAuthor;
+        /**
+         * The M content.
+         */
         TextView mContent;
+        /**
+         * The M url.
+         */
         TextView mURL;
 
 
+        /**
+         * Instantiates a new Movie review viewholder.
+         *
+         * @param itemView the item view
+         */
         public MovieReviewViewholder(View itemView) {
             super(itemView);
 
@@ -277,31 +345,64 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             
         }
 
+        /**
+         * Gets author text view.
+         *
+         * @return the author text view
+         */
         public TextView getAuthorTextView() {
             return mAuthor;
         }
 
+        /**
+         * Sets author.
+         *
+         * @param author the author
+         */
         public void setAuthor(TextView author) {
             mAuthor = author;
         }
 
+        /**
+         * Gets content text view.
+         *
+         * @return the content text view
+         */
         public TextView getContentTextView() {
             return mContent;
         }
 
+        /**
+         * Sets content.
+         *
+         * @param content the content
+         */
         public void setContent(TextView content) {
             mContent = content;
         }
 
+        /**
+         * Gets url text view.
+         *
+         * @return the url text view
+         */
         public TextView getURLTextView() {
             return mURL;
         }
 
+        /**
+         * Sets url.
+         *
+         * @param URL the url
+         */
         public void setURL(TextView URL) {
             mURL = URL;
         }
     }
 
+    /**
+     * The type Movie item details view holder.
+     */
     public class MovieItemDetailsViewHolder  extends RecyclerView.ViewHolder{
 
         private ImageView mImageViewPoster;
@@ -311,6 +412,11 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         private TextView mTextViewOverview;
         private ImageButton mStarButton;
 
+        /**
+         * Instantiates a new Movie item details view holder.
+         *
+         * @param itemView the item view
+         */
         public MovieItemDetailsViewHolder(View itemView) {
             super(itemView);
             mImageViewPoster = (ImageView) itemView.findViewById(R.id.detail_imageview_poster);
@@ -321,71 +427,151 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             mStarButton = (ImageButton)itemView.findViewById(R.id.detail_imagebutton_save);
         }
 
+        /**
+         * Gets image view poster.
+         *
+         * @return the image view poster
+         */
         public ImageView getImageViewPoster() {
             return mImageViewPoster;
         }
 
+        /**
+         * Sets image view poster.
+         *
+         * @param imageViewPoster the image view poster
+         */
         public void setImageViewPoster(ImageView imageViewPoster) {
             mImageViewPoster = imageViewPoster;
         }
 
+        /**
+         * Gets text view release date.
+         *
+         * @return the text view release date
+         */
         public TextView getTextViewReleaseDate() {
             return mTextViewReleaseDate;
         }
 
+        /**
+         * Sets text view release date.
+         *
+         * @param textViewReleaseDate the text view release date
+         */
         public void setTextViewReleaseDate(TextView textViewReleaseDate) {
             mTextViewReleaseDate = textViewReleaseDate;
         }
 
+        /**
+         * Gets text view rating.
+         *
+         * @return the text view rating
+         */
         public TextView getTextViewRating() {
             return mTextViewRating;
         }
 
+        /**
+         * Sets text view rating.
+         *
+         * @param textViewRating the text view rating
+         */
         public void setTextViewRating(TextView textViewRating) {
             mTextViewRating = textViewRating;
         }
 
+        /**
+         * Gets text view popularity.
+         *
+         * @return the text view popularity
+         */
         public TextView getTextViewPopularity() {
             return mTextViewPopularity;
         }
 
+        /**
+         * Sets text view popularity.
+         *
+         * @param textViewPopularity the text view popularity
+         */
         public void setTextViewPopularity(TextView textViewPopularity) {
             mTextViewPopularity = textViewPopularity;
         }
 
+        /**
+         * Gets text view overview.
+         *
+         * @return the text view overview
+         */
         public TextView getTextViewOverview() {
             return mTextViewOverview;
         }
 
+        /**
+         * Sets text view overview.
+         *
+         * @param textViewOverview the text view overview
+         */
         public void setTextViewOverview(TextView textViewOverview) {
             mTextViewOverview = textViewOverview;
         }
 
+        /**
+         * Gets star button.
+         *
+         * @return the star button
+         */
         public ImageButton getStarButton() {
             return mStarButton;
         }
 
+        /**
+         * Sets star button.
+         *
+         * @param starButton the star button
+         */
         public void setStarButton(ImageButton starButton) {
             mStarButton = starButton;
         }
     }
 
+    /**
+     * The type Movie details header view holder.
+     */
     public class MovieDetailsHeaderViewHolder extends RecyclerView.ViewHolder{
 
         private TextView mHeader;
 
+        /**
+         * Instantiates a new Movie details header view holder.
+         *
+         * @param itemView the item view
+         */
         public MovieDetailsHeaderViewHolder(View itemView) {
             super(itemView);
             mHeader = (TextView) itemView.findViewById(R.id.detail_recyclerview_header);
         }
 
+        /**
+         * Gets header.
+         *
+         * @return the header
+         */
         public TextView getHeader() {
             return mHeader;
         }
 
+        /**
+         * Sets header.
+         *
+         * @param header the header
+         */
         public void setHeader(TextView header) {
             mHeader = header;
         }
     }
+
+
 
 }
