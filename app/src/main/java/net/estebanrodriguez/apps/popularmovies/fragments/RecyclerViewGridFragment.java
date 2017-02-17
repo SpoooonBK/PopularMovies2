@@ -18,6 +18,7 @@ import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
+import net.estebanrodriguez.apps.popularmovies.interfaces.listeners.FavoritesUpdatedListener;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class RecyclerViewGridFragment extends Fragment {
     private MovieDAOImpl mMovieDAO;
     private GridLayoutManager mGridLayoutManager;
     private final String LOG_TAG = RecyclerViewGridFragment.class.getSimpleName();
+    private FavoriteManager mFavoriteManager;
 
 
 
@@ -48,22 +50,19 @@ public class RecyclerViewGridFragment extends Fragment {
 
 
         mMovieDAO = MovieDAOImpl.getInstance(getActivity());
+        mFavoriteManager = FavoriteManager.getInstance();
 
         View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.main_recycler_view);
         mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
-        String key = getString(R.string.sort_preference_key);
-        String mostPopular = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
-        String favorites = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
-
-        if(sharedPreferences.getString(key, mostPopular).equals(favorites)){
-            updateMovieData(FavoriteManager.setObservable(getActivity().getApplicationContext()));
-        }else{
-            updateMovieData(setObservable());
-        }
+        mFavoriteManager.setFavoritesUpdatedListener(new FavoritesUpdatedListener() {
+            @Override
+            public void onFavoritesUpdated() {
+                updateFavoriteData();
+            }
+        });
 
         return rootView;
     }
@@ -80,7 +79,7 @@ public class RecyclerViewGridFragment extends Fragment {
             String favorites = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
 
             if(sharedPreferences.getString(key, mostPopular).equals(favorites)){
-                updateMovieData(FavoriteManager.setObservable(getActivity().getApplicationContext()));
+                updateMovieData(mFavoriteManager.setObservable(getActivity().getApplicationContext()));
             }else{
                 updateMovieData(setObservable());
             }
@@ -139,6 +138,17 @@ public class RecyclerViewGridFragment extends Fragment {
 
                 });
 
+    }
+
+    public void updateFavoriteData(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String key = getString(R.string.sort_preference_key);
+        String mostPopular = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
+        String favorites = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
+
+        if(sharedPreferences.getString(key, mostPopular).equals(favorites)) {
+            updateMovieData(mFavoriteManager.setObservable(getActivity().getApplicationContext()));
+        }
     }
 
 

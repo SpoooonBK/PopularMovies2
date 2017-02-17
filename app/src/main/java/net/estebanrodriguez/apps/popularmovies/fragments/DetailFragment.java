@@ -101,10 +101,15 @@ public class DetailFragment extends Fragment {
 
                     @Override
                     public void onNext(MovieItem movieItem) {
-                        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieItem, getActivity());
+                        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieItem, getActivity(), DetailFragment.this);
                         mRecyclerView.setAdapter(adapter);
                     }
                 });
     }
+
+//    public void NotifyDataChanged(){
+//        RecyclerViewGridFragment gridViewFragment = (RecyclerViewGridFragment) getFragmentManager().findFragmentById(R.id.fragment_gridview);
+//        gridViewFragment.notifyOnPreferenceChanged();
+//    }
     }
 

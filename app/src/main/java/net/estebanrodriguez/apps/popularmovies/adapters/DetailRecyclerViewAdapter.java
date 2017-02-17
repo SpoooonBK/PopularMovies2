@@ -1,5 +1,7 @@
 package net.estebanrodriguez.apps.popularmovies.adapters;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -22,6 +24,8 @@ import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDetailFactory;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieItemFactory;
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
+import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
+import net.estebanrodriguez.apps.popularmovies.fragments.RecyclerViewGridFragment;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
@@ -42,6 +46,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     private Context mContext;
     private boolean mHasMovieClip;
     private boolean mHasMovieReview;
+    private DetailFragment mFragment;
 
     private final int MOVIE_CLIP = 0;
     private final int MOVIE_REVIEW = 1;
@@ -51,10 +56,11 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     public static String LOG_TAG = DetailRecyclerViewAdapter.class.getName();
 
-    public DetailRecyclerViewAdapter(MovieItem movieItem, Context context) {
+    public DetailRecyclerViewAdapter(MovieItem movieItem, Context context, DetailFragment fragment) {
         mMovieItem = movieItem;
         mContext = context;
         mMovieDetailsList = movieItem.getMovieDetails();
+        mFragment = fragment;
         setHasMovieClip();
         setHasMovieReview();
     }
@@ -62,7 +68,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         int viewtype = holder.getItemViewType();
 
         switch (viewtype){
@@ -118,7 +124,8 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 starButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        FavoriteManager.toggleFavorite(mMovieItem, mContext);
+                        FavoriteManager favoriteManager = FavoriteManager.getInstance();
+                        favoriteManager.toggleFavorite(mMovieItem, mContext);
                     }
                 });
 
