@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import net.estebanrodriguez.apps.popularmovies.R;
 
+/**
+ * The type Detail activity.
+ */
 public class DetailActivity extends AppCompatActivity {
 
     @Override

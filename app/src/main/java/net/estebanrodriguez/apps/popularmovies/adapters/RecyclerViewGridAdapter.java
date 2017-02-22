@@ -1,7 +1,5 @@
 package net.estebanrodriguez.apps.popularmovies.adapters;
 
-import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -15,24 +13,15 @@ import com.squareup.picasso.Picasso;
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.activities.DetailActivity;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
-import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Spoooon on 10/12/2016.
+ *
+ * @param <MovieItems> the type parameter
  */
-
 public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<RecyclerViewGridAdapter.Viewholder> {
 
     private Context mContext;
@@ -40,17 +29,34 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
     private static final String LOG_TAG = RecyclerViewGridAdapter.class.getSimpleName();
 
 
+    /**
+     * Instantiates a new Recycler view grid adapter.
+     *
+     * @param context    the context
+     * @param movieItems the movie items
+     */
     public RecyclerViewGridAdapter(Context context, List<MovieItem> movieItems) {
         mContext = context;
         mMovieItems = movieItems;
 
     }
 
+    /**
+     * The type Viewholder.
+     */
     public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        /**
+         * The M image view.
+         */
         public ImageView mImageView;
 
 
+        /**
+         * Instantiates a new Viewholder.
+         *
+         * @param itemView the item view
+         */
         public Viewholder(View itemView) {
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.main_gridview_item_image);
@@ -97,6 +103,9 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
         return mMovieItems.size();
     }
 
+    /**
+     * Clear.
+     */
     public void clear() {
 
         if (mMovieItems != null) {
@@ -105,6 +114,11 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
 
     }
 
+    /**
+     * Add all.
+     *
+     * @param movieItems the movie items
+     */
     public void addAll(List<MovieItem> movieItems) {
 
         if (mMovieItems != null) {
@@ -112,12 +126,23 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
         }
     }
 
+    /**
+     * Swap data.
+     *
+     * @param movieItems the movie items
+     */
     public void swapData(List<MovieItem> movieItems) {
         clear();
         addAll(movieItems);
     }
 
 
+    /**
+     * Gets movie item.
+     *
+     * @param index the index
+     * @return the movie item
+     */
     public MovieItem getMovieItem(int index) {
         return mMovieItems.get(index);
     }

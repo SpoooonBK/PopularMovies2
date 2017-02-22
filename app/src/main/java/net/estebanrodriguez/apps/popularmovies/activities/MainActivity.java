@@ -12,12 +12,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import net.estebanrodriguez.apps.popularmovies.fragments.MoviePreferencesFragment;
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
+import net.estebanrodriguez.apps.popularmovies.fragments.MoviePreferencesFragment;
 import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
 
+/**
+ * The type Main activity.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private final static String LOG_TAG = MainActivity.class.getSimpleName();

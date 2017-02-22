@@ -44,7 +44,6 @@ public class RecyclerViewGridFragment extends Fragment {
     private FavoriteManager mFavoriteManager;
 
 
-
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -82,9 +81,9 @@ public class RecyclerViewGridFragment extends Fragment {
             String mostPopular = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
             String favorites = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
 
-            if(sharedPreferences.getString(key, mostPopular).equals(favorites)){
+            if (sharedPreferences.getString(key, mostPopular).equals(favorites)) {
                 updateMovieData(mFavoriteManager.setObservable(getActivity().getApplicationContext()));
-            }else{
+            } else {
                 updateMovieData(setObservable());
             }
 
@@ -157,13 +156,13 @@ public class RecyclerViewGridFragment extends Fragment {
     /**
      * Update favorite data.
      */
-    public void updateFavoriteData(){
+    public void updateFavoriteData() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         String key = getString(R.string.sort_preference_key);
         String mostPopular = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
         String favorites = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
 
-        if(sharedPreferences.getString(key, mostPopular).equals(favorites)) {
+        if (sharedPreferences.getString(key, mostPopular).equals(favorites)) {
             updateMovieData(mFavoriteManager.setObservable(getActivity().getApplicationContext()));
         }
     }

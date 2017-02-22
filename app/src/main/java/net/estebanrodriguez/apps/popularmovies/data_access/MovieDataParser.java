@@ -15,12 +15,20 @@ import java.util.Map;
 /**
  * Created by Spoooon on 10/9/2016.
  */
-
 public class MovieDataParser {
 
+    /**
+     * The constant LOG_TAG.
+     */
     public static final String LOG_TAG = MovieDataParser.class.getSimpleName();
 
-    //Parses original json string data into a list of movie data maps
+    /**
+     * Parse json movie data string list.
+     *
+     * @param jsonData the json data
+     * @return the list
+     */
+//Parses original json string data into a list of movie data maps
     public static List<Map<String, String>> parseJsonMovieDataString(String jsonData) {
 
         Log.v(LOG_TAG, jsonData);
@@ -44,7 +52,13 @@ public class MovieDataParser {
         return movieDataList;
     }
 
-    //Parses a json movie data object into a movie data map
+    /**
+     * Parse json movie data object map.
+     *
+     * @param jsonObject the json object
+     * @return the map
+     */
+//Parses a json movie data object into a movie data map
     public static Map<String, String> parseJsonMovieDataObject(JSONObject jsonObject) {
         Map<String, String> movieDataObjectMap = new HashMap<>();
 

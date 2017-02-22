@@ -6,9 +6,14 @@ import java.util.Date;
 /**
  * Created by spoooon on 12/14/16.
  */
-
 public class DateParser {
 
+    /**
+     * Parse date string.
+     *
+     * @param date the date
+     * @return the string
+     */
     public static String parseDate(Date date){
 
 

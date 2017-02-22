@@ -1,6 +1,5 @@
 package net.estebanrodriguez.apps.popularmovies.fragments;
 
-import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;

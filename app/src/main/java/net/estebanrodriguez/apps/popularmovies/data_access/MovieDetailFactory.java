@@ -4,11 +4,9 @@ import android.database.Cursor;
 
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
-import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +19,26 @@ import java.util.Set;
 
 public class MovieDetailFactory {
 
+    /**
+     * The constant LOG_TAG.
+     */
     public static final String LOG_TAG = MovieDetailFactory.class.getSimpleName();
+    /**
+     * The constant MOVIE_CLIP.
+     */
     public static final int MOVIE_CLIP = 0;
+    /**
+     * The constant MOVIE_REVIEW.
+     */
     public static final int MOVIE_REVIEW = 1;
 
 
+    /**
+     * Build movie clip list list.
+     *
+     * @param cursor the cursor
+     * @return the list
+     */
     public static List<MovieClip> buildMovieClipList(Cursor cursor) {
 
         String[] colNames = cursor.getColumnNames();
@@ -90,6 +103,12 @@ public class MovieDetailFactory {
     }
 
 
+    /**
+     * Build movie clip list list.
+     *
+     * @param mapList the map list
+     * @return the list
+     */
     public static List<MovieClip> buildMovieClipList(List<Map<String, String>> mapList) {
         List<MovieClip> movieClips = new ArrayList<>();
         for (Map<String, String> map : mapList) {
@@ -99,6 +118,12 @@ public class MovieDetailFactory {
     }
 
 
+    /**
+     * Build movie review list list.
+     *
+     * @param cursor the cursor
+     * @return the list
+     */
     public static List<MovieReview> buildMovieReviewList(Cursor cursor) {
         String[] colNames = cursor.getColumnNames();
         List<Map<String, String>> detailsList = new ArrayList<>();
@@ -141,6 +166,12 @@ public class MovieDetailFactory {
     }
 
 
+    /**
+     * Build movie review list list.
+     *
+     * @param mapList the map list
+     * @return the list
+     */
     public static List<MovieReview> buildMovieReviewList(List<Map<String, String>> mapList) {
         List<MovieReview> movieReviews = new ArrayList<>();
         for (Map<String, String> map : mapList) {

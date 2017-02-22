@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
@@ -17,10 +18,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by spoooon on 2/15/17.
@@ -29,152 +26,122 @@ public class FavoriteManager {
 
     private List<FavoritesUpdatedListener> mFavoritesUpdatedListeners;
 
+
     private FavoriteManager() {
     }
 
-    private static class FavoriteManagerHelper{
+    private static class FavoriteManagerHelper {
         private static final FavoriteManager INSTANCE = new FavoriteManager();
     }
 
-    public static FavoriteManager getInstance(){
+
+    public static FavoriteManager getInstance() {
         return FavoriteManagerHelper.INSTANCE;
     }
 
-    /**
-     * The constant LOG_TAG.
-     */
+
     public String LOG_TAG = FavoriteManager.class.getName();
 
-    /**
-     * Toggle favorite int.
-     *
-     *
-     * @param movieItem the movie item
-     * @param context   the context
-     * @return the int
-     */
 
-    public void toggleFavorite(MovieItem movieItem, Context context){
-        subscribeOnMain(setObservable(movieItem, context));
+
+    public int toggleFavorite(final MovieItem movieItem, final Context context) {
+
+                if (isFavorited(movieItem, context)) {
+                    unfavoriteMovie(movieItem, context);
+                    movieItem.setFavorited(false);
+                    return -1;
+                } else {
+                    favoriteMovie(movieItem, context);
+                    movieItem.setFavorited(true);
+                    return 0;
+                }
     }
 
-    public int handleFavorite(MovieItem movieItem, Context context){
 
-        if (isFavorited(movieItem, context)) {
-            unfavoriteMovie(movieItem, context);
-            movieItem.setFavorited(false);
-            return -1;
-        } else {
-            favoriteMovie(movieItem, context);
-            movieItem.setFavorited(true);
-            return 0;
-        }
+    public void favoriteMovie(MovieItem movieItem, Context context) {
 
+
+                ContentResolver contentResolver = context.getContentResolver();
+
+                List<MovieClip> movieClips = movieItem.getMovieClips();
+                List<MovieReview> movieReviews = movieItem.getMovieReviews();
+
+
+                ContentValues basicDetailsValues = new ContentValues();
+
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORGINAL_TITLE, movieItem.getOriginalTitle());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH, movieItem.getBackdropPath());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_IMAGE_FETCH_URL, movieItem.getImageFetchURL());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORIGINAL_LANGUAGE, movieItem.getOriginalLanguage());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_OVERVIEW, movieItem.getOverview());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY, movieItem.getPopularity());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH, movieItem.getPosterPath());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE, movieItem.getFormattedReleaseDate());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE, movieItem.getTitle());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO, movieItem.isVideo());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE, movieItem.getVoteAverage());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT, movieItem.getVoteCount());
+
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT, movieItem.isAdult());
+                basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_FAVORITED, movieItem.isFavorited());
+
+
+                contentResolver.insert(
+                        DatabaseContract.BasicMovieDetailEntries.CONTENT_URI,
+                        basicDetailsValues
+                );
+
+
+                for (MovieClip movieClip : movieClips) {
+                    ContentValues movieClipValues = new ContentValues();
+                    movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_URL_KEY, movieClip.getKey());
+                    movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_TYPE, movieClip.getClipType());
+                    movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_URI, movieClip.getClipURI());
+                    movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO639, movieClip.getLanguageCodeISO639());
+                    movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO3166, movieClip.getLanguagecodeiso3166());
+                    movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
+                    movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_NAME, movieClip.getName());
+                    movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_SITE, movieClip.getSite());
+                    movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_SIZE, movieClip.getSize());
+
+                    contentResolver.insert(
+                            DatabaseContract.MovieClipEntries.CONTENT_URI,
+                            movieClipValues
+                    );
+
+
+                }
+
+                for (MovieReview movieReview : movieReviews) {
+                    ContentValues reviewValues = new ContentValues();
+                    reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_AUTHOR, movieReview.getAuthor());
+                    reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_CONTENT, movieReview.getContent());
+                    reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
+                    reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_REVIEW_URL, movieReview.getUrl());
+
+                    contentResolver.insert(
+                            DatabaseContract.MovieReviewEntries.CONTENT_URI,
+                            reviewValues
+                    );
+                }
+                notifyListeners();
+                showFavorites(context);
     }
 
-    /**
-     * Favorite movie.
-     *
-     * Saves a movieItem and its details into the local database
-     *
-     * @param movieItem the movie item
-     * @param context   the context
-     */
-    public void favoriteMovie(MovieItem movieItem, Context context){
 
-
-        ContentResolver contentResolver = context.getContentResolver();
-
-        List<MovieClip> movieClips = movieItem.getMovieClips();
-        List<MovieReview> movieReviews = movieItem.getMovieReviews();
-
-
-        ContentValues basicDetailsValues = new ContentValues();
-
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORGINAL_TITLE, movieItem.getOriginalTitle());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_BACKDROP_PATH, movieItem.getBackdropPath());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_IMAGE_FETCH_URL, movieItem.getImageFetchURL());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ORIGINAL_LANGUAGE, movieItem.getOriginalLanguage());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_OVERVIEW, movieItem.getOverview());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POPULARITY, movieItem.getPopularity());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_POSTER_PATH, movieItem.getPosterPath());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_RELEASE_DATE, movieItem.getFormattedReleaseDate());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE, movieItem.getTitle());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VIDEO, movieItem.isVideo());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_AVERAGE, movieItem.getVoteAverage());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_VOTE_COUNT, movieItem.getVoteCount());
-
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_ADULT, movieItem.isAdult());
-        basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_FAVORITED, movieItem.isFavorited());
-
-
-        contentResolver.insert(
-                DatabaseContract.BasicMovieDetailEntries.CONTENT_URI,
-                basicDetailsValues
-        );
-
-
-
-        for(MovieClip movieClip: movieClips){
-            ContentValues movieClipValues = new ContentValues();
-            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_URL_KEY, movieClip.getKey());
-            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_TYPE, movieClip.getClipType());
-            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_URI, movieClip.getClipURI());
-            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO639, movieClip.getLanguageCodeISO639());
-            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_LANGUAGE_ISO3166, movieClip.getLanguagecodeiso3166());
-            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
-            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_NAME, movieClip.getName());
-            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_SITE, movieClip.getSite());
-            movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_SIZE, movieClip.getSize());
-
-            contentResolver.insert(
-                    DatabaseContract.MovieClipEntries.CONTENT_URI,
-                    movieClipValues
-            );
-
-
-
-        }
-
-        for(MovieReview movieReview: movieReviews){
-            ContentValues reviewValues = new ContentValues();
-            reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_AUTHOR, movieReview.getAuthor());
-            reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_CONTENT, movieReview.getContent());
-            reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
-            reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_REVIEW_URL, movieReview.getUrl());
-
-            contentResolver.insert(
-                    DatabaseContract.MovieReviewEntries.CONTENT_URI,
-                    reviewValues
-            );
-        }
-        notifyListeners();
-        showFavorites(context);
-
-
-
-    }
-
-    /**
-     * Unfavorite movie boolean.
-     *
-     * @param movieItem the movie item
-     * @param context   the context
-     * @return the boolean
-     */
-    public Boolean unfavoriteMovie(MovieItem movieItem, Context context){
+    public Boolean unfavoriteMovie(MovieItem movieItem, Context context) {
 
         ContentResolver contentResolver = context.getContentResolver();
         String[] selection = {movieItem.getID()};
 
-        contentResolver.delete(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI,DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
+        contentResolver.delete(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
         contentResolver.delete(DatabaseContract.MovieClipEntries.CONTENT_URI, DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
-        contentResolver.delete(DatabaseContract.MovieReviewEntries.CONTENT_URI,DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
+        contentResolver.delete(DatabaseContract.MovieReviewEntries.CONTENT_URI, DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
 
 
         boolean unfavorited = !isFavorited(movieItem, context);
-        if(unfavorited){
+        if (unfavorited) {
             Log.v(LOG_TAG, movieItem.getTitle() + " unfavorited.");
         }
         notifyListeners();
@@ -182,20 +149,14 @@ public class FavoriteManager {
         return !isFavorited(movieItem, context);
     }
 
-    /**
-     * Get favorites list.
-     *
-     * @param context the context
-     * @return the list
-     */
-    public List<MovieItem> getFavorites(Context context){
+
+    public List<MovieItem> getFavorites(Context context) {
 
         ContentResolver contentResolver = context.getContentResolver();
 
         Cursor cursor = contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
         List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
-        for(MovieItem movieItem : movieItems)
-        {
+        for (MovieItem movieItem : movieItems) {
             String id = movieItem.getID();
             cursor = contentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
             List<MovieClip> movieClips = MovieDetailFactory.buildMovieClipList(cursor);
@@ -210,41 +171,41 @@ public class FavoriteManager {
         return movieItems;
     }
 
-    /**
-     * Show favorites.
-     *
-     * @param context the context
-     */
+
 //TODO remove after testing
-    public void showFavorites(Context context){
+    public void showFavorites(Context context) {
 
         ContentResolver contentResolver = context.getContentResolver();
 
-        Cursor cursor = contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
-        List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
-        for(MovieItem movieItem : movieItems)
-        {
-            String id = movieItem.getID();
-            cursor = contentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
-            List<MovieClip> movieClips = MovieDetailFactory.buildMovieClipList(cursor);
-            movieItem.setMovieClips(movieClips);
+        Cursor cursor = null;
 
-            cursor = contentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
-            List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
-            movieItem.setMovieReviews(movieReviews);
-            Log.v(LOG_TAG, movieItem.toString());
+        try{
+            cursor = contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
+            List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
+            for (MovieItem movieItem : movieItems) {
+                String id = movieItem.getID();
+                cursor = contentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
+                List<MovieClip> movieClips = MovieDetailFactory.buildMovieClipList(cursor);
+                movieItem.setMovieClips(movieClips);
+
+                cursor = contentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
+                List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
+                movieItem.setMovieReviews(movieReviews);
+                Log.v(LOG_TAG, movieItem.toString());
+            }
+
+        }catch (Exception e){
+
+        }finally {
+            if(cursor!=null)
+            cursor.close();
         }
-        cursor.close();
 
     }
 
-    /**
-     * Set observable observable.
-     *
-     * @param context the context
-     * @return the observable
-     */
-    public Observable<List<MovieItem>> setObservable(final Context context){
+
+
+    public Observable<List<MovieItem>> setObservable(final Context context) {
         Observable<List<MovieItem>> observable = Observable.fromCallable(new Callable<List<MovieItem>>() {
             @Override
             public List<MovieItem> call() throws Exception {
@@ -254,64 +215,45 @@ public class FavoriteManager {
         return observable;
     }
 
-    /**
-     * Set observable observable.
-     *
-     * @param movieItem the movie item
-     * @param context   the context
-     * @return the observable
-     */
-    private Observable<Integer> setObservable(final MovieItem movieItem, final Context context){
-        Observable<Integer> observable = Observable.fromCallable(new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                return handleFavorite(movieItem, context);
-            }
-        });
-        return observable;
-    }
 
 
+    public boolean isFavorited(MovieItem movieItem, Context context) {
 
-    /**
-     * Is favorited boolean.
-     *
-     * @param movieItem the movie item
-     * @param context   the context
-     * @return the boolean
-     */
-    public boolean isFavorited(MovieItem movieItem, Context context){
         Cursor cursor = null;
         ContentResolver contentResolver = context.getContentResolver();
         String selectionClause = DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID + " = ?";
         String[] selectionArgs = {movieItem.getID()};
         Boolean favorited = null;
 
-        try{
-            cursor =contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI,null,selectionClause, selectionArgs, null);
+        try {
+            cursor = contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, selectionClause, selectionArgs, null);
 
             favorited = cursor.getCount() > 0;
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
-        }finally {
-            if(cursor != null){
+        } finally {
+            if (cursor != null  && !cursor.isClosed()) {
                 cursor.close();
             }
         }
+
         return favorited;
     }
 
-    public void setFavoritesUpdatedListener(FavoritesUpdatedListener listener){
-        if(mFavoritesUpdatedListeners == null){
+
+
+    public void setFavoritesUpdatedListener(FavoritesUpdatedListener listener) {
+        if (mFavoritesUpdatedListeners == null) {
             mFavoritesUpdatedListeners = new ArrayList<>();
         }
         mFavoritesUpdatedListeners.add(listener);
     }
 
-    public void notifyListeners(){
-        if(mFavoritesUpdatedListeners != null){
-            for(FavoritesUpdatedListener listener: mFavoritesUpdatedListeners){
+
+    public void notifyListeners() {
+        if (mFavoritesUpdatedListeners != null) {
+            for (FavoritesUpdatedListener listener : mFavoritesUpdatedListeners) {
                 listener.onFavoritesUpdated();
             }
         }
@@ -320,27 +262,5 @@ public class FavoriteManager {
 
 
 
-    private void subscribeOnMain(Observable<Integer> observable){
-
-        final Subscription favoriteMoviesSubscription = observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Integer>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Integer integer) {
-
-                    }
-                });
-
-    }
 
 }

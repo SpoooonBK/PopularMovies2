@@ -11,7 +11,6 @@ import android.util.Log;
 import net.estebanrodriguez.apps.popularmovies.BuildConfig;
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
-import net.estebanrodriguez.apps.popularmovies.model.MovieDetail;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.io.BufferedReader;
@@ -22,14 +21,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Spoooon on 10/9/2016.
  */
-
 public class MovieDAOImpl implements MovieDAO {
 
     private static Boolean isPreferenceChanged = null;
@@ -45,6 +42,12 @@ public class MovieDAOImpl implements MovieDAO {
         private static final MovieDAOImpl INSTANCE = new MovieDAOImpl();
     }
 
+    /**
+     * Gets instance.
+     *
+     * @param context the context
+     * @return the instance
+     */
     public static MovieDAOImpl getInstance(Context context) {
         MovieDAOImpl movieDAO = MovieDAOHelper.INSTANCE;
         movieDAO.setContext(context);
@@ -98,7 +101,12 @@ public class MovieDAOImpl implements MovieDAO {
     }
 
 
-
+    /**
+     * Complete movie details movie item.
+     *
+     * @param movieItem the movie item
+     * @return the movie item
+     */
     public MovieItem completeMovieDetails(MovieItem movieItem){
 
         URL movieClipURL = getMovieClipDataURL(movieItem);
@@ -115,12 +123,18 @@ public class MovieDAOImpl implements MovieDAO {
     }
 
 
-
-
+    /**
+     * Notify preference change.
+     */
     public static void NotifyPreferenceChange() {
         isPreferenceChanged = true;
     }
 
+    /**
+     * Gets is preference changed.
+     *
+     * @return the is preference changed
+     */
     public static Boolean getIsPreferenceChanged() {
         return isPreferenceChanged;
     }
@@ -211,6 +225,12 @@ public class MovieDAOImpl implements MovieDAO {
         return movieData;
     }
 
+    /**
+     * Gets movie clip data url.
+     *
+     * @param movieItem the movie item
+     * @return the movie clip data url
+     */
     public URL getMovieClipDataURL(MovieItem movieItem) {
 
         String baseURL = ConstantsVault.DB_FETCH_BASE_URL + movieItem.getID() + "/videos";
@@ -218,6 +238,12 @@ public class MovieDAOImpl implements MovieDAO {
         return createURL(baseURL);
     }
 
+    /**
+     * Gets movie reviews url.
+     *
+     * @param movieItem the movie item
+     * @return the movie reviews url
+     */
     public URL getMovieReviewsURL(MovieItem movieItem) {
 
         String baseURL = ConstantsVault.DB_FETCH_BASE_URL + movieItem.getID() + "/reviews";
@@ -225,6 +251,11 @@ public class MovieDAOImpl implements MovieDAO {
         return createURL(baseURL);
     }
 
+    /**
+     * Gets movie data url.
+     *
+     * @return the movie data url
+     */
     public URL getMovieDataURL() {
         String baseURL = null;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);

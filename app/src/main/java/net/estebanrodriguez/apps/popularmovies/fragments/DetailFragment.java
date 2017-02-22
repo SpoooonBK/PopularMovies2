@@ -10,10 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.adapters.DetailRecyclerViewAdapter;
@@ -22,7 +19,6 @@ import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
-import java.util.Date;
 import java.util.concurrent.Callable;
 
 import rx.Observable;
@@ -72,6 +68,12 @@ public class DetailFragment extends Fragment {
     }
 
 
+    /**
+     * Set observable observable.
+     *
+     * @param movieItem the movie item
+     * @return the observable
+     */
     public Observable<MovieItem> setObservable(final MovieItem movieItem){
 
         Observable<MovieItem> observable = Observable.fromCallable(new Callable<MovieItem>() {
@@ -85,6 +87,11 @@ public class DetailFragment extends Fragment {
         return observable;
     }
 
+    /**
+     * Show details.
+     *
+     * @param observable the observable
+     */
     public void showDetails(Observable<MovieItem> observable) {
         Subscription movieDetailSubscription = observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

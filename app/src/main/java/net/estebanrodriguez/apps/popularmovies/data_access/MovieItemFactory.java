@@ -1,7 +1,6 @@
 package net.estebanrodriguez.apps.popularmovies.data_access;
 
 import android.database.Cursor;
-import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
@@ -15,7 +14,6 @@ import java.util.Set;
 /**
  * Builds MovieItems
  */
-
 public class MovieItemFactory {
 
     private static final String LOG_TAG = MovieItemFactory.class.getSimpleName();
@@ -25,10 +23,9 @@ public class MovieItemFactory {
      * Method: buildMovieList(List<Map<String, String>> mapList)
      * Builds an ArrayList of movies from maps of parsed Json data
      *
-     * @param mapList
-     * @return List<MovieItem>
+     * @param mapList the map list
+     * @return List<MovieItem> list
      */
-
     public static List<MovieItem> buildMovieList(List<Map<String, String>> mapList) {
 
         List<MovieItem> movieItems = new ArrayList<>();
@@ -42,8 +39,8 @@ public class MovieItemFactory {
     /**
      * Method: Builds movie list from cursor data
      *
-     * @param cursor
-     * @return List<MovieItems>
+     * @param cursor the cursor
+     * @return List<MovieItems> list
      */
     public static List<MovieItem> buildMovieList(Cursor cursor) {
         List<MovieItem> movieItems = new ArrayList<>();
@@ -134,8 +131,8 @@ public class MovieItemFactory {
      * Method: MovieItem buildMovie(Map<String,String> dataMap)
      * Uses a map of parsed json data to instantiate a single MovieItem
      *
-     * @param dataMap
-     * @return MovieItem
+     * @param dataMap the data map
+     * @return MovieItem movie item
      */
     public static MovieItem buildMovie(Map<String, String> dataMap) {
         //TODO Implement
@@ -240,6 +237,8 @@ public class MovieItemFactory {
             }
 
         }
+
+
 
 
         return movieItem;

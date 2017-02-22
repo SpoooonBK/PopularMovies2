@@ -1,15 +1,9 @@
 package net.estebanrodriguez.apps.popularmovies.adapters;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +15,19 @@ import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieDetailFactory;
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieItemFactory;
-import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
-import net.estebanrodriguez.apps.popularmovies.fragments.RecyclerViewGridFragment;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
-
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Spoooon on 11/2/2016.
@@ -132,14 +128,75 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
 
                 final ImageButton starButton = ((MovieItemDetailsViewHolder) holder).getStarButton();
-                starButton.setPressed(mMovieItem.isFavorited());
 
+                //Query if movieItem is favorited using RxJava
+                Observable<Boolean> observable = Observable.fromCallable(new Callable<Boolean>() {
+                    @Override
+                    public Boolean call() throws Exception {
+                        return FavoriteManager.getInstance().isFavorited(mMovieItem, mContext);
+                    }
+                });
+
+                Subscription subscription = observable.observeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        mMovieItem.setFavorited(aBoolean);
+
+                    }
+                });
+
+
+
+                starButton.setPressed(mMovieItem.isFavorited());
+                subscription.unsubscribe();
+
+                //Set starButton to toggle(insert, delete) from local db using RxJava
                 starButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        FavoriteManager favoriteManager = FavoriteManager.getInstance();
-                        favoriteManager.toggleFavorite(mMovieItem, mContext);
+
+
+                        Observable<Integer> togglerObservable = Observable.fromCallable(new Callable<Integer>() {
+                            @Override
+                            public Integer call() throws Exception {
+                                return FavoriteManager.getInstance().toggleFavorite(mMovieItem, mContext);
+                            }
+                        });
+
+                        Subscription togglerSubscription = togglerObservable.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Observer<Integer>() {
+                                    @Override
+                                    public void onCompleted() {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+
+                                    }
+
+                                    @Override
+                                    public void onNext(Integer integer) {
+
+                                    }
+                                });
+
+
                         starButton.setPressed(mMovieItem.isFavorited());
+                        togglerSubscription.unsubscribe();
                     }
                 });
 
@@ -255,6 +312,8 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     public boolean hasMovieReview() {
         return mHasMovieReview;
     }
+
+
 
 
     /**

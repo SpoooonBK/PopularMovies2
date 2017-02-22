@@ -11,22 +11,30 @@ import java.util.List;
 /**
  * Created by Spoooon on 11/18/2016.
  */
-
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    /**
+     * The constant LOG_TAG.
+     */
     public static final String LOG_TAG = DatabaseHelper.class.getSimpleName();
 
+    /**
+     * The constant DB_NAME.
+     */
     public static final String DB_NAME = "LocalMovies.db";
+    /**
+     * The constant DB_VERSION.
+     */
     public static final int DB_VERSION = 1;
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ", ";
 
 
-
-
-
-
-
+    /**
+     * Instantiates a new Database helper.
+     *
+     * @param context the context
+     */
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }

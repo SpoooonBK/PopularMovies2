@@ -7,10 +7,15 @@ import android.net.NetworkInfo;
 /**
  * Confirms if network connected to network
  */
-
 public class NetworkChecker {
 
 
+    /**
+     * Is network available boolean.
+     *
+     * @param context the context
+     * @return the boolean
+     */
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

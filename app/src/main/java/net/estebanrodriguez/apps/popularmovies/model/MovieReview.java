@@ -6,7 +6,6 @@ import android.os.Parcelable;
 /**
  * Created by Spoooon on 11/5/2016.
  */
-
 public class MovieReview extends MovieDetail implements Parcelable {
 
     private String id;
@@ -14,34 +13,74 @@ public class MovieReview extends MovieDetail implements Parcelable {
     private String content;
     private String url;
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * Gets author.
+     *
+     * @return the author
+     */
     public String getAuthor() {
         return author;
     }
 
+    /**
+     * Sets author.
+     *
+     * @param author the author
+     */
     public void setAuthor(String author) {
         this.author = author;
     }
 
+    /**
+     * Gets content.
+     *
+     * @return the content
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     * Sets content.
+     *
+     * @param content the content
+     */
     public void setContent(String content) {
         this.content = content;
     }
 
+    /**
+     * Gets url.
+     *
+     * @return the url
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     * Sets url.
+     *
+     * @param url the url
+     */
     public void setUrl(String url) {
         this.url = url;
     }
@@ -71,9 +110,17 @@ public class MovieReview extends MovieDetail implements Parcelable {
         dest.writeString(this.url);
     }
 
+    /**
+     * Instantiates a new Movie review.
+     */
     public MovieReview() {
     }
 
+    /**
+     * Instantiates a new Movie review.
+     *
+     * @param in the in
+     */
     protected MovieReview(Parcel in) {
         this.id = in.readString();
         this.author = in.readString();
@@ -81,6 +128,9 @@ public class MovieReview extends MovieDetail implements Parcelable {
         this.url = in.readString();
     }
 
+    /**
+     * The constant CREATOR.
+     */
     public static final Parcelable.Creator<MovieReview> CREATOR = new Parcelable.Creator<MovieReview>() {
         @Override
         public MovieReview createFromParcel(Parcel source) {

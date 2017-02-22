@@ -9,7 +9,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseHelper;
@@ -17,7 +16,6 @@ import net.estebanrodriguez.apps.popularmovies.database.DatabaseHelper;
 /**
  * Created by Spoooon on 11/21/2016.
  */
-
 public class PopularMoviesProvider extends ContentProvider {
 
     private DatabaseHelper mLocalMovieDBHelper;
