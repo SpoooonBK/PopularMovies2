@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import net.estebanrodriguez.apps.popularmovies.R;
@@ -36,12 +37,13 @@ import rx.schedulers.Schedulers;
 public class RecyclerViewGridFragment extends Fragment {
 
     private RecyclerViewGridAdapter<MovieItem> mRecyclerViewGridAdapter;
-    private List<MovieItem> mMovieItems;
     private RecyclerView mRecyclerView;
     private MovieDAOImpl mMovieDAO;
     private GridLayoutManager mGridLayoutManager;
     private final String LOG_TAG = RecyclerViewGridFragment.class.getSimpleName();
     private FavoriteManager mFavoriteManager;
+    private TextView mHeader;
+
 
 
     @Override
@@ -52,8 +54,20 @@ public class RecyclerViewGridFragment extends Fragment {
         mFavoriteManager = FavoriteManager.getInstance();
 
         View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
+
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+
+        String key = getString(R.string.sort_preference_key);
+        String mostPopular = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
+
+        mHeader = (TextView) rootView.findViewById(R.id.main_gridview_header_text_view);
+        mHeader.setText(sharedPreferences.getString(key, mostPopular));
+
+
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.main_recycler_view);
-        mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        int spanCount = 2;
+        mGridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
         updateMovieData(setObservable());
 
@@ -69,7 +83,7 @@ public class RecyclerViewGridFragment extends Fragment {
 
 
     /**
-     * Notify on preference changed.
+     * Notify on preference changed. Switches to the correct movieData set
      */
     public void notifyOnPreferenceChanged() {
 
@@ -80,6 +94,7 @@ public class RecyclerViewGridFragment extends Fragment {
             String key = getString(R.string.sort_preference_key);
             String mostPopular = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
             String favorites = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
+            mHeader.setText(sharedPreferences.getString(key, mostPopular));
 
             if (sharedPreferences.getString(key, mostPopular).equals(favorites)) {
                 updateMovieData(mFavoriteManager.setObservable(getActivity().getApplicationContext()));
@@ -96,7 +111,7 @@ public class RecyclerViewGridFragment extends Fragment {
 
 
     /**
-     * Sets observable.
+     * Sets observable for movie fetches.
      *
      * @return the observable
      */
@@ -117,7 +132,7 @@ public class RecyclerViewGridFragment extends Fragment {
      *
      * @param observable the observable
      */
-/* Method updateMovieData used JavaRX to fire off another thread to fetch the movie data
+/* Method updateMovieData used JavaRX to subscribe to io thread fetching the movie data
     and updates the UI when the data is ready.
      */
     public void updateMovieData(final Observable<List<MovieItem>> observable) {
@@ -138,6 +153,7 @@ public class RecyclerViewGridFragment extends Fragment {
 
                     @Override
                     public void onNext(List<MovieItem> movieItems) {
+
 
                         if (mRecyclerViewGridAdapter == null) {
                             mRecyclerViewGridAdapter = new RecyclerViewGridAdapter<MovieItem>(getActivity(), movieItems);
