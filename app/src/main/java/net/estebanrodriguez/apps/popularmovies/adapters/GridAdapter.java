@@ -1,7 +1,8 @@
 package net.estebanrodriguez.apps.popularmovies.adapters;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +12,10 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.activities.DetailActivity;
-import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
+import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
+import net.estebanrodriguez.apps.popularmovies.fragments.GridFragment;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
+import net.estebanrodriguez.apps.popularmovies.model.MovieItemHolder;
 
 import java.util.List;
 
@@ -22,22 +24,28 @@ import java.util.List;
  *
  * @param <MovieItems> the type parameter
  */
-public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<RecyclerViewGridAdapter.Viewholder> {
+public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Viewholder> {
 
     private Context mContext;
     private List<MovieItem> mMovieItems;
-    private static final String LOG_TAG = RecyclerViewGridAdapter.class.getSimpleName();
+    private static final String LOG_TAG = GridAdapter.class.getSimpleName();
+    private MovieItem mMovieItem = null;
+    private FragmentManager mFragmentManager;
 
 
     /**
      * Instantiates a new Recycler view grid adapter.
-     *
-     * @param context    the context
+     *  @param context    the context
      * @param movieItems the movie items
+     * @param fragmentManager
      */
-    public RecyclerViewGridAdapter(Context context, List<MovieItem> movieItems) {
+    public GridAdapter(Context context, List<MovieItem> movieItems, FragmentManager fragmentManager) {
         mContext = context;
         mMovieItems = movieItems;
+        mFragmentManager = fragmentManager;
+        if(!mMovieItems.isEmpty()){
+            mMovieItem = mMovieItems.get(0);
+        }
 
     }
 
@@ -67,14 +75,22 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
         public void onClick(View view) {
 
             MovieItem movieItem = getMovieItem(getAdapterPosition());
+            MovieItemHolder.setMovieItem(movieItem);
 
-            String MovieId = movieItem.getID();
+//            String MovieId = movieItem.getID();
 
-
-
-            Intent intent = new Intent(mContext, DetailActivity.class);
-            intent.putExtra(ConstantsVault.MOVIE_ITEM_PARCELABLE, movieItem);
-            mContext.startActivity(intent);
+            DetailFragment detailFragment = (DetailFragment) mFragmentManager.findFragmentById(R.id.fragment_detail);
+            GridFragment gridFragment = (GridFragment) mFragmentManager.findFragmentById(R.id.fragment_gridview);
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            ft.hide(gridFragment);
+            ft.show(detailFragment);
+            ft.addToBackStack(null);
+            ft.commit();
+//
+//
+//            Intent intent = new Intent(mContext, DetailActivity.class);
+//            intent.putExtra(ConstantsVault.MOVIE_ITEM_PARCELABLE, movieItem);
+//            mContext.startActivity(intent);
         }
     }
 
@@ -87,7 +103,7 @@ public class RecyclerViewGridAdapter<MovieItems> extends RecyclerView.Adapter<Re
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewGridAdapter.Viewholder holder, int position) {
+    public void onBindViewHolder(GridAdapter.Viewholder holder, int position) {
         MovieItem movieItem = mMovieItems.get(position);
 
 

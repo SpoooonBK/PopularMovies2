@@ -13,10 +13,12 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.adapters.DetailAdapter;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
-import net.estebanrodriguez.apps.popularmovies.fragments.MoviePreferencesFragment;
+import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
+import net.estebanrodriguez.apps.popularmovies.fragments.PreferencesFragment;
 import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
 
 /**
@@ -46,6 +48,15 @@ public class MainActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(this, ConstantsVault.NETWORK_ERROR_MESSAGE, Toast.LENGTH_LONG);
             toast.show();
         }
+
+
+
+        FragmentManager fragmentManager = getFragmentManager();
+        DetailFragment detailFragment = (DetailFragment) fragmentManager.findFragmentById(R.id.fragment_detail);
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.hide(detailFragment);
+        ft.commit();
+
     }
 
     @Override
@@ -65,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getFragmentManager();
         Fragment gridviewfragment = fragmentManager.findFragmentById(R.id.fragment_gridview);
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.add(R.id.activity_main, new MoviePreferencesFragment());
+        ft.add(R.id.activity_main, new PreferencesFragment());
         ft.hide(gridviewfragment);
         ft.addToBackStack(gridviewfragment.getTag());
         ft.commit();

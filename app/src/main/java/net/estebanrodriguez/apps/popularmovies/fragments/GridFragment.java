@@ -1,6 +1,7 @@
 package net.estebanrodriguez.apps.popularmovies.fragments;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.adapters.RecyclerViewGridAdapter;
+import net.estebanrodriguez.apps.popularmovies.adapters.GridAdapter;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
@@ -34,15 +35,17 @@ import rx.schedulers.Schedulers;
 /**
  * The type Recycler view grid fragment.
  */
-public class RecyclerViewGridFragment extends Fragment {
+public class GridFragment extends Fragment {
 
-    private RecyclerViewGridAdapter<MovieItem> mRecyclerViewGridAdapter;
+    private GridAdapter<MovieItem> mRecyclerViewGridAdapter;
     private RecyclerView mRecyclerView;
     private MovieDAOImpl mMovieDAO;
     private GridLayoutManager mGridLayoutManager;
-    private final String LOG_TAG = RecyclerViewGridFragment.class.getSimpleName();
+    private final String LOG_TAG = GridFragment.class.getSimpleName();
     private FavoriteManager mFavoriteManager;
     private TextView mHeader;
+    private MovieItem mMovieItem;
+    private FragmentManager mFragmentManager;
 
 
 
@@ -52,6 +55,7 @@ public class RecyclerViewGridFragment extends Fragment {
 
         mMovieDAO = MovieDAOImpl.getInstance(getActivity());
         mFavoriteManager = FavoriteManager.getInstance();
+        mFragmentManager = getFragmentManager();
 
         View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
 
@@ -156,13 +160,14 @@ public class RecyclerViewGridFragment extends Fragment {
 
 
                         if (mRecyclerViewGridAdapter == null) {
-                            mRecyclerViewGridAdapter = new RecyclerViewGridAdapter<MovieItem>(getActivity(), movieItems);
+                            mRecyclerViewGridAdapter = new GridAdapter<MovieItem>(getActivity(), movieItems,mFragmentManager );
                             mRecyclerView.setAdapter(mRecyclerViewGridAdapter);
 
                         } else {
                             mRecyclerViewGridAdapter.swapData(movieItems);
                             mRecyclerViewGridAdapter.notifyDataSetChanged();
                         }
+
                     }
 
                 });

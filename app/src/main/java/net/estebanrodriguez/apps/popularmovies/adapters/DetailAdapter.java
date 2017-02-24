@@ -17,7 +17,6 @@ import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
-import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
@@ -34,7 +33,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Spoooon on 11/2/2016.
  */
-public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Object> mMovieDetailsList;
     private MovieItem mMovieItem;
@@ -52,25 +51,29 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     /**
      * The constant LOG_TAG.
      */
-    public static String LOG_TAG = DetailRecyclerViewAdapter.class.getName();
+    public static String LOG_TAG = DetailAdapter.class.getName();
 
     /**
      * Instantiates a new Detail recycler view adapter.
-     *  @param movieItem the movie item
      * @param context   the context
      */
-    public DetailRecyclerViewAdapter(MovieItem movieItem, Context context) {
+    public DetailAdapter(Context context) {
 
         mFavoriteManager = FavoriteManager.getInstance();
-        mMovieItem = movieItem;
         mContext = context;
+    }
+
+    public MovieItem getMovieItem() {
+        return mMovieItem;
+    }
+
+    public void setMovieItem(MovieItem movieItem) {
+        mMovieItem = movieItem;
         mMovieDetailsList = movieItem.getMovieDetails();
         setHasMovieClip();
         setHasMovieReview();
         mMovieItem.setFavorited(mFavoriteManager.isFavorited(movieItem));
     }
-
-
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {

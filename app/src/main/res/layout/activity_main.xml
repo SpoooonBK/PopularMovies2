@@ -4,17 +4,25 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-             android:background="@drawable/happy_popcorn"
+    android:background="@drawable/happy_popcorn"
     tools:context="net.estebanrodriguez.apps.popularmovies.activities.MainActivity"
     >
 
 <fragment
 
-    android:name="net.estebanrodriguez.apps.popularmovies.fragments.RecyclerViewGridFragment"
+    android:name="net.estebanrodriguez.apps.popularmovies.fragments.GridFragment"
     android:id="@+id/fragment_gridview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:layout="@layout/fragment_grid_view"
     />
+
+    <fragment
+        android:name="net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fragment_detail"
+        tools:layout="@layout/fragment_detail"
+        />
 
 </FrameLayout>
