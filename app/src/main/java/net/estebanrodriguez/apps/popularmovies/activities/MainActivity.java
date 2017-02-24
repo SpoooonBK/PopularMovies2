@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
+import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
 import net.estebanrodriguez.apps.popularmovies.fragments.MoviePreferencesFragment;
 import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
@@ -29,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Initializes FavoriteManager
+        FavoriteManager.getInstance(this.getContentResolver());
 
         //Dynamically set image sizes
         ImageSizer.setDefaultImageSize(getDisplaySizeWidth());

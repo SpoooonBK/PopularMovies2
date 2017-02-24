@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
@@ -25,9 +24,11 @@ import rx.Observable;
 public class FavoriteManager {
 
     private List<FavoritesUpdatedListener> mFavoritesUpdatedListeners;
+    private ContentResolver mContentResolver = null;
 
 
     private FavoriteManager() {
+
     }
 
     private static class FavoriteManagerHelper {
@@ -35,33 +36,41 @@ public class FavoriteManager {
     }
 
 
-    public static FavoriteManager getInstance() {
+    public static FavoriteManager getInstance(ContentResolver contentResolver) {
+        FavoriteManager favoriteManager = FavoriteManagerHelper.INSTANCE;
+        favoriteManager.setContentResolver(contentResolver);
+        return FavoriteManagerHelper.INSTANCE;
+    }
+
+    public static FavoriteManager getInstance(){
         return FavoriteManagerHelper.INSTANCE;
     }
 
 
     public String LOG_TAG = FavoriteManager.class.getName();
 
+    private void setContentResolver(ContentResolver contentResolver) {
+        mContentResolver = contentResolver;
+    }
 
+    public int toggleFavorite(final MovieItem movieItem) {
 
-    public int toggleFavorite(final MovieItem movieItem, final Context context) {
-
-                if (isFavorited(movieItem, context)) {
-                    unfavoriteMovie(movieItem, context);
+                if (isFavorited(movieItem)) {
+                    unfavoriteMovie(movieItem);
                     movieItem.setFavorited(false);
                     return -1;
                 } else {
-                    favoriteMovie(movieItem, context);
+                    favoriteMovie(movieItem);
                     movieItem.setFavorited(true);
                     return 0;
                 }
     }
 
 
-    public void favoriteMovie(MovieItem movieItem, Context context) {
+    public void favoriteMovie(MovieItem movieItem) {
 
 
-                ContentResolver contentResolver = context.getContentResolver();
+
 
                 List<MovieClip> movieClips = movieItem.getMovieClips();
                 List<MovieReview> movieReviews = movieItem.getMovieReviews();
@@ -87,7 +96,7 @@ public class FavoriteManager {
                 basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_FAVORITED, movieItem.isFavorited());
 
 
-                contentResolver.insert(
+                mContentResolver.insert(
                         DatabaseContract.BasicMovieDetailEntries.CONTENT_URI,
                         basicDetailsValues
                 );
@@ -105,7 +114,7 @@ public class FavoriteManager {
                     movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_SITE, movieClip.getSite());
                     movieClipValues.put(DatabaseContract.MovieClipEntries.COLUMN_NAME_CLIP_SIZE, movieClip.getSize());
 
-                    contentResolver.insert(
+                    mContentResolver.insert(
                             DatabaseContract.MovieClipEntries.CONTENT_URI,
                             movieClipValues
                     );
@@ -120,49 +129,49 @@ public class FavoriteManager {
                     reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID, movieItem.getID());
                     reviewValues.put(DatabaseContract.MovieReviewEntries.COLUMN_NAME_REVIEW_URL, movieReview.getUrl());
 
-                    contentResolver.insert(
+                    mContentResolver.insert(
                             DatabaseContract.MovieReviewEntries.CONTENT_URI,
                             reviewValues
                     );
                 }
                 notifyListeners();
-                showFavorites(context);
+                showFavorites();
     }
 
 
-    public Boolean unfavoriteMovie(MovieItem movieItem, Context context) {
+    public Boolean unfavoriteMovie(MovieItem movieItem) {
 
-        ContentResolver contentResolver = context.getContentResolver();
+
         String[] selection = {movieItem.getID()};
 
-        contentResolver.delete(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
-        contentResolver.delete(DatabaseContract.MovieClipEntries.CONTENT_URI, DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
-        contentResolver.delete(DatabaseContract.MovieReviewEntries.CONTENT_URI, DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
+        mContentResolver.delete(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
+        mContentResolver.delete(DatabaseContract.MovieClipEntries.CONTENT_URI, DatabaseContract.MovieClipEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
+        mContentResolver.delete(DatabaseContract.MovieReviewEntries.CONTENT_URI, DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID + " = ?", selection);
 
 
-        boolean unfavorited = !isFavorited(movieItem, context);
+        boolean unfavorited = !isFavorited(movieItem);
         if (unfavorited) {
             Log.v(LOG_TAG, movieItem.getTitle() + " unfavorited.");
         }
         notifyListeners();
-        showFavorites(context);
-        return !isFavorited(movieItem, context);
+        showFavorites();
+        return !isFavorited(movieItem);
     }
 
 
-    public List<MovieItem> getFavorites(Context context) {
+    public List<MovieItem> getFavorites() {
 
-        ContentResolver contentResolver = context.getContentResolver();
 
-        Cursor cursor = contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
+
+        Cursor cursor = mContentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
         List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
         for (MovieItem movieItem : movieItems) {
             String id = movieItem.getID();
-            cursor = contentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
+            cursor = mContentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
             List<MovieClip> movieClips = MovieDetailFactory.buildMovieClipList(cursor);
             movieItem.setMovieClips(movieClips);
 
-            cursor = contentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
+            cursor = mContentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
             List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
             movieItem.setMovieReviews(movieReviews);
             Log.v(LOG_TAG, movieItem.toString());
@@ -173,22 +182,22 @@ public class FavoriteManager {
 
 
 //TODO remove after testing
-    public void showFavorites(Context context) {
+    public void showFavorites() {
 
-        ContentResolver contentResolver = context.getContentResolver();
+
 
         Cursor cursor = null;
 
         try{
-            cursor = contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
+            cursor = mContentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
             List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
             for (MovieItem movieItem : movieItems) {
                 String id = movieItem.getID();
-                cursor = contentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
+                cursor = mContentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
                 List<MovieClip> movieClips = MovieDetailFactory.buildMovieClipList(cursor);
                 movieItem.setMovieClips(movieClips);
 
-                cursor = contentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
+                cursor = mContentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
                 List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
                 movieItem.setMovieReviews(movieReviews);
                 Log.v(LOG_TAG, movieItem.toString());
@@ -209,24 +218,28 @@ public class FavoriteManager {
         Observable<List<MovieItem>> observable = Observable.fromCallable(new Callable<List<MovieItem>>() {
             @Override
             public List<MovieItem> call() throws Exception {
-                return getFavorites(context);
+                return getFavorites();
             }
         });
         return observable;
     }
 
+    public boolean isFavorited(MovieItem movieItem) {
+        return isFavorited(movieItem.getID());
+    }
 
 
-    public boolean isFavorited(MovieItem movieItem, Context context) {
+
+    public boolean isFavorited(String movieID) {
 
         Cursor cursor = null;
-        ContentResolver contentResolver = context.getContentResolver();
+
         String selectionClause = DatabaseContract.MovieReviewEntries.COLUMN_NAME_MOVIE_ID + " = ?";
-        String[] selectionArgs = {movieItem.getID()};
+        String[] selectionArgs = {movieID};
         Boolean favorited = null;
 
         try {
-            cursor = contentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, selectionClause, selectionArgs, null);
+            cursor = mContentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, selectionClause, selectionArgs, null);
 
             favorited = cursor.getCount() > 0;
 

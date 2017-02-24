@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.squareup.picasso.Picasso;
 
@@ -35,13 +37,10 @@ import rx.schedulers.Schedulers;
 public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Object> mMovieDetailsList;
-    private List<MovieClip> mMovieClips;
-    private List<MovieReview> mMovieReviews;
     private MovieItem mMovieItem;
     private Context mContext;
     private boolean mHasMovieClip;
     private boolean mHasMovieReview;
-    private DetailFragment mFragment;
     private FavoriteManager mFavoriteManager;
 
     private final int MOVIE_CLIP = 0;
@@ -57,21 +56,18 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     /**
      * Instantiates a new Detail recycler view adapter.
-     *
-     * @param movieItem the movie item
+     *  @param movieItem the movie item
      * @param context   the context
-     * @param fragment  the fragment
      */
-    public DetailRecyclerViewAdapter(MovieItem movieItem, Context context, DetailFragment fragment) {
+    public DetailRecyclerViewAdapter(MovieItem movieItem, Context context) {
 
         mFavoriteManager = FavoriteManager.getInstance();
         mMovieItem = movieItem;
         mContext = context;
         mMovieDetailsList = movieItem.getMovieDetails();
-        mFragment = fragment;
         setHasMovieClip();
         setHasMovieReview();
-        mMovieItem.setFavorited(mFavoriteManager.isFavorited(movieItem, mContext));
+        mMovieItem.setFavorited(mFavoriteManager.isFavorited(movieItem));
     }
 
 
@@ -127,40 +123,11 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
 
 
-                final ImageButton starButton = ((MovieItemDetailsViewHolder) holder).getStarButton();
-
-                //Query if movieItem is favorited using RxJava
-                Observable<Boolean> observable = Observable.fromCallable(new Callable<Boolean>() {
-                    @Override
-                    public Boolean call() throws Exception {
-                        return FavoriteManager.getInstance().isFavorited(mMovieItem, mContext);
-                    }
-                });
-
-                Subscription subscription = observable.observeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<Boolean>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Boolean aBoolean) {
-                        mMovieItem.setFavorited(aBoolean);
-
-                    }
-                });
+                final ToggleButton starButton = ((MovieItemDetailsViewHolder) holder).getStarButton();
 
 
+                starButton.setChecked(mMovieItem.isFavorited());
 
-                starButton.setPressed(mMovieItem.isFavorited());
-                subscription.unsubscribe();
 
                 //Set starButton to toggle(insert, delete) from local db using RxJava
                 starButton.setOnClickListener(new View.OnClickListener() {
@@ -168,19 +135,18 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                     public void onClick(View view) {
 
 
-                        Observable<Integer> togglerObservable = Observable.fromCallable(new Callable<Integer>() {
+                        final Observable<Integer> togglerObservable = Observable.fromCallable(new Callable<Integer>() {
                             @Override
                             public Integer call() throws Exception {
-                                return FavoriteManager.getInstance().toggleFavorite(mMovieItem, mContext);
+                                return FavoriteManager.getInstance().toggleFavorite(mMovieItem);
                             }
                         });
 
-                        Subscription togglerSubscription = togglerObservable.subscribeOn(Schedulers.io())
+                        final Subscription togglerSubscription = togglerObservable.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(new Observer<Integer>() {
                                     @Override
                                     public void onCompleted() {
-
                                     }
 
                                     @Override
@@ -191,12 +157,17 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                                     @Override
                                     public void onNext(Integer integer) {
 
+                                        starButton.setChecked(mMovieItem.isFavorited());
+
+                                        String notification;
+                                        if(mMovieItem.isFavorited()){
+                                            notification = mContext.getString(R.string.favorited);
+                                        }else notification = mContext.getString(R.string.unfavorited);
+                                        Toast toast = Toast.makeText(mContext,mMovieItem.getTitle() + " " + notification,Toast.LENGTH_SHORT);
+                                        toast.show();
                                     }
                                 });
 
-
-                        starButton.setPressed(mMovieItem.isFavorited());
-                        togglerSubscription.unsubscribe();
                     }
                 });
 
@@ -469,7 +440,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         private TextView mTextViewRating;
         private TextView mTextViewPopularity;
         private TextView mTextViewOverview;
-        private ImageButton mStarButton;
+        private ToggleButton mStarButton;
 
         /**
          * Instantiates a new Movie item details view holder.
@@ -483,7 +454,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             mTextViewRating =(TextView)itemView.findViewById(R.id.detail_textview_vote_average);
             mTextViewPopularity =(TextView)itemView.findViewById(R.id.detail_textview_popularity);
             mTextViewOverview = (TextView)itemView.findViewById(R.id.detail_textview_overview);
-            mStarButton = (ImageButton)itemView.findViewById(R.id.detail_imagebutton_save);
+            mStarButton = (ToggleButton)itemView.findViewById(R.id.detail_togglebutton_save);
         }
 
         /**
@@ -581,7 +552,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
          *
          * @return the star button
          */
-        public ImageButton getStarButton() {
+        public ToggleButton getStarButton() {
             return mStarButton;
         }
 
@@ -590,7 +561,7 @@ public class DetailRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
          *
          * @param starButton the star button
          */
-        public void setStarButton(ImageButton starButton) {
+        public void setStarButton(ToggleButton starButton) {
             mStarButton = starButton;
         }
     }

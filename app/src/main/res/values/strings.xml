@@ -8,10 +8,11 @@
     <string name="sort_preference_key" translatable="false">sort_preference_key</string>
     <string name="settings" translatable="true">Settings</string>
     <string name="author_header">Author:</string>
-    <string name="review">Review</string>
-    <string name="reviews">Reviews:</string>
-    <string name="trailers">Trailers:</string>
-    <string name="favorite">Favorite:</string>
-
+    <string name="review" translatable="true">Review</string>
+    <string name="reviews" translatable="true">Reviews:</string>
+    <string name="trailers" translatable="true">Trailers:</string>
+    <string name="favorite" translatable="true">Favorite:</string>
+    <string name="favorited" translatable="true">favorited</string>
+    <string name="unfavorited" translatable="true">unfavorited</string>
 
 </resources>

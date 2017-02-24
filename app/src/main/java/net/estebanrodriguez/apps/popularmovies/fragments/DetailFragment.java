@@ -108,7 +108,7 @@ public class DetailFragment extends Fragment {
 
                     @Override
                     public void onNext(MovieItem movieItem) {
-                        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieItem, getActivity(), DetailFragment.this);
+                        DetailRecyclerViewAdapter adapter = new DetailRecyclerViewAdapter(movieItem, getActivity());
                         mRecyclerView.setAdapter(adapter);
                     }
                 });

@@ -219,16 +219,8 @@ public class MovieItemFactory {
                         break;
                     }
                     case ConstantsVault.FAVORITED: {
-                        try{
-                            int value = Integer.parseInt(dataMap.get(key));
-                            if(value == 1){
-                                movieItem.setFavorited(true);
-                            }else if(value == 0){
-                                movieItem.setFavorited(false);
-                            }
-                        }catch (Exception e){
-                            movieItem.setFavorited(Boolean.parseBoolean(dataMap.get(key)));
-                        }
+                        boolean isFavorite = FavoriteManager.getInstance().isFavorited(movieItem.getID());
+                        movieItem.setFavorited(isFavorite);
                         break;
                     }
                 }

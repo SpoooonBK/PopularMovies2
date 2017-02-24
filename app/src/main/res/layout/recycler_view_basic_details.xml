@@ -66,13 +66,19 @@
                     android:text="@string/favorite"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"/>
-                <ImageButton
+                <ToggleButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/detail_imagebutton_save"
                     android:src="@drawable/star"
-                    android:background="#00ffffff"
-                    />
+                    android:id="@+id/detail_togglebutton_save"
+                    android:background="#00ffffff"/>
+                <!--<ImageButton-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/detail_imagebutton_save"-->
+                    <!--android:src="@drawable/star"-->
+                    <!--android:background="#00ffffff"-->
+                    <!--/>-->
             </LinearLayout>
 
 
