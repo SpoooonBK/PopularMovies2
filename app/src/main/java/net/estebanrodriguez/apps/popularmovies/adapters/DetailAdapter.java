@@ -70,6 +70,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public void setDetails(MovieItem movieItem) {
 
+        mMovieDetailsList.clear();
 
         mMovieItem = movieItem;
         mMovieClips = movieItem.getMovieClips();
