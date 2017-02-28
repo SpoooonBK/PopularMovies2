@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.adapters.DetailAdapter;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getFragmentManager();
         Fragment gridviewfragment = fragmentManager.findFragmentById(R.id.fragment_gridview);
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.add(R.id.activity_main, new PreferencesFragment());
+        ft.add(R.id.activity_main_frame_layout, new PreferencesFragment());
         ft.hide(gridviewfragment);
         ft.addToBackStack(gridviewfragment.getTag());
         ft.commit();
@@ -90,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         display.getSize(size);
         return size.x;
     }
+
+
 
 
 }

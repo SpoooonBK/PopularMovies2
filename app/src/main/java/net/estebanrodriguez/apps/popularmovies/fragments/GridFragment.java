@@ -37,14 +37,13 @@ import rx.schedulers.Schedulers;
  */
 public class GridFragment extends Fragment {
 
-    private GridAdapter<MovieItem> mRecyclerViewGridAdapter;
+    private GridAdapter<MovieItem> mGridAdapter;
     private RecyclerView mRecyclerView;
     private MovieDAOImpl mMovieDAO;
     private GridLayoutManager mGridLayoutManager;
     private final String LOG_TAG = GridFragment.class.getSimpleName();
     private FavoriteManager mFavoriteManager;
     private TextView mHeader;
-    private MovieItem mMovieItem;
     private FragmentManager mFragmentManager;
 
 
@@ -159,13 +158,13 @@ public class GridFragment extends Fragment {
                     public void onNext(List<MovieItem> movieItems) {
 
 
-                        if (mRecyclerViewGridAdapter == null) {
-                            mRecyclerViewGridAdapter = new GridAdapter<MovieItem>(getActivity(), movieItems,mFragmentManager );
-                            mRecyclerView.setAdapter(mRecyclerViewGridAdapter);
+                        if (mGridAdapter == null) {
+                            mGridAdapter = new GridAdapter<MovieItem>(getActivity(), movieItems,mFragmentManager );
+                            mRecyclerView.setAdapter(mGridAdapter);
 
                         } else {
-                            mRecyclerViewGridAdapter.swapData(movieItems);
-                            mRecyclerViewGridAdapter.notifyDataSetChanged();
+                            mGridAdapter.swapData(movieItems);
+                            mGridAdapter.notifyDataSetChanged();
                         }
 
                     }

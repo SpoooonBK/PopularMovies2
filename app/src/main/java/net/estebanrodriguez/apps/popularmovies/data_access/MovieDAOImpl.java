@@ -23,6 +23,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+
+import rx.Observable;
 
 /**
  * Created by Spoooon on 10/9/2016.
@@ -274,6 +277,16 @@ public class MovieDAOImpl implements MovieDAO {
         }
 
         return createURL(baseURL);
+    }
+
+    public Observable<MovieItem> getMovieDetailsObservable(final MovieItem movieItem){
+        Observable<MovieItem> observable = Observable.fromCallable(new Callable<MovieItem>() {
+            @Override
+            public MovieItem call() throws Exception {
+                return completeMovieDetails(movieItem);
+            }
+        });
+        return observable;
     }
 
 

@@ -19,8 +19,10 @@ import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
+import net.estebanrodriguez.apps.popularmovies.model.MovieItemHolder;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -37,10 +39,13 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private List<Object> mMovieDetailsList;
     private MovieItem mMovieItem;
+    private List<MovieReview> mMovieReviews;
+    private List<MovieClip> mMovieClips;
+
     private Context mContext;
     private boolean mHasMovieClip;
     private boolean mHasMovieReview;
-    private FavoriteManager mFavoriteManager;
+
 
     private final int MOVIE_CLIP = 0;
     private final int MOVIE_REVIEW = 1;
@@ -58,26 +63,33 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
      * @param context   the context
      */
     public DetailAdapter(Context context) {
-
-        mFavoriteManager = FavoriteManager.getInstance();
+        mMovieDetailsList = new ArrayList<Object>();
         mContext = context;
     }
 
-    public MovieItem getMovieItem() {
-        return mMovieItem;
-    }
 
-    public void setMovieItem(MovieItem movieItem) {
+    public void setDetails(MovieItem movieItem) {
+
+
         mMovieItem = movieItem;
-        mMovieDetailsList = movieItem.getMovieDetails();
-        setHasMovieClip();
-        setHasMovieReview();
-        mMovieItem.setFavorited(mFavoriteManager.isFavorited(movieItem));
+        mMovieClips = movieItem.getMovieClips();
+        mMovieReviews = movieItem.getMovieReviews();
+
+        mMovieDetailsList.add(movieItem);
+        for(MovieClip movieClip: mMovieClips){
+            mMovieDetailsList.add(movieClip);
+        }
+
+        for(MovieReview movieReview: mMovieReviews) {
+            mMovieDetailsList.add(movieReview);
+        }
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         int viewtype = holder.getItemViewType();
+
+
 
         switch (viewtype){
             case(MOVIE_CLIP):{
@@ -198,7 +210,6 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-
         return (mMovieDetailsList.size());
     }
 
@@ -264,7 +275,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 mHasMovieClip = true;
             }
             else{
-                mHasMovieReview = false;
+                mHasMovieClip = false;
             }
         }
     }
@@ -583,7 +594,6 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
          */
         public MovieDetailsHeaderViewHolder(View itemView) {
             super(itemView);
-            mHeader = (TextView) itemView.findViewById(R.id.detail_recyclerview_header);
         }
 
         /**

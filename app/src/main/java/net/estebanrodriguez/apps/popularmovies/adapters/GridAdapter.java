@@ -3,21 +3,31 @@ package net.estebanrodriguez.apps.popularmovies.adapters;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAO;
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
 import net.estebanrodriguez.apps.popularmovies.fragments.GridFragment;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItemHolder;
 
 import java.util.List;
+
+import rx.Observable;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Spoooon on 10/12/2016.
@@ -29,24 +39,34 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
     private Context mContext;
     private List<MovieItem> mMovieItems;
     private static final String LOG_TAG = GridAdapter.class.getSimpleName();
-    private MovieItem mMovieItem = null;
     private FragmentManager mFragmentManager;
 
 
     /**
      * Instantiates a new Recycler view grid adapter.
-     *  @param context    the context
-     * @param movieItems the movie items
+     *
+     * @param context         the context
+     * @param movieItems      the movie items
      * @param fragmentManager
      */
     public GridAdapter(Context context, List<MovieItem> movieItems, FragmentManager fragmentManager) {
         mContext = context;
         mMovieItems = movieItems;
         mFragmentManager = fragmentManager;
-        if(!mMovieItems.isEmpty()){
-            mMovieItem = mMovieItems.get(0);
-        }
+    }
 
+    public void showDetails(MovieItem movieItem) {
+
+        DetailFragment detailFragment = (DetailFragment) mFragmentManager.findFragmentById(R.id.fragment_detail);
+        GridFragment gridFragment = (GridFragment) mFragmentManager.findFragmentById(R.id.fragment_gridview);
+
+        detailFragment.update(movieItem);
+
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
+        ft.hide(gridFragment);
+        ft.show(detailFragment);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     /**
@@ -75,22 +95,32 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
         public void onClick(View view) {
 
             MovieItem movieItem = getMovieItem(getAdapterPosition());
-            MovieItemHolder.setMovieItem(movieItem);
 
-//            String MovieId = movieItem.getID();
 
-            DetailFragment detailFragment = (DetailFragment) mFragmentManager.findFragmentById(R.id.fragment_detail);
-            GridFragment gridFragment = (GridFragment) mFragmentManager.findFragmentById(R.id.fragment_gridview);
-            FragmentTransaction ft = mFragmentManager.beginTransaction();
-            ft.hide(gridFragment);
-            ft.show(detailFragment);
-            ft.addToBackStack(null);
-            ft.commit();
-//
-//
-//            Intent intent = new Intent(mContext, DetailActivity.class);
-//            intent.putExtra(ConstantsVault.MOVIE_ITEM_PARCELABLE, movieItem);
-//            mContext.startActivity(intent);
+            Observable<MovieItem> observable = MovieDAOImpl.getInstance(mContext).getMovieDetailsObservable(movieItem);
+            Subscription subscription = observable.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<MovieItem>() {
+                        @Override
+                        public void onCompleted() {
+
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onNext(MovieItem movieItem) {
+
+                            showDetails(movieItem);
+
+                        }
+                    });
+
+
         }
     }
 
@@ -162,11 +192,6 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
     public MovieItem getMovieItem(int index) {
         return mMovieItems.get(index);
     }
-
-
-
-
-
 
 
 }
