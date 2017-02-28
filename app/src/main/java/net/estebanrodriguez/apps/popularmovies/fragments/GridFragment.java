@@ -47,6 +47,11 @@ public class GridFragment extends Fragment {
     private FragmentManager mFragmentManager;
 
 
+    //Preferences Strings
+    private String FAVORITES;
+    private String MOST_POPULAR;
+
+
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,27 +64,31 @@ public class GridFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
 
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
-        String key = getString(R.string.sort_preference_key);
-        String mostPopular = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
 
         mHeader = (TextView) rootView.findViewById(R.id.main_gridview_header_text_view);
-        mHeader.setText(sharedPreferences.getString(key, mostPopular));
+        mHeader.setText(getSortByPreference());
 
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.main_recycler_view);
         int spanCount = 2;
         mGridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
-        updateMovieData(setObservable());
+        updateMovieData();
 
+
+        //Set favorites updated listener
         mFavoriteManager.setFavoritesUpdatedListener(new FavoritesUpdatedListener() {
             @Override
             public void onFavoritesUpdated() {
-                updateFavoriteData();
+                updateMovieData();
             }
         });
+
+
+        //Set SortBy Constants
+        FAVORITES = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
+        MOST_POPULAR = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
 
         return rootView;
     }
@@ -92,18 +101,13 @@ public class GridFragment extends Fragment {
 
         if (NetworkChecker.isNetworkAvailable(getActivity())) {
 
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 
-            String key = getString(R.string.sort_preference_key);
-            String mostPopular = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
-            String favorites = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
-            mHeader.setText(sharedPreferences.getString(key, mostPopular));
+            String sortByPreference = getSortByPreference();
 
-            if (sharedPreferences.getString(key, mostPopular).equals(favorites)) {
-                updateMovieData(mFavoriteManager.setObservable(getActivity().getApplicationContext()));
-            } else {
-                updateMovieData(setObservable());
-            }
+
+            mHeader.setText(sortByPreference);
+
+            updateMovieData();
 
         } else {
             Toast toast = Toast.makeText(getActivity(), ConstantsVault.NETWORK_ERROR_MESSAGE, Toast.LENGTH_LONG);
@@ -133,12 +137,23 @@ public class GridFragment extends Fragment {
     /**
      * Update movie data.
      *
-     * @param observable the observable
+     *
      */
 /* Method updateMovieData used JavaRX to subscribe to io thread fetching the movie data
     and updates the UI when the data is ready.
      */
-    public void updateMovieData(final Observable<List<MovieItem>> observable) {
+    public void updateMovieData() {
+
+        Observable<List<MovieItem>> observable = null;
+
+        if (getSortByPreference().equals(FAVORITES)) {
+            observable = mFavoriteManager.setObservable(getActivity().getApplicationContext());
+        } else{
+            observable = MovieDAOImpl.getInstance(getActivity().getApplicationContext()).getMovieItemsObservable();
+        }
+
+
+
 
 
         final Subscription movieListSubscription = observable.subscribeOn(Schedulers.io())
@@ -173,18 +188,12 @@ public class GridFragment extends Fragment {
 
     }
 
-    /**
-     * Update favorite data.
-     */
-    public void updateFavoriteData() {
+
+    public String getSortByPreference(){
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         String key = getString(R.string.sort_preference_key);
-        String mostPopular = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
-        String favorites = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
-
-        if (sharedPreferences.getString(key, mostPopular).equals(favorites)) {
-            updateMovieData(mFavoriteManager.setObservable(getActivity().getApplicationContext()));
-        }
+        return sharedPreferences.getString(key, MOST_POPULAR);
     }
 
 

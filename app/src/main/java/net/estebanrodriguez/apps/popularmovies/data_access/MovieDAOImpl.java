@@ -289,5 +289,17 @@ public class MovieDAOImpl implements MovieDAO {
         return observable;
     }
 
+    public Observable<List<MovieItem>> getMovieItemsObservable() {
+
+        Observable<List<MovieItem>> observable = Observable.fromCallable(new Callable<List<MovieItem>>() {
+            @Override
+            public List<MovieItem> call() throws Exception {
+                return getAllMovies();
+            }
+        });
+
+        return observable;
+    }
+
 
 }
