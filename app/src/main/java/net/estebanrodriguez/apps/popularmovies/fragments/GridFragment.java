@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +25,7 @@ import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
 import net.estebanrodriguez.apps.popularmovies.interfaces.listeners.FavoritesUpdatedListener;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -37,6 +40,8 @@ import rx.schedulers.Schedulers;
  */
 public class GridFragment extends Fragment {
 
+    private static String MOVIE_ITEM_LIST = "movie_item_list";
+
     private GridAdapter<MovieItem> mGridAdapter;
     private RecyclerView mRecyclerView;
     private MovieDAOImpl mMovieDAO;
@@ -45,37 +50,29 @@ public class GridFragment extends Fragment {
     private FavoriteManager mFavoriteManager;
     private TextView mHeader;
     private FragmentManager mFragmentManager;
+    private List<MovieItem> mMovieItems;
 
 
     //Preferences Strings
     private String FAVORITES;
     private String MOST_POPULAR;
 
-
+    public void setMovieItems(List<MovieItem> movieItems) {
+        mMovieItems = movieItems;
+    }
+    
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        //Set SortBy Strings
+        FAVORITES = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
+        MOST_POPULAR = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
 
 
         mMovieDAO = MovieDAOImpl.getInstance(getActivity());
         mFavoriteManager = FavoriteManager.getInstance();
         mFragmentManager = getFragmentManager();
-
-        View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
-
-
-
-
-        mHeader = (TextView) rootView.findViewById(R.id.main_gridview_header_text_view);
-        mHeader.setText(getSortByPreference());
-
-
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.main_recycler_view);
-        int spanCount = 2;
-        mGridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
-        mRecyclerView.setLayoutManager(mGridLayoutManager);
-        updateMovieData();
-
 
         //Set favorites updated listener
         mFavoriteManager.setFavoritesUpdatedListener(new FavoritesUpdatedListener() {
@@ -86,9 +83,24 @@ public class GridFragment extends Fragment {
         });
 
 
-        //Set SortBy Constants
-        FAVORITES = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[2];
-        MOST_POPULAR = getActivity().getResources().getStringArray(R.array.fetch_movies_list_preference)[0];
+        View rootView = inflater.inflate(R.layout.fragment_grid_view, container, false);
+
+        mHeader = (TextView) rootView.findViewById(R.id.main_gridview_header_text_view);
+        mHeader.setText(getSortByPreference());
+
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.main_recycler_view);
+        int spanCount = 2;
+        mGridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
+
+// Checks to see if there is already movieData. So that network is not called on orientation change
+        if (savedInstanceState != null) {
+            mMovieItems = savedInstanceState.getParcelableArrayList(MOVIE_ITEM_LIST);
+            updateAdapter(mMovieItems);
+        } else {
+            updateMovieData();
+        }
+
 
         return rootView;
     }
@@ -136,8 +148,6 @@ public class GridFragment extends Fragment {
 
     /**
      * Update movie data.
-     *
-     *
      */
 /* Method updateMovieData used JavaRX to subscribe to io thread fetching the movie data
     and updates the UI when the data is ready.
@@ -148,12 +158,9 @@ public class GridFragment extends Fragment {
 
         if (getSortByPreference().equals(FAVORITES)) {
             observable = mFavoriteManager.setObservable(getActivity().getApplicationContext());
-        } else{
+        } else {
             observable = MovieDAOImpl.getInstance(getActivity().getApplicationContext()).getMovieItemsObservable();
         }
-
-
-
 
 
         final Subscription movieListSubscription = observable.subscribeOn(Schedulers.io())
@@ -172,24 +179,19 @@ public class GridFragment extends Fragment {
                     @Override
                     public void onNext(List<MovieItem> movieItems) {
 
+                        setMovieItems(movieItems);
 
-                        if (mGridAdapter == null) {
-                            mGridAdapter = new GridAdapter<MovieItem>(getActivity(), movieItems,mFragmentManager );
-                            mRecyclerView.setAdapter(mGridAdapter);
-
-                        } else {
-                            mGridAdapter.swapData(movieItems);
-                            mGridAdapter.notifyDataSetChanged();
-                        }
+                        updateAdapter(mMovieItems);
 
                     }
 
                 });
 
+
     }
 
 
-    public String getSortByPreference(){
+    public String getSortByPreference() {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         String key = getString(R.string.sort_preference_key);
@@ -197,7 +199,41 @@ public class GridFragment extends Fragment {
     }
 
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (mMovieItems != null) {
+            ArrayList<MovieItem> parcelableList = new ArrayList<>();
+            for (MovieItem movieItem : mMovieItems) {
+                parcelableList.add(movieItem);
+                Log.v(LOG_TAG, "Saving " + movieItem.getTitle());
+            }
+            outState.putParcelableArrayList(MOVIE_ITEM_LIST, parcelableList);
+        }
+
+    }
+
+    public void updateAdapter(List<MovieItem> movieItems) {
+
+
+        if (mGridAdapter == null) {
+            mGridAdapter = new GridAdapter<MovieItem>(getActivity(), movieItems, mFragmentManager);
+            mRecyclerView.setAdapter(mGridAdapter);
+
+        } else {
+            mGridAdapter.swapData(movieItems);
+            mGridAdapter.notifyDataSetChanged();
+        }
+
+    }
+
 }
+
+
+
+
+
 
 
 

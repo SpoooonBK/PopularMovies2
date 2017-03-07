@@ -43,9 +43,6 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private List<MovieClip> mMovieClips;
 
     private Context mContext;
-    private boolean mHasMovieClip;
-    private boolean mHasMovieReview;
-
 
     private final int MOVIE_CLIP = 0;
     private final int MOVIE_REVIEW = 1;
@@ -263,41 +260,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return -1;
     }
 
-    private void setHasMovieReview(){
-        for(Object movieDetail: mMovieDetailsList){
-            mHasMovieReview = movieDetail instanceof MovieReview;
-        }
 
-    }
-
-    private void setHasMovieClip(){
-        for(Object movieDetail: mMovieDetailsList){
-            if(movieDetail instanceof MovieClip){
-                mHasMovieClip = true;
-            }
-            else{
-                mHasMovieClip = false;
-            }
-        }
-    }
-
-    /**
-     * Has movie clip boolean.
-     *
-     * @return the boolean
-     */
-    public boolean hasMovieClip() {
-        return mHasMovieClip;
-    }
-
-    /**
-     * Has movie review boolean.
-     *
-     * @return the boolean
-     */
-    public boolean hasMovieReview() {
-        return mHasMovieReview;
-    }
 
 
 
@@ -615,6 +578,8 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             mHeader = header;
         }
     }
+
+
 
 
 

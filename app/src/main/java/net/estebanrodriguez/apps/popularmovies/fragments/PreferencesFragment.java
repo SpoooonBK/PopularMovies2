@@ -47,6 +47,8 @@ public class PreferencesFragment extends PreferenceFragment implements SharedPre
     }
 
 
-
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
 }

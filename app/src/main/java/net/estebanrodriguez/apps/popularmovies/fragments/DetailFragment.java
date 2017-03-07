@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +25,12 @@ import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 public class DetailFragment extends Fragment {
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+    public static final String MOVIE_ITEM = "movie_item";
     private RecyclerView mRecyclerView;
     private DetailAdapter mDetailAdapter;
     private LinearLayout mLinearLayout;
     private TextView mHeader;
+    private MovieItem mMovieItem;
 
 
 
@@ -42,6 +45,12 @@ public class DetailFragment extends Fragment {
 
         mLinearLayout = (LinearLayout) rootView.findViewById(R.id.detail_layout);
         mHeader = (TextView) rootView.findViewById(R.id.detail_textview_title);
+        if(savedInstanceState!=null){
+            MovieItem movieItem = savedInstanceState.getParcelable(MOVIE_ITEM);
+            if(movieItem != null){
+                update(movieItem);
+            }
+        }
 
 
         return rootView;
@@ -49,11 +58,22 @@ public class DetailFragment extends Fragment {
 
     public void update(MovieItem movieItem){
 
+
+        mMovieItem = movieItem;
         mDetailAdapter.setDetails(movieItem);
         mDetailAdapter.notifyDataSetChanged();
-
         mHeader.setText(movieItem.getTitle());
         mLinearLayout.setBackgroundColor(Color.WHITE);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if(mMovieItem != null){
+            outState.putParcelable(MOVIE_ITEM, mMovieItem);
+            Log.e(LOG_TAG, "OnSavedInstanceState called.  Bundling movieItem: " + mMovieItem.getTitle());
+        }
     }
 
 

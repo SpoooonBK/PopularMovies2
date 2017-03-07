@@ -3,23 +3,19 @@ package net.estebanrodriguez.apps.popularmovies.adapters;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAO;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
 import net.estebanrodriguez.apps.popularmovies.fragments.GridFragment;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
-import net.estebanrodriguez.apps.popularmovies.model.MovieItemHolder;
 
 import java.util.List;
 
@@ -65,7 +61,8 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
         FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.hide(gridFragment);
         ft.show(detailFragment);
-        ft.addToBackStack(null);
+        ft.setBreadCrumbShortTitle(mContext.getString(R.string.detail_fragment));
+        ft.addToBackStack(gridFragment.getTag());
         ft.commit();
     }
 
