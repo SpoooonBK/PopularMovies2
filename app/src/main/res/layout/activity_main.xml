@@ -25,4 +25,5 @@
         tools:layout="@layout/fragment_detail"
         />
 
+
 </FrameLayout>

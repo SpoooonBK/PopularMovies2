@@ -16,6 +16,7 @@ import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
 import net.estebanrodriguez.apps.popularmovies.fragments.GridFragment;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
+import net.estebanrodriguez.apps.popularmovies.utility.FragmentStateHolder;
 
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
         FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.hide(gridFragment);
         ft.show(detailFragment);
-        ft.setBreadCrumbShortTitle(mContext.getString(R.string.detail_fragment));
+        ft.setBreadCrumbShortTitle(FragmentStateHolder.DETAILS);
         ft.addToBackStack(gridFragment.getTag());
         ft.commit();
     }

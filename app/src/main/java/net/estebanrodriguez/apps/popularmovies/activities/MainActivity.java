@@ -19,6 +19,7 @@ import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
 import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
 import net.estebanrodriguez.apps.popularmovies.fragments.PreferencesFragment;
+import net.estebanrodriguez.apps.popularmovies.utility.FragmentStateHolder;
 import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
 
 /**
@@ -26,12 +27,20 @@ import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
  */
 public class MainActivity extends AppCompatActivity {
 
+
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
     private final static String VIS_FRAGMENT = "visible";
 
     private final static int GRIDVIEW_FRAGMENT = 0;
     private final static int SETTINGS_FRAGMENT = 1;
     private final static int DETAILS_FRAGMENT = 2;
+
+
+
+    private PreferencesFragment mPreferencesFragment = new PreferencesFragment();
+    private Fragment mGridFragment;
+    private Fragment mDetailFragment;
+    private FragmentManager mFragmentManager = getFragmentManager();
 
 
 
@@ -57,53 +66,60 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        FragmentManager fragmentManager = getFragmentManager();
-        DetailFragment detailFragment = (DetailFragment) fragmentManager.findFragmentById(R.id.fragment_detail);
-        Fragment gridviewfragment = fragmentManager.findFragmentById(R.id.fragment_gridview);
+        mDetailFragment = mFragmentManager.findFragmentById(R.id.fragment_detail);
+        mGridFragment = mFragmentManager.findFragmentById(R.id.fragment_gridview);
+
 
         int visible_fragment = GRIDVIEW_FRAGMENT;
 
 
-
         if(savedInstanceState != null){
+            restoreBackStack();
             String currentFragment = savedInstanceState.getString(VIS_FRAGMENT);
-            if(currentFragment!= null && currentFragment.equals(getString(R.string.settings))){
+            if(currentFragment!= null && currentFragment.equals(FragmentStateHolder.SETTINGS)){
                 visible_fragment = SETTINGS_FRAGMENT;
             }else if(currentFragment!= null && currentFragment.equals(getString(R.string.detail_fragment))){
                 visible_fragment = DETAILS_FRAGMENT;
             }
         }
 
-        FragmentTransaction ft = fragmentManager.beginTransaction();
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
         switch (visible_fragment){
 
             case SETTINGS_FRAGMENT:
-                ft.add(R.id.activity_main_frame_layout, new PreferencesFragment());
-                ft.hide(gridviewfragment);
-                ft.hide(detailFragment);
-                ft.setBreadCrumbShortTitle(getString(R.string.settings));
+                ft.show(mPreferencesFragment);
+                ft.hide(mGridFragment);
+                ft.hide(mDetailFragment);
+                ft.setBreadCrumbShortTitle(FragmentStateHolder.SETTINGS);
                 ft.commit();
+                Log.v(LOG_TAG, "Adding: Preferences; Hiding: Grid Fragment, Detail Fragment");
                 break;
 
             case DETAILS_FRAGMENT:
-                ft.hide(gridviewfragment);
-                ft.show(detailFragment);
-                ft.setBreadCrumbShortTitle(getString(R.string.detail_fragment));
+                ft.detach(mPreferencesFragment);
+                ft.hide(mGridFragment);
+                ft.show(mDetailFragment);
+                ft.setBreadCrumbShortTitle(FragmentStateHolder.DETAILS);
                 ft.commit();
+                Log.v(LOG_TAG, "Showing: Detail Fragment;  Hiding: Grid Fragment; Detach: Preferences;");
                 break;
 
             case GRIDVIEW_FRAGMENT:
-                ft.hide(detailFragment);
-                ft.show(gridviewfragment);
-                ft.setBreadCrumbShortTitle(getString(R.string.gridview_fragment));
+                FragmentStateHolder.clear();
+                ft.add(R.id.activity_main_frame_layout, mPreferencesFragment);
+                ft.detach(mPreferencesFragment);
+                ft.hide(mDetailFragment);
+                ft.show(mGridFragment);
+                ft.setBreadCrumbShortTitle(FragmentStateHolder.GRIDVIEW);
                 ft.commit();
+                Log.v(LOG_TAG, "Showing: Grid Fragment; Adding: Preferences; Hiding: Detail; Detach: Preferences;");
                 break;
         }
 
 //
 //
 //        FragmentTransaction ft = fragmentManager.beginTransaction();
-//        ft.hide(detailFragment);
+//        ft.hide(mDetailFragment);
 //        ft.commit();
 
     }
@@ -121,16 +137,37 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment gridviewfragment = fragmentManager.findFragmentById(R.id.fragment_gridview);
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.add(R.id.activity_main_frame_layout, new PreferencesFragment());
-        ft.hide(gridviewfragment);
-        ft.addToBackStack(gridviewfragment.getTag());
-        ft.setBreadCrumbShortTitle(R.string.settings);
-        ft.commit();
+        displaySettings();
         return super.onOptionsItemSelected(item);
+    }
+
+    private void displaySettings(){
+
+        FragmentStateHolder.saveState(getCurrentFragmentName(), FragmentStateHolder.SETTINGS);
+
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
+
+        String currentFragment = getCurrentFragmentName();
+
+        if(currentFragment.equals(FragmentStateHolder.GRIDVIEW)){
+
+
+            ft.attach(mPreferencesFragment);
+            ft.show(mPreferencesFragment);
+            ft.hide(mGridFragment);
+            ft.addToBackStack("Settings from " + getCurrentFragmentName());
+            ft.setBreadCrumbShortTitle(FragmentStateHolder.SETTINGS);
+            ft.commit();
+            Log.v(LOG_TAG, "Showing: Preferences; Hiding: Grid Fragment; Attach: Preferences");
+        }else if(currentFragment.equals(FragmentStateHolder.DETAILS)){
+            ft.attach(mPreferencesFragment);
+            ft.show(mPreferencesFragment);
+            ft.hide(mDetailFragment);
+            ft.addToBackStack("Settings from " + getCurrentFragmentName());
+            ft.setBreadCrumbShortTitle(FragmentStateHolder.SETTINGS);
+            ft.commit();
+            Log.v(LOG_TAG, "Showing: Preferences; Hiding: Detail Fragment; Attach: Preferences");
+        }
 
     }
 
@@ -145,16 +182,44 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+
+            outState.putString(VIS_FRAGMENT, getCurrentFragmentName());
+
+    }
+
+    private String getCurrentFragmentName(){
+
         FragmentManager fragmentManager = getFragmentManager();
-        if(fragmentManager.getBackStackEntryCount() > 0){
+        if(fragmentManager.getBackStackEntryCount() > 0) {
             int index = fragmentManager.getBackStackEntryCount();
             FragmentManager.BackStackEntry backStackEntry = fragmentManager.getBackStackEntryAt(index - 1);
             String currentFragment = backStackEntry.getBreadCrumbShortTitle().toString();
             Log.v(LOG_TAG, "Backstack entry: " + currentFragment);
-            outState.putString(VIS_FRAGMENT, currentFragment);
+            return currentFragment;
+        } else return "gridview";
+    }
+
+
+
+    private void restoreBackStack(){
+
+        if(FragmentStateHolder.hasState()){
+            String backstackFragment = FragmentStateHolder.getBackstack();
+            String currentFragment = FragmentStateHolder.getCurrent();
+
+            int count = mFragmentManager.getBackStackEntryCount();
+            for(int i = 0; i < count; i++){
+                mFragmentManager.popBackStack();
+                Log.v(LOG_TAG, i + ": Back Stack popped");
+            }
+
         }
 
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.v(LOG_TAG, "Main Activity Destroyed");
     }
 }
