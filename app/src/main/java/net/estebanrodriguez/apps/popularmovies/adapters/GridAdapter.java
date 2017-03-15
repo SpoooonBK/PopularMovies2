@@ -3,6 +3,7 @@ package net.estebanrodriguez.apps.popularmovies.adapters;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
 import net.estebanrodriguez.apps.popularmovies.fragments.GridFragment;
@@ -63,7 +65,7 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
         ft.hide(gridFragment);
         ft.show(detailFragment);
         ft.setBreadCrumbShortTitle(FragmentStateHolder.DETAILS);
-        ft.addToBackStack(gridFragment.getTag());
+        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -133,6 +135,9 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
     @Override
     public void onBindViewHolder(GridAdapter.Viewholder holder, int position) {
         MovieItem movieItem = mMovieItems.get(position);
+        if(movieItem.isFavorited()){
+            holder.mImageView.setBackgroundColor(Color.YELLOW);
+        }
 
 
         Picasso.with(mContext).load(movieItem.getImageFetchURL())
@@ -190,6 +195,7 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
     public MovieItem getMovieItem(int index) {
         return mMovieItems.get(index);
     }
+
 
 
 }

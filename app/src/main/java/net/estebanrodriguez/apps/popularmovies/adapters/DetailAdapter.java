@@ -19,7 +19,6 @@ import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
-import net.estebanrodriguez.apps.popularmovies.model.MovieItemHolder;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 
 import java.util.ArrayList;

@@ -4,8 +4,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +19,7 @@ import net.estebanrodriguez.apps.popularmovies.adapters.GridAdapter;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
-import net.estebanrodriguez.apps.popularmovies.data_access.NetworkChecker;
+import net.estebanrodriguez.apps.popularmovies.utility.NetworkChecker;
 import net.estebanrodriguez.apps.popularmovies.interfaces.listeners.FavoritesUpdatedListener;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
@@ -207,7 +205,6 @@ public class GridFragment extends Fragment {
             ArrayList<MovieItem> parcelableList = new ArrayList<>();
             for (MovieItem movieItem : mMovieItems) {
                 parcelableList.add(movieItem);
-                Log.v(LOG_TAG, "Saving " + movieItem.getTitle());
             }
             outState.putParcelableArrayList(MOVIE_ITEM_LIST, parcelableList);
         }

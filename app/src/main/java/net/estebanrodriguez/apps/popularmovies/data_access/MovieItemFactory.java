@@ -1,6 +1,7 @@
 package net.estebanrodriguez.apps.popularmovies.data_access;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
@@ -218,19 +219,19 @@ public class MovieItemFactory {
                         movieItem.setOverview(dataMap.get(key));
                         break;
                     }
-                    case ConstantsVault.FAVORITED: {
-                        boolean isFavorite = FavoriteManager.getInstance().isFavorited(movieItem.getID());
-                        movieItem.setFavorited(isFavorite);
-                        break;
-                    }
+
+
                 }
+
 
 
             }
 
         }
 
-
+        boolean isFavorite = FavoriteManager.getInstance().isFavorited(movieItem.getID());
+        movieItem.setFavorited(isFavorite);
+        Log.v(LOG_TAG, movieItem.getTitle() + " favorited: " + isFavorite);
 
 
         return movieItem;

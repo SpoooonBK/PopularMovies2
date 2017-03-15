@@ -1,4 +1,4 @@
-package net.estebanrodriguez.apps.popularmovies.data_access;
+package net.estebanrodriguez.apps.popularmovies.utility;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

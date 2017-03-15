@@ -177,6 +177,7 @@ public class FavoriteManager {
             Log.v(LOG_TAG, movieItem.toString());
         }
         cursor.close();
+        showFavorites();
         return movieItems;
     }
 
@@ -231,6 +232,7 @@ public class FavoriteManager {
 
 
     public boolean isFavorited(String movieID) {
+
 
         Cursor cursor = null;
 
