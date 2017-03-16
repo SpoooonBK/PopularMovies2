@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager mFragmentManager = getFragmentManager();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,16 +61,13 @@ public class MainActivity extends AppCompatActivity {
         mDetailFragment = mFragmentManager.findFragmentById(R.id.fragment_detail);
         mGridFragment = mFragmentManager.findFragmentById(R.id.fragment_gridview);
 
-
+        displayGridView();
 
         if (savedInstanceState != null) {
 
             restoreVisibleFragment(savedInstanceState);
 
-        } else {
-        displayGridView();
         }
-
 
     }
 
@@ -86,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        FragmentStateHolder.saveState(getCurrentFragmentName(), FragmentStateHolder.SETTINGS);
         displaySettings();
         return super.onOptionsItemSelected(item);
     }
@@ -117,10 +116,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void restoreBackStack() {
+    private void clearBackStack() {
 
         if (FragmentStateHolder.hasState()) {
-            String backstackFragment = FragmentStateHolder.getBackstack();
+            String backstackFragment = FragmentStateHolder.getRefferingFragmentName();
             String currentFragment = FragmentStateHolder.getCurrent();
 
             int count = mFragmentManager.getBackStackEntryCount();
@@ -128,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 mFragmentManager.popBackStack();
                 Log.v(LOG_TAG, i + ": Back Stack popped");
             }
+            Log.v(LOG_TAG, "Backstack cleared");
 
         }
 
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 case FragmentStateHolder.SETTINGS: {
-                    displaySettings();
+                        displaySettings();
                     break;
                 }
 
@@ -182,39 +182,38 @@ public class MainActivity extends AppCompatActivity {
 
     public void displaySettings() {
 
-        FragmentStateHolder.saveState(getCurrentFragmentName(), FragmentStateHolder.SETTINGS);
 
-        PreferencesFragment settings = new PreferencesFragment();
-        String currentFragment =getCurrentFragmentName();
+
+
+        String currentFragment = getCurrentFragmentName();
 
 
         switch (currentFragment){
 
             case FragmentStateHolder.GRIDVIEW: {
-                mFragmentManager.beginTransaction()
-                        .hide(mGridFragment)
-                        .add(R.id.activity_main_frame_layout, settings)
-                        .show(settings)
-                        .addToBackStack(null)
-                        .setBreadCrumbShortTitle(FragmentStateHolder.SETTINGS)
-                        .commit();
+                displaySettingsFromGridview();
                 break;
             }
             case FragmentStateHolder.DETAILS: {
-                mFragmentManager.beginTransaction()
-                        .hide(mDetailFragment)
-                        .add(R.id.activity_main_frame_layout, settings)
-                        .show(settings)
-                        .addToBackStack(null)
-                        .setBreadCrumbShortTitle(FragmentStateHolder.SETTINGS)
-                        .commit();
+                displaySettingsFromDetails();
+
+            }
+            case FragmentStateHolder.SETTINGS: {
+
+                String referringFragment = FragmentStateHolder.getRefferingFragmentName();
+                if(referringFragment.equals(FragmentStateHolder.GRIDVIEW)){
+                    mFragmentManager.popBackStack();
+                    displaySettingsFromGridview();
+
+                }else if(referringFragment.equals(FragmentStateHolder.DETAILS)){
+                    mFragmentManager.popBackStack();
+                    displayDetails();
+                    displaySettingsFromDetails();
+                }
+
             }
 
         }
-
-
-
-        Log.v(LOG_TAG, "Settings from " + getCurrentFragmentName() + " Hiding: Grid Fragment");
     }
 
 
@@ -228,6 +227,30 @@ public class MainActivity extends AppCompatActivity {
         Log.v(LOG_TAG, "Showing: Detail Fragment;  Hiding: Grid Fragment");
     }
 
+    private void displaySettingsFromGridview(){
+
+        PreferencesFragment settings = new PreferencesFragment();
+        mFragmentManager.beginTransaction()
+                .hide(mGridFragment)
+                .add(R.id.activity_main_frame_layout, settings)
+                .show(settings)
+                .addToBackStack(null)
+                .setBreadCrumbShortTitle(FragmentStateHolder.SETTINGS)
+                .commit();
+
+    }
+
+    private void displaySettingsFromDetails(){
+        PreferencesFragment settings = new PreferencesFragment();
+        mFragmentManager.beginTransaction()
+                .hide(mDetailFragment)
+                .add(R.id.activity_main_frame_layout, settings)
+                .show(settings)
+                .addToBackStack(null)
+                .setBreadCrumbShortTitle(FragmentStateHolder.SETTINGS)
+                .commit();
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -236,5 +259,9 @@ public class MainActivity extends AppCompatActivity {
         outState.putString(VISIBLE_FRAGMENT, getCurrentFragmentName());
 
     }
+
+
+
+
 
 }

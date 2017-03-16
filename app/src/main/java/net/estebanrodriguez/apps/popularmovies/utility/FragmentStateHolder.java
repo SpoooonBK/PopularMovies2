@@ -38,7 +38,7 @@ public class FragmentStateHolder {
         sFragmentNames.clear();
     }
 
-    public static String getBackstack(){
+    public static String getRefferingFragmentName(){
         return sFragmentNames.get(BACKSTACK);
     }
 
