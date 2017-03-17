@@ -38,24 +38,28 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         FavoriteManager.getInstance(this.getContentResolver());
 
-        //Checks display widith to dynamically set image sizes
+        //Checks display width to dynamically set image sizes
         ImageSizer.setDefaultImageSize(getDisplaySizeWidth());
 
         //Confirms network is working.  If not, show error message
 
-        if (NetworkChecker.isNetworkAvailable(this)) {
-            setContentView(R.layout.activity_main);
-        } else {
-            setContentView(R.layout.activity_error);
+        setContentView(R.layout.activity_main);
+
+        if (!NetworkChecker.isNetworkAvailable(this)) {
+
+
+//            setContentView(R.layout.activity_error);
             Toast toast = Toast.makeText(this, ConstantsVault.NETWORK_ERROR_MESSAGE, Toast.LENGTH_LONG);
             toast.show();
         }
+
 
 
         mDetailFragment = mFragmentManager.findFragmentById(R.id.fragment_detail);
@@ -116,22 +120,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void clearBackStack() {
 
-        if (FragmentStateHolder.hasState()) {
-            String backstackFragment = FragmentStateHolder.getRefferingFragmentName();
-            String currentFragment = FragmentStateHolder.getCurrent();
-
-            int count = mFragmentManager.getBackStackEntryCount();
-            for (int i = 0; i < count; i++) {
-                mFragmentManager.popBackStack();
-                Log.v(LOG_TAG, i + ": Back Stack popped");
-            }
-            Log.v(LOG_TAG, "Backstack cleared");
-
-        }
-
-    }
 
     private void restoreVisibleFragment(Bundle savedInstanceState) {
 
@@ -200,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
             case FragmentStateHolder.SETTINGS: {
 
-                String referringFragment = FragmentStateHolder.getRefferingFragmentName();
+                String referringFragment = FragmentStateHolder.getReferringFragmentName();
                 if(referringFragment.equals(FragmentStateHolder.GRIDVIEW)){
                     mFragmentManager.popBackStack();
                     displaySettingsFromGridview();

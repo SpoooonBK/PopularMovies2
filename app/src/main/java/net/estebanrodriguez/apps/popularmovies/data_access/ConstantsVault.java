@@ -176,7 +176,7 @@ public final class ConstantsVault {
      * The constant NETWORK_ERROR_MESSAGE.
      */
 //Error Messages
-    public static final String NETWORK_ERROR_MESSAGE = "Internet connectivity is required.  Please check your settings and restart.";
+    public static final String NETWORK_ERROR_MESSAGE = "Usage limited to saved favorites.  To enable full usage, enable internet and restart.";
 
     /**
      * The constant MOVIE_ITEM_PARCELABLE.

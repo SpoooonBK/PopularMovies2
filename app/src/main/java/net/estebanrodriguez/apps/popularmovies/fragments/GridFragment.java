@@ -72,7 +72,7 @@ public class GridFragment extends Fragment {
         mFavoriteManager = FavoriteManager.getInstance();
         mFragmentManager = getFragmentManager();
 
-        //Set favorites updated listener
+        //Favorites updated listner required to display the correct data in gridFragment when a movieItem is favorted or unfavorited
         mFavoriteManager.setFavoritesUpdatedListener(new FavoritesUpdatedListener() {
             @Override
             public void onFavoritesUpdated() {
@@ -91,7 +91,7 @@ public class GridFragment extends Fragment {
         mGridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
-// Checks to see if there is already movieData. So that network is not called on orientation change
+// Checks to see if there is already movieData saved in Bundle. So that network is not called on orientation change
         if (savedInstanceState != null) {
             mMovieItems = savedInstanceState.getParcelableArrayList(MOVIE_ITEM_LIST);
             updateAdapter(mMovieItems);
@@ -154,7 +154,7 @@ public class GridFragment extends Fragment {
 
         Observable<List<MovieItem>> observable = null;
 
-        if (getSortByPreference().equals(FAVORITES)) {
+        if (getSortByPreference().equals(FAVORITES) || !NetworkChecker.isNetworkAvailable(getActivity())) {
             observable = mFavoriteManager.setObservable(getActivity().getApplicationContext());
         } else {
             observable = MovieDAOImpl.getInstance(getActivity().getApplicationContext()).getMovieItemsObservable();
