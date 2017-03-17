@@ -17,11 +17,12 @@ import android.widget.Toast;
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.adapters.GridAdapter;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
-import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
+import net.estebanrodriguez.apps.popularmovies.local_database.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.utility.NetworkChecker;
 import net.estebanrodriguez.apps.popularmovies.interfaces.listeners.FavoritesUpdatedListener;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
+import net.estebanrodriguez.apps.popularmovies.utility.SubscriptionHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,12 +162,12 @@ public class GridFragment extends Fragment {
         }
 
 
-        final Subscription movieListSubscription = observable.subscribeOn(Schedulers.io())
+        final Subscription subscription = observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<MovieItem>>() {
                     @Override
                     public void onCompleted() {
-                        Log.v(LOG_TAG, "Data retrieved");
+
                     }
 
                     @Override
@@ -184,6 +185,7 @@ public class GridFragment extends Fragment {
                     }
 
                 });
+        SubscriptionHolder.holdSubscription(subscription);
 
 
     }

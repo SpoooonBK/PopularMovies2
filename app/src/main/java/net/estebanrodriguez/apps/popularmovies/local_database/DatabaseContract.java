@@ -1,4 +1,4 @@
-package net.estebanrodriguez.apps.popularmovies.database;
+package net.estebanrodriguez.apps.popularmovies.local_database;
 
 import android.content.ContentResolver;
 import android.net.Uri;

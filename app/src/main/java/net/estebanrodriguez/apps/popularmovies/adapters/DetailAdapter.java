@@ -16,10 +16,11 @@ import android.widget.ToggleButton;
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
+import net.estebanrodriguez.apps.popularmovies.local_database.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
+import net.estebanrodriguez.apps.popularmovies.utility.SubscriptionHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,7 +155,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             }
                         });
 
-                        final Subscription togglerSubscription = togglerObservable.subscribeOn(Schedulers.io())
+                        final Subscription subscription = togglerObservable.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(new Observer<Integer>() {
                                     @Override
@@ -179,6 +180,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                         toast.show();
                                     }
                                 });
+                        SubscriptionHolder.holdSubscription(subscription);
 
                     }
                 });

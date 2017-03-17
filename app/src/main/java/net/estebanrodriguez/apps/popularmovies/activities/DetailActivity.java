@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
-import net.estebanrodriguez.apps.popularmovies.interfaces.listeners.FavoritesUpdatedListener;
 
 /**
  * The type Detail activity.

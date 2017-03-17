@@ -16,8 +16,11 @@ import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
 import net.estebanrodriguez.apps.popularmovies.fragments.GridFragment;
+import net.estebanrodriguez.apps.popularmovies.interfaces.listeners.FavoritesUpdatedListener;
+import net.estebanrodriguez.apps.popularmovies.local_database.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 import net.estebanrodriguez.apps.popularmovies.utility.FragmentStateHolder;
+import net.estebanrodriguez.apps.popularmovies.utility.SubscriptionHolder;
 
 import java.util.List;
 
@@ -40,17 +43,17 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
     private FragmentManager mFragmentManager;
 
 
-    /**
-     * Instantiates a new Recycler view grid adapter.
-     *
-     * @param context         the context
-     * @param movieItems      the movie items
-     * @param fragmentManager
-     */
     public GridAdapter(Context context, List<MovieItem> movieItems, FragmentManager fragmentManager) {
         mContext = context;
         mMovieItems = movieItems;
         mFragmentManager = fragmentManager;
+
+        FavoriteManager.getInstance().setFavoritesUpdatedListener(new FavoritesUpdatedListener() {
+            @Override
+            public void onFavoritesUpdated() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     public void showDetails(MovieItem movieItem) {
@@ -67,6 +70,8 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
         ft.addToBackStack(null);
         ft.commit();
     }
+
+
 
     /**
      * The type Viewholder.
@@ -118,7 +123,7 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
 
                         }
                     });
-
+            SubscriptionHolder.holdSubscription(subscription);
 
         }
     }
@@ -128,6 +133,7 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_view_grid_movie_item, parent, false);
         Viewholder viewholder = new Viewholder(view);
+
         return viewholder;
     }
 
@@ -136,7 +142,7 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
         MovieItem movieItem = mMovieItems.get(position);
         if(movieItem.isFavorited()){
             holder.mImageView.setBackgroundColor(Color.YELLOW);
-        }
+        }else holder.mImageView.setBackgroundColor(Color.BLACK);
 
 
         Picasso.with(mContext).load(movieItem.getImageFetchURL())
@@ -144,6 +150,7 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
                 .error(R.drawable.sad_popcorn)
                 .into(holder.mImageView);
     }
+
 
 
     @Override

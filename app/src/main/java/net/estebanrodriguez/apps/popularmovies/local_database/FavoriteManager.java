@@ -1,12 +1,14 @@
-package net.estebanrodriguez.apps.popularmovies.data_access;
+package net.estebanrodriguez.apps.popularmovies.local_database;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.util.Log;
 
-import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieDetailFactory;
+import net.estebanrodriguez.apps.popularmovies.data_access.MovieItemFactory;
 import net.estebanrodriguez.apps.popularmovies.interfaces.listeners.FavoritesUpdatedListener;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
@@ -56,12 +58,14 @@ public class FavoriteManager {
     public int toggleFavorite(final MovieItem movieItem) {
 
                 if (isFavorited(movieItem)) {
-                    unfavoriteMovie(movieItem);
                     movieItem.setFavorited(false);
+                    unfavoriteMovie(movieItem);
+
                     return -1;
                 } else {
-                    favoriteMovie(movieItem);
                     movieItem.setFavorited(true);
+                    favoriteMovie(movieItem);
+
                     return 0;
                 }
     }
@@ -96,10 +100,12 @@ public class FavoriteManager {
                 basicDetailsValues.put(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_FAVORITED, movieItem.isFavorited());
 
 
-                mContentResolver.insert(
+                Uri uri = mContentResolver.insert(
                         DatabaseContract.BasicMovieDetailEntries.CONTENT_URI,
                         basicDetailsValues
                 );
+
+                Log.v(LOG_TAG, uri.toString());
 
 
                 for (MovieClip movieClip : movieClips) {
@@ -135,7 +141,7 @@ public class FavoriteManager {
                     );
                 }
                 notifyListeners();
-                showFavorites();
+
     }
 
 
@@ -154,7 +160,7 @@ public class FavoriteManager {
             Log.v(LOG_TAG, movieItem.getTitle() + " unfavorited.");
         }
         notifyListeners();
-        showFavorites();
+
         return !isFavorited(movieItem);
     }
 
@@ -164,7 +170,9 @@ public class FavoriteManager {
 
 
         Cursor cursor = mContentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
+        Log.v(LOG_TAG, "Favorited count: " + cursor.getCount());
         List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
+        Log.v(LOG_TAG, "Favorited movies");
         for (MovieItem movieItem : movieItems) {
             String id = movieItem.getID();
             cursor = mContentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
@@ -174,44 +182,45 @@ public class FavoriteManager {
             cursor = mContentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
             List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
             movieItem.setMovieReviews(movieReviews);
-            Log.v(LOG_TAG, movieItem.toString());
+            Log.v(LOG_TAG, movieItem.getTitle());
         }
         cursor.close();
-        showFavorites();
+//        showFavorites();
         return movieItems;
     }
 
 
-//TODO remove after testing
-    public void showFavorites() {
-
-
-
-        Cursor cursor = null;
-
-        try{
-            cursor = mContentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
-            List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
-            for (MovieItem movieItem : movieItems) {
-                String id = movieItem.getID();
-                cursor = mContentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
-                List<MovieClip> movieClips = MovieDetailFactory.buildMovieClipList(cursor);
-                movieItem.setMovieClips(movieClips);
-
-                cursor = mContentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
-                List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
-                movieItem.setMovieReviews(movieReviews);
-                Log.v(LOG_TAG, movieItem.toString());
-            }
-
-        }catch (Exception e){
-
-        }finally {
-            if(cursor!=null)
-            cursor.close();
-        }
-
-    }
+////TODO remove after testing
+//    public void showFavorites() {
+//
+//
+//
+//        Cursor cursor = null;
+//
+//        try{
+//            cursor = mContentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
+//            List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
+//            Log.v(LOG_TAG, "Total Favorited movies: " + movieItems.size());
+//            for (MovieItem movieItem : movieItems) {
+//                String id = movieItem.getID();
+//                cursor = mContentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
+//                List<MovieClip> movieClips = MovieDetailFactory.buildMovieClipList(cursor);
+//                movieItem.setMovieClips(movieClips);
+//
+//                cursor = mContentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
+//                List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
+//                movieItem.setMovieReviews(movieReviews);
+//                Log.v(LOG_TAG, movieItem.toString());
+//            }
+//
+//        }catch (Exception e){
+//
+//        }finally {
+//            if(cursor!=null)
+//            cursor.close();
+//        }
+//
+//    }
 
 
 
@@ -243,7 +252,9 @@ public class FavoriteManager {
         try {
             cursor = mContentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, selectionClause, selectionArgs, null);
 
-            favorited = cursor.getCount() > 0;
+            if(cursor.getCount() > 0){
+                favorited = true;
+            }else favorited = false;
 
         } catch (Exception e) {
 

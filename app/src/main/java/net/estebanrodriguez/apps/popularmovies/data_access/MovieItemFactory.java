@@ -3,7 +3,8 @@ package net.estebanrodriguez.apps.popularmovies.data_access;
 import android.database.Cursor;
 import android.util.Log;
 
-import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
+import net.estebanrodriguez.apps.popularmovies.local_database.DatabaseContract;
+import net.estebanrodriguez.apps.popularmovies.local_database.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class MovieItemFactory {
         String[] colNames = cursor.getColumnNames();
 
 
-        cursor.moveToFirst();
+
         while (cursor.moveToNext()) {
             for (String column : colNames) {
 
@@ -231,7 +232,7 @@ public class MovieItemFactory {
 
         boolean isFavorite = FavoriteManager.getInstance().isFavorited(movieItem.getID());
         movieItem.setFavorited(isFavorite);
-        Log.v(LOG_TAG, movieItem.getTitle() + " favorited: " + isFavorite);
+
 
 
         return movieItem;

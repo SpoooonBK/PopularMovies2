@@ -47,9 +47,7 @@ public class FragmentStateHolder {
     }
 
     public static boolean hasState(){
-        if(sFragmentNames.size()> 0){
-            return true;
-        }else return false;
+        return sFragmentNames.size() > 0;
     }
 
 }

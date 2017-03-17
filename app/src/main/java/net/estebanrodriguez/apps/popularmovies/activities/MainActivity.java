@@ -15,15 +15,13 @@ import android.widget.Toast;
 
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
-import net.estebanrodriguez.apps.popularmovies.data_access.FavoriteManager;
+import net.estebanrodriguez.apps.popularmovies.local_database.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.utility.NetworkChecker;
 import net.estebanrodriguez.apps.popularmovies.fragments.PreferencesFragment;
 import net.estebanrodriguez.apps.popularmovies.utility.FragmentStateHolder;
 import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
+import net.estebanrodriguez.apps.popularmovies.utility.SubscriptionHolder;
 
-/**
- * The type Main activity.
- */
 public class MainActivity extends AppCompatActivity {
 
 
@@ -31,12 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private final static String VISIBLE_FRAGMENT = "visible";
 
 
-
     private Fragment mGridFragment;
     private Fragment mDetailFragment;
     private FragmentManager mFragmentManager = getFragmentManager();
-
-
 
 
     @Override
@@ -59,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(this, ConstantsVault.NETWORK_ERROR_MESSAGE, Toast.LENGTH_LONG);
             toast.show();
         }
-
 
 
         mDetailFragment = mFragmentManager.findFragmentById(R.id.fragment_detail);
@@ -94,17 +88,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
     private int getDisplaySizeWidth() {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         return size.x;
     }
-
 
 
     private String getCurrentFragmentName() {
@@ -120,15 +109,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     private void restoreVisibleFragment(Bundle savedInstanceState) {
 
         String visibleFragment = savedInstanceState.getString(VISIBLE_FRAGMENT);
 
 
         if (visibleFragment != null) {
-            FragmentTransaction ft = mFragmentManager.beginTransaction();
+
 
             switch (visibleFragment) {
 
@@ -138,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 case FragmentStateHolder.SETTINGS: {
-                        displaySettings();
+                    displaySettings();
                     break;
                 }
 
@@ -172,12 +159,10 @@ public class MainActivity extends AppCompatActivity {
     public void displaySettings() {
 
 
-
-
         String currentFragment = getCurrentFragmentName();
 
 
-        switch (currentFragment){
+        switch (currentFragment) {
 
             case FragmentStateHolder.GRIDVIEW: {
                 displaySettingsFromGridview();
@@ -190,11 +175,11 @@ public class MainActivity extends AppCompatActivity {
             case FragmentStateHolder.SETTINGS: {
 
                 String referringFragment = FragmentStateHolder.getReferringFragmentName();
-                if(referringFragment.equals(FragmentStateHolder.GRIDVIEW)){
+                if (referringFragment.equals(FragmentStateHolder.GRIDVIEW)) {
                     mFragmentManager.popBackStack();
                     displaySettingsFromGridview();
 
-                }else if(referringFragment.equals(FragmentStateHolder.DETAILS)){
+                } else if (referringFragment.equals(FragmentStateHolder.DETAILS)) {
                     mFragmentManager.popBackStack();
                     displayDetails();
                     displaySettingsFromDetails();
@@ -206,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     public void displayDetails() {
         mFragmentManager.beginTransaction()
                 .hide(mGridFragment)
@@ -216,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
         Log.v(LOG_TAG, "Showing: Detail Fragment;  Hiding: Grid Fragment");
     }
 
-    private void displaySettingsFromGridview(){
+    private void displaySettingsFromGridview() {
 
         PreferencesFragment settings = new PreferencesFragment();
         mFragmentManager.beginTransaction()
@@ -229,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void displaySettingsFromDetails(){
+    private void displaySettingsFromDetails() {
         PreferencesFragment settings = new PreferencesFragment();
         mFragmentManager.beginTransaction()
                 .hide(mDetailFragment)
@@ -250,7 +234,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SubscriptionHolder.unsubscribeAll();
+    }
 }

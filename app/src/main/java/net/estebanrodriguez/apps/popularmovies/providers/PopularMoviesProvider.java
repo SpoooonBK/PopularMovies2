@@ -9,9 +9,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
-import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
-import net.estebanrodriguez.apps.popularmovies.database.DatabaseHelper;
+import net.estebanrodriguez.apps.popularmovies.local_database.DatabaseContract;
+import net.estebanrodriguez.apps.popularmovies.local_database.DatabaseHelper;
 
 /**
  * Created by Spoooon on 11/21/2016.
@@ -147,6 +148,7 @@ public class PopularMoviesProvider extends ContentProvider {
 
                 case MOVIE_ITEM_LIST: {
                     String movieId = (String) contentValues.get(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID);
+                    String movieTitle = (String) contentValues.get(DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_TITLE);
                     String dupeCheckQuery = "SELECT * FROM " + DatabaseContract.BasicMovieDetailEntries.TABLE_NAME
                             + " WHERE " + DatabaseContract.BasicMovieDetailEntries.COLUMN_NAME_MOVIE_ID
                             + "= " + movieId;
@@ -154,9 +156,10 @@ public class PopularMoviesProvider extends ContentProvider {
                     // CHECK FOR DUPLICATE ENTRIES
                     Cursor cursor = db.rawQuery(dupeCheckQuery, null);
                     // IF NO DUPES INSERT DATA
-                    if (cursor.getCount() == 0) {
-                        long id = db.insert(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
-                        return (getUriForId(id, uri));
+                    if (cursor.getCount() <= 0 || cursor == null) {
+                        long rowID = db.insert(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
+                        Log.v(LOG_TAG, movieTitle + " saved at row " + rowID);
+                        return (getUriForId(rowID, uri));
                     }
                     break;
                 }

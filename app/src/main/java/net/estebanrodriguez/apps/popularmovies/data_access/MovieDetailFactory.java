@@ -2,7 +2,7 @@ package net.estebanrodriguez.apps.popularmovies.data_access;
 
 import android.database.Cursor;
 
-import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
+import net.estebanrodriguez.apps.popularmovies.local_database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
 

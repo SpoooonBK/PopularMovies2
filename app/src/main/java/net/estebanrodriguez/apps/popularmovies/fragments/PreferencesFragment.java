@@ -57,18 +57,6 @@ public class PreferencesFragment extends PreferenceFragment implements SharedPre
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.v(LOG_TAG, "Settings attached");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.v(LOG_TAG, "Settings detached");
-    }
-
 
 
 }

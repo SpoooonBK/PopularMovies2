@@ -10,7 +10,7 @@ import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.BuildConfig;
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.database.DatabaseContract;
+import net.estebanrodriguez.apps.popularmovies.local_database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
 import java.io.BufferedReader;
@@ -176,7 +176,7 @@ public class MovieDAOImpl implements MovieDAO {
 
 
     private String fetchMovieData(URL url) {
-        Log.v(LOG_TAG, "Fetch URL: " + url.toString());
+
         String movieData = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
