@@ -35,25 +35,32 @@ import rx.schedulers.Schedulers;
  *
  * @param <MovieItems> the type parameter
  */
-public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Viewholder> {
+public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Viewholder> implements FavoritesUpdatedListener{
 
     private Context mContext;
     private List<MovieItem> mMovieItems;
     private static final String LOG_TAG = GridAdapter.class.getSimpleName();
     private FragmentManager mFragmentManager;
 
+    private Viewholder mClickedViewholder;
+
 
     public GridAdapter(Context context, List<MovieItem> movieItems, FragmentManager fragmentManager) {
         mContext = context;
         mMovieItems = movieItems;
         mFragmentManager = fragmentManager;
+        FavoriteManager.getInstance().setFavoritesUpdatedListener(this);
 
-        FavoriteManager.getInstance().setFavoritesUpdatedListener(new FavoritesUpdatedListener() {
-            @Override
-            public void onFavoritesUpdated() {
-                notifyDataSetChanged();
-            }
-        });
+
+    }
+
+
+    public Viewholder getClickedViewholder() {
+        return mClickedViewholder;
+    }
+
+    public void setClickedViewholder(Viewholder clickedViewholder) {
+        mClickedViewholder = clickedViewholder;
     }
 
     public void showDetails(MovieItem movieItem) {
@@ -62,6 +69,7 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
         GridFragment gridFragment = (GridFragment) mFragmentManager.findFragmentById(R.id.fragment_gridview);
 
         detailFragment.update(movieItem);
+
 
         FragmentTransaction ft = mFragmentManager.beginTransaction();
         ft.hide(gridFragment);
@@ -73,60 +81,14 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
 
 
 
-    /**
-     * The type Viewholder.
-     */
-    public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    @Override
+    public void onFavoritesUpdated() {
 
-        /**
-         * The M image view.
-         */
-        public ImageView mImageView;
+        mClickedViewholder.toggleFavorite();
 
-
-        /**
-         * Instantiates a new Viewholder.
-         *
-         * @param itemView the item view
-         */
-        public Viewholder(View itemView) {
-            super(itemView);
-            mImageView = (ImageView) itemView.findViewById(R.id.main_gridview_item_image);
-            mImageView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-
-            MovieItem movieItem = getMovieItem(getAdapterPosition());
-
-
-            Observable<MovieItem> observable = MovieDAOImpl.getInstance(mContext).getMovieDetailsObservable(movieItem);
-            Subscription subscription = observable.subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<MovieItem>() {
-                        @Override
-                        public void onCompleted() {
-
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onNext(MovieItem movieItem) {
-
-                            showDetails(movieItem);
-
-                        }
-                    });
-            SubscriptionHolder.holdSubscription(subscription);
-
-        }
     }
+
+
 
     @Override
     public Viewholder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -140,9 +102,9 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
     @Override
     public void onBindViewHolder(GridAdapter.Viewholder holder, int position) {
         MovieItem movieItem = mMovieItems.get(position);
-        if(movieItem.isFavorited()){
-            holder.mImageView.setBackgroundColor(Color.YELLOW);
-        }else holder.mImageView.setBackgroundColor(Color.BLACK);
+        holder.setFavorited(movieItem.isFavorited());
+        holder.toggleFavorite();
+
 
 
         Picasso.with(mContext).load(movieItem.getImageFetchURL())
@@ -200,6 +162,87 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
      */
     public MovieItem getMovieItem(int index) {
         return mMovieItems.get(index);
+    }
+
+
+
+
+    /**
+     * The type Viewholder.
+     */
+    public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private boolean mIsFavorited;
+
+        /**
+         * The M image view.
+         */
+        public ImageView mImageView;
+
+
+        /**
+         * Instantiates a new Viewholder.
+         *
+         * @param itemView the item view
+         */
+        public Viewholder(View itemView) {
+            super(itemView);
+            mImageView = (ImageView) itemView.findViewById(R.id.main_gridview_item_image);
+            mImageView.setOnClickListener(this);
+            GridAdapter.this.setClickedViewholder(this);
+        }
+
+        public boolean isFavorited() {
+            return mIsFavorited;
+        }
+
+        public void setFavorited(boolean favorited) {
+            mIsFavorited = favorited;
+        }
+
+        @Override
+        public void onClick(View view) {
+
+            MovieItem movieItem = getMovieItem(getAdapterPosition());
+
+
+
+            Observable<MovieItem> observable = MovieDAOImpl.getInstance(mContext).getMovieDetailsObservable(movieItem);
+            Subscription subscription = observable.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<MovieItem>() {
+                        @Override
+                        public void onCompleted() {
+
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onNext(MovieItem movieItem) {
+
+                            showDetails(movieItem);
+
+                        }
+                    });
+            SubscriptionHolder.holdSubscription(subscription);
+
+
+        }
+
+        public void toggleFavorite(){
+
+
+            if(mIsFavorited){
+                mImageView.setBackgroundColor(Color.YELLOW);
+            }else mImageView.setBackgroundColor(Color.BLACK);
+
+
+        }
     }
 
 
