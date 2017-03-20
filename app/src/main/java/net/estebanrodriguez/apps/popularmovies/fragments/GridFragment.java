@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +15,12 @@ import android.widget.Toast;
 
 import net.estebanrodriguez.apps.popularmovies.R;
 import net.estebanrodriguez.apps.popularmovies.adapters.GridAdapter;
-import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
-import net.estebanrodriguez.apps.popularmovies.local_database.FavoriteManager;
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
-import net.estebanrodriguez.apps.popularmovies.utility.NetworkChecker;
+import net.estebanrodriguez.apps.popularmovies.external_data_access.ConstantsVault;
+import net.estebanrodriguez.apps.popularmovies.external_data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.interfaces.listeners.FavoritesUpdatedListener;
+import net.estebanrodriguez.apps.popularmovies.local_database.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
+import net.estebanrodriguez.apps.popularmovies.utility.NetworkChecker;
 import net.estebanrodriguez.apps.popularmovies.utility.SubscriptionHolder;
 
 import java.util.ArrayList;
@@ -148,7 +147,7 @@ public class GridFragment extends Fragment {
     /**
      * Update movie data.
      */
-/* Method updateMovieData used JavaRX to subscribe to io thread fetching the movie data
+/* Method updateMovieData used JavaRX to subscribe on io thread fetching the movie data
     and updates the UI when the data is ready.
      */
     public void updateMovieData() {

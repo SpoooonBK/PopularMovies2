@@ -2,7 +2,6 @@ package net.estebanrodriguez.apps.popularmovies.activities;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,12 +13,13 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
-import net.estebanrodriguez.apps.popularmovies.local_database.FavoriteManager;
-import net.estebanrodriguez.apps.popularmovies.utility.NetworkChecker;
+import net.estebanrodriguez.apps.popularmovies.external_data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.fragments.PreferencesFragment;
+import net.estebanrodriguez.apps.popularmovies.local_database.FavoriteManager;
+import net.estebanrodriguez.apps.popularmovies.utility.DatabaseCloser;
 import net.estebanrodriguez.apps.popularmovies.utility.FragmentStateHolder;
 import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
+import net.estebanrodriguez.apps.popularmovies.utility.NetworkChecker;
 import net.estebanrodriguez.apps.popularmovies.utility.SubscriptionHolder;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (!NetworkChecker.isNetworkAvailable(this)) {
 
-
-//            setContentView(R.layout.activity_error);
             Toast toast = Toast.makeText(this, ConstantsVault.NETWORK_ERROR_MESSAGE, Toast.LENGTH_LONG);
             toast.show();
         }
@@ -103,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
             int index = fragmentManager.getBackStackEntryCount();
             FragmentManager.BackStackEntry backStackEntry = fragmentManager.getBackStackEntryAt(index - 1);
             String currentFragment = backStackEntry.getBreadCrumbShortTitle().toString();
-            Log.v(LOG_TAG, "Backstack entry: " + currentFragment);
             return currentFragment;
         } else return "gridview";
     }
@@ -152,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
                 .show(mGridFragment)
                 .setBreadCrumbShortTitle(FragmentStateHolder.GRIDVIEW)
                 .commit();
-        Log.v(LOG_TAG, "Showing: Grid Fragment; Hiding: Detail; Detach: Preferences;");
 
     }
 
@@ -197,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 .show(mDetailFragment)
                 .setBreadCrumbShortTitle(FragmentStateHolder.DETAILS)
                 .commit();
-        Log.v(LOG_TAG, "Showing: Detail Fragment;  Hiding: Grid Fragment");
+
     }
 
     private void displaySettingsFromGridview() {
@@ -238,5 +234,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         SubscriptionHolder.unsubscribeAll();
+        DatabaseCloser.closeAllDatabases();
     }
 }

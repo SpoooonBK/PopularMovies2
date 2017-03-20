@@ -17,9 +17,6 @@
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activities.DetailActivity"
-            android:label="@string/detail_fragment">
-        </activity>
         <activity
             android:name=".activities.SplashActivity"
             android:theme="@style/SplashTheme">

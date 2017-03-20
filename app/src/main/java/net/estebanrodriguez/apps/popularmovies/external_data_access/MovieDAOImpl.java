@@ -1,4 +1,4 @@
-package net.estebanrodriguez.apps.popularmovies.data_access;
+package net.estebanrodriguez.apps.popularmovies.external_data_access;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -6,10 +6,11 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.BuildConfig;
 import net.estebanrodriguez.apps.popularmovies.R;
+import net.estebanrodriguez.apps.popularmovies.factories.MovieDetailFactory;
+import net.estebanrodriguez.apps.popularmovies.factories.MovieItemFactory;
 import net.estebanrodriguez.apps.popularmovies.local_database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
 
@@ -95,9 +96,6 @@ public class MovieDAOImpl implements MovieDAO {
         mMovieData.clear();
 
          movieItemList= MovieItemFactory.buildMovieList(mapList);
-//        for (MovieItem movieItem : movieItemList) {
-//            movieItem.setMovieDetails(getMovieDetails(movieItem));
-//        }
 
         return movieItemList;
 
@@ -156,7 +154,7 @@ public class MovieDAOImpl implements MovieDAO {
 
         URL url = null;
 
-        //Build URL
+
         final String API_PARAM = "api_key";
 
         Uri builtUri = Uri.parse(baseURL).buildUpon()

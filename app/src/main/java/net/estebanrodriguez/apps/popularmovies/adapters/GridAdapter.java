@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
+import net.estebanrodriguez.apps.popularmovies.external_data_access.MovieDAOImpl;
 import net.estebanrodriguez.apps.popularmovies.fragments.DetailFragment;
 import net.estebanrodriguez.apps.popularmovies.fragments.GridFragment;
 import net.estebanrodriguez.apps.popularmovies.interfaces.listeners.FavoritesUpdatedListener;
@@ -55,11 +55,8 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
     }
 
 
-    public Viewholder getClickedViewholder() {
-        return mClickedViewholder;
-    }
 
-    public void setClickedViewholder(Viewholder clickedViewholder) {
+    private void setClickedViewholder(Viewholder clickedViewholder) {
         mClickedViewholder = clickedViewholder;
     }
 
@@ -192,9 +189,7 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
             GridAdapter.this.setClickedViewholder(this);
         }
 
-        public boolean isFavorited() {
-            return mIsFavorited;
-        }
+
 
         public void setFavorited(boolean favorited) {
             mIsFavorited = favorited;
@@ -234,6 +229,7 @@ public class GridAdapter<MovieItems> extends RecyclerView.Adapter<GridAdapter.Vi
 
         }
 
+        //This is used to highlight or unhiglight the poster in the gridview in order to inform the user whether the movie is favorited
         public void toggleFavorite(){
 
 

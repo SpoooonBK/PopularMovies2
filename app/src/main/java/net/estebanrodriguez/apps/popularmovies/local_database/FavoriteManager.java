@@ -7,8 +7,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieDetailFactory;
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieItemFactory;
+import net.estebanrodriguez.apps.popularmovies.factories.MovieDetailFactory;
+import net.estebanrodriguez.apps.popularmovies.factories.MovieItemFactory;
 import net.estebanrodriguez.apps.popularmovies.interfaces.listeners.FavoritesUpdatedListener;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
@@ -105,7 +105,7 @@ public class FavoriteManager {
                         basicDetailsValues
                 );
 
-                Log.v(LOG_TAG, uri.toString());
+
 
 
                 for (MovieClip movieClip : movieClips) {
@@ -170,9 +170,9 @@ public class FavoriteManager {
 
 
         Cursor cursor = mContentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
-        Log.v(LOG_TAG, "Favorited count: " + cursor.getCount());
+
         List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
-        Log.v(LOG_TAG, "Favorited movies");
+
         for (MovieItem movieItem : movieItems) {
             String id = movieItem.getID();
             cursor = mContentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
@@ -182,45 +182,16 @@ public class FavoriteManager {
             cursor = mContentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
             List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
             movieItem.setMovieReviews(movieReviews);
-            Log.v(LOG_TAG, movieItem.getTitle());
         }
-        cursor.close();
-//        showFavorites();
+        try{
+            cursor.close();
+        } catch (Exception e){
+            
+        }
+
         return movieItems;
     }
 
-
-////TODO remove after testing
-//    public void showFavorites() {
-//
-//
-//
-//        Cursor cursor = null;
-//
-//        try{
-//            cursor = mContentResolver.query(DatabaseContract.BasicMovieDetailEntries.CONTENT_URI, null, null, null, null);
-//            List<MovieItem> movieItems = MovieItemFactory.buildMovieList(cursor);
-//            Log.v(LOG_TAG, "Total Favorited movies: " + movieItems.size());
-//            for (MovieItem movieItem : movieItems) {
-//                String id = movieItem.getID();
-//                cursor = mContentResolver.query(DatabaseContract.MovieClipEntries.CONTENT_URI, null, id, null, null);
-//                List<MovieClip> movieClips = MovieDetailFactory.buildMovieClipList(cursor);
-//                movieItem.setMovieClips(movieClips);
-//
-//                cursor = mContentResolver.query(DatabaseContract.MovieReviewEntries.CONTENT_URI, null, id, null, null);
-//                List<MovieReview> movieReviews = MovieDetailFactory.buildMovieReviewList(cursor);
-//                movieItem.setMovieReviews(movieReviews);
-//                Log.v(LOG_TAG, movieItem.toString());
-//            }
-//
-//        }catch (Exception e){
-//
-//        }finally {
-//            if(cursor!=null)
-//            cursor.close();
-//        }
-//
-//    }
 
 
 

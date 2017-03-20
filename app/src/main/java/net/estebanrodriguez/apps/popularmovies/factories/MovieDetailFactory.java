@@ -1,7 +1,8 @@
-package net.estebanrodriguez.apps.popularmovies.data_access;
+package net.estebanrodriguez.apps.popularmovies.factories;
 
 import android.database.Cursor;
 
+import net.estebanrodriguez.apps.popularmovies.external_data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.local_database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.model.MovieClip;
 import net.estebanrodriguez.apps.popularmovies.model.MovieReview;
@@ -44,7 +45,6 @@ public class MovieDetailFactory {
         String[] colNames = cursor.getColumnNames();
         List<Map<String, String>> detailsList = new ArrayList<>();
 
-        cursor.moveToFirst();
         while (cursor.moveToNext()) {
             Map<String, String> dataMap = new HashMap<>();
             for (String column : colNames) {
@@ -97,6 +97,10 @@ public class MovieDetailFactory {
             detailsList.add(dataMap);
 
         }
+        if(cursor != null && !cursor.isClosed()){
+            cursor.close();
+        }
+
 
         return buildMovieClipList(detailsList);
 
@@ -128,7 +132,7 @@ public class MovieDetailFactory {
         String[] colNames = cursor.getColumnNames();
         List<Map<String, String>> detailsList = new ArrayList<>();
 
-        cursor.moveToFirst();
+
         while (cursor.moveToNext()) {
             Map<String, String> dataMap = new HashMap<>();
             for (String column : colNames) {
@@ -160,6 +164,10 @@ public class MovieDetailFactory {
 
             detailsList.add(dataMap);
 
+        }
+
+        if(cursor != null){
+            cursor.close();
         }
 
         return buildMovieReviewList(detailsList);

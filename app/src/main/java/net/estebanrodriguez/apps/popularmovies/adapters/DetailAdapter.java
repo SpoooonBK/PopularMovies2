@@ -60,7 +60,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
      * @param context   the context
      */
     public DetailAdapter(Context context) {
-        mMovieDetailsList = new ArrayList<Object>();
+        mMovieDetailsList = new ArrayList<>();
         mContext = context;
     }
 

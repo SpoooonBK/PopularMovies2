@@ -2,7 +2,7 @@ package net.estebanrodriguez.apps.popularmovies.utility;
 
 import android.util.Log;
 
-import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
+import net.estebanrodriguez.apps.popularmovies.external_data_access.ConstantsVault;
 
 /**
  * Created by Spoooon on 10/12/2016.

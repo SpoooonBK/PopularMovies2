@@ -1,6 +1,4 @@
-package net.estebanrodriguez.apps.popularmovies.data_access;
-
-import android.util.Log;
+package net.estebanrodriguez.apps.popularmovies.external_data_access;
 
 import org.json.JSONArray;
 import org.json.JSONException;

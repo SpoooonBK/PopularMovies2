@@ -1,13 +1,11 @@
 package net.estebanrodriguez.apps.popularmovies.fragments;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.R;
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieDAOImpl;
+import net.estebanrodriguez.apps.popularmovies.external_data_access.MovieDAOImpl;
 
 /**
  * Created by Spoooon on 10/19/2016.

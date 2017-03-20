@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
  * This is the Activity for the splash page.
  */
 public class SplashActivity extends AppCompatActivity {
+    //The Splash Activity runs while mainActivity is loading to help smooth the starting aesthetics
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

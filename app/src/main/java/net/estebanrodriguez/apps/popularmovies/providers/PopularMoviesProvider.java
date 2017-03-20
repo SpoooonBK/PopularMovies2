@@ -13,6 +13,7 @@ import android.util.Log;
 
 import net.estebanrodriguez.apps.popularmovies.local_database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.local_database.DatabaseHelper;
+import net.estebanrodriguez.apps.popularmovies.utility.DatabaseCloser;
 
 /**
  * Created by Spoooon on 11/21/2016.
@@ -45,7 +46,8 @@ public class PopularMoviesProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        db = mLocalMovieDBHelper.getReadableDatabase();
+
+        db = mLocalMovieDBHelper.getWritableDatabase();
 
         try {
 
@@ -89,11 +91,12 @@ public class PopularMoviesProvider extends ContentProvider {
         } catch (SQLException e) {
 
         }
-//        finally {
-//            if(db != null){
-//                db.close();
-//            }
-//        }
+        finally {
+            if(db != null){
+                //Using a delayed db close to prevent the database from closing before queries are finished.
+                DatabaseCloser.addDatabase(db);
+            }
+        }
 
 
         return null;
@@ -137,11 +140,12 @@ public class PopularMoviesProvider extends ContentProvider {
             throw new IllegalArgumentException("Unsupported uri for insertion: " + uri);
         }
 
-
+        Cursor cursor = null;
         try {
 
 
             db = mLocalMovieDBHelper.getWritableDatabase();
+
 
 
             switch (URI_MATCHER.match(uri)) {
@@ -154,7 +158,7 @@ public class PopularMoviesProvider extends ContentProvider {
                             + "= " + movieId;
 
                     // CHECK FOR DUPLICATE ENTRIES
-                    Cursor cursor = db.rawQuery(dupeCheckQuery, null);
+                    cursor = db.rawQuery(dupeCheckQuery, null);
                     // IF NO DUPES INSERT DATA
                     if (cursor.getCount() <= 0 || cursor == null) {
                         long rowID = db.insert(DatabaseContract.BasicMovieDetailEntries.TABLE_NAME, null, contentValues);
@@ -177,6 +181,11 @@ public class PopularMoviesProvider extends ContentProvider {
             }
         } catch (SQLException e) {
         } finally {
+            if(cursor!=null  && !cursor.isClosed()){
+                cursor.close();
+
+            }
+
             if (db != null) {
                 db.close();
             }

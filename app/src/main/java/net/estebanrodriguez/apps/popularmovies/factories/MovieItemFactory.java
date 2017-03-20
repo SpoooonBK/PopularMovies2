@@ -1,8 +1,8 @@
-package net.estebanrodriguez.apps.popularmovies.data_access;
+package net.estebanrodriguez.apps.popularmovies.factories;
 
 import android.database.Cursor;
-import android.util.Log;
 
+import net.estebanrodriguez.apps.popularmovies.external_data_access.ConstantsVault;
 import net.estebanrodriguez.apps.popularmovies.local_database.DatabaseContract;
 import net.estebanrodriguez.apps.popularmovies.local_database.FavoriteManager;
 import net.estebanrodriguez.apps.popularmovies.model.MovieItem;
@@ -123,6 +123,9 @@ public class MovieItemFactory {
                 }
             }
             movieItems.add(buildMovie(dataMap));
+        }
+        if(cursor != null && !cursor.isClosed()){
+            cursor.close();
         }
 
         return movieItems;

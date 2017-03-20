@@ -1,4 +1,4 @@
-package net.estebanrodriguez.apps.popularmovies.data_access;
+package net.estebanrodriguez.apps.popularmovies.external_data_access;
 
 /**
  * Created by Spoooon on 10/9/2016.

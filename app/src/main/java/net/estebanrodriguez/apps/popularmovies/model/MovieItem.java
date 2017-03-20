@@ -4,8 +4,8 @@ package net.estebanrodriguez.apps.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import net.estebanrodriguez.apps.popularmovies.data_access.ConstantsVault;
-import net.estebanrodriguez.apps.popularmovies.data_access.MovieDetailFactory;
+import net.estebanrodriguez.apps.popularmovies.external_data_access.ConstantsVault;
+import net.estebanrodriguez.apps.popularmovies.factories.MovieDetailFactory;
 import net.estebanrodriguez.apps.popularmovies.utility.DateParser;
 import net.estebanrodriguez.apps.popularmovies.utility.ImageSizer;
 
